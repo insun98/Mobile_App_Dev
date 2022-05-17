@@ -1,4 +1,4 @@
-# MDC-100 Series of Codelabs
+# YoriJori
 
 ## Getting Started
 
