@@ -34,6 +34,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     ApplicationState authProvider= Provider.of<ApplicationState>(context);
     return Scaffold(
+
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -102,7 +103,7 @@ class _SignupPageState extends State<SignupPage> {
               child: const Text('가입하기'),
               style: ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
               onPressed: () {
-                authProvider.registerAccount(_usernameController.text, _nameController.text, _passwordController.text,(e) => _showErrorDialog(context, 'Invalid email', e));
+                authProvider.registerAccount(_usernameController.text, _idController.text, _passwordController.text,_nameController.text,(e) => _showErrorDialog(context, 'Invalid email', e));
                 _idController.clear();
                 _nameController.clear();
                 _usernameController.clear();

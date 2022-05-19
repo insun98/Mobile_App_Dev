@@ -1,13 +1,17 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import '../firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+import 'dart:io';
 
-import '../src/LoginState.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+import '../firebase_options.dart';
+
 
 class ApplicationState extends ChangeNotifier {
+
+  String _defaultImage='';
   ApplicationState() {
     init();
   }
@@ -16,89 +20,88 @@ class ApplicationState extends ChangeNotifier {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    StreamSubscription<DocumentSnapshot>? _profileSubscription;
+    StreamSubscription<QuerySnapshot>? ItemSubscription;
+    StreamSubscription<DocumentSnapshot>? _likeSubscription;
+    final storageRef = FirebaseStorage.instance.ref();
+    final filename = "defaultProfile.png";
+    final  defaultProPicRef = storageRef.child(filename);
+
+
+    final downloadUrl = await defaultProPicRef.getDownloadURL();
+    _defaultImage = downloadUrl;
+
+    FirebaseAuth.instance.userChanges().listen((user) {
+      _profileSubscription = FirebaseFirestore.instance
+          .collection('user')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .snapshots()
+          .listen((snapshot) {
+        if (snapshot.data() != null) {
+          _profile.name = snapshot.data()!['name'];
+          _profile.email = snapshot.data()!['email'];
+          _profile.followers = snapshot.data()!['followers'];
+          _profile.photo = snapshot.data()!['image'];
+          _profile.uid = snapshot.data()!['uid'];
+          notifyListeners();
+        }
+      });
+
+      ItemSubscription = FirebaseFirestore.instance
+          .collection('post')
+          .where('creator', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .snapshots()
+          .listen((snapshot) {
+        _MyPost = [];
+        for (final document in snapshot.docs) {
+          _MyPost.add(
+            Post(
+              docId: document.id,
+              title: document.data()['title'] as String,
+              image: document.data()['image'] as String,
+              description: document.data()['description'] as String,
+              type: document.data()['type'] as String,
+              create: document.data()['create'],
+              modify: document.data()['modify'],
+              creator: document.data()['creator'] as String,
+              price: document.data()['price'],
+            ),
+          );
+        }
+        notifyListeners();
+      });
+
+    });}
+
+
+  Future<void> set() async {
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.data() != null) {
+        _profile.name = snapshot.data()!['name'];
+        _profile.email = snapshot.data()!['email'];
+        _profile.id = snapshot.data()!['id'];
+        _profile.followers = snapshot.data()!['followers'];
+        _profile.photo = snapshot.data()!['image'];
+        _profile.uid = snapshot.data()!['uid'];
+        notifyListeners();
+      }
+    });
   }
 
-        // _guestBookSubscription = FirebaseFirestore.insta // FirebaseFirestore.instance
-    //     //     .collection('attendees')
-    //     //     .where('attending', isEqualTo: true)
-    //     //     .snapshots()
-    //     //     .listen((snapshot) {
-    //     //   _attendees = snapshot.docs.length;
-    //     //   notifyListeners();
-    //     // });
-    //     //
-    //     // FirebaseAuth.instance.userChanges().listen((user) {
-    //     //   if (user != null) {
-    //     //     _loginState = ApplicationLoginState.loggedIn;nce
-        //     .collection('guestbook')
-        //     .orderBy('timestamp', descending: true)
-        //     .snapshots()
-        //     .listen((snapshot) {
-        //   _guestBookMessages = [];
-        //   for (final document in snapshot.docs) {
-        //     _guestBookMessages.add(
-        //       GuestBookMessage(
-        //         name: document.data()['name'] as String,
-        //         message: document.data()['text'] as String,
-        //       ),
-        //     );
-        //   }
-        //   notifyListeners();
-        // });
-        // _attendingSubscription = FirebaseFirestore.instance
-        //     .collection('attendees')
-        //     .doc(user.uid)
-        //     .snapshots()
-        //     .listen((snapshot) {
-        //   if (snapshot.data() != null) {
-        //     if (snapshot.data()!['attending'] as bool) {
-        //       _attending = Attending.yes;
-        //     } else {
-        //       _attending = Attending.no;
-        //     }
-        //   } else {
-        //     _attending = Attending.unknown;
-        //   }
-        //   notifyListeners();
-        // });
-  //     } else {
-  //       _loginState = ApplicationLoginState.loggedOut;
-  //       // _guestBookMessages = [];
-  //       // _guestBookSubscription?.cancel();
-  //       // _attendingSubscription?.cancel();
-  //     }
-  //     notifyListeners();
-  //   });
-  // }
-
-  ApplicationLoginState _loginState = ApplicationLoginState.loggedOut;
-  ApplicationLoginState get loginState => _loginState;
   bool? _checkUser;
-  String? _email;
-  String? get email => _email;
 
-  // StreamSubscription<QuerySnapshot>? _guestBookSubscription;
-  // List<GuestBookMessage> _guestBookMessages = [];
-  // List<GuestBookMessage> get guestBookMessages => _guestBookMessages;
-
-  int _attendees = 0;
-  int get attendees => _attendees;
-
-  // Attending _attending = Attending.unknown;
-  // StreamSubscription<DocumentSnapshot>? _attendingSubscription;
-  // Attending get attending => _attending;
-  // set attending(Attending attending) {
-  //   final userDoc = FirebaseFirestore.instance
-  //       .collection('attendees')
-  //       .doc();
-  //   if (attending == Attending.yes) {
-  //     userDoc.set(<String, dynamic>{'attending': true});
-  //   } else {
-  //     userDoc.set(<String, dynamic>{'attending': false});
-  //   }
-  // }
-
-
+  Profile _profile = Profile(
+      name: '',
+      id: ' ',
+      photo: 'https://firebasestorage.googleapis.com/v0/b/yorijori-52f2a.appspot.com/o/defaultProfile.png?alt=media&token=127cd072-80b8-4b77-ab22-a50a0dfa5206',
+      email: '',
+      followers: '',
+      uid: ' ');
+  Profile get profile => _profile;
   Future<bool?> verifyEmail(
       String email,
 
@@ -113,7 +116,7 @@ class ApplicationState extends ChangeNotifier {
       } else {
         _checkUser = false;
       }
-      _email = email;
+
       notifyListeners();
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
@@ -135,6 +138,8 @@ class ApplicationState extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
+    notifyListeners();
+
   }
 
 
@@ -143,6 +148,7 @@ class ApplicationState extends ChangeNotifier {
       String email,
       String displayName,
       String password,
+      String name,
       void Function(FirebaseAuthException e) errorCallback) async {
     try {
       var credential = await FirebaseAuth.instance
@@ -151,12 +157,88 @@ class ApplicationState extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
-  }
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set(<String, dynamic>{
+          'image':"https://firebasestorage.googleapis.com/v0/b/yorijori-52f2a.appspot.com/o/defaultProfile.png?alt=media&token=127cd072-80b8-4b77-ab22-a50a0dfa5206",
+      'email': email,
+      'name': name,
+      'id': displayName,
+      'password': password,
+      'followers': "20",
+      'uid': FirebaseAuth.instance.currentUser!.uid,
+    });
 
+  }
+  List<Post> _MyPost = [];
+  List<Post> get MyPost => _MyPost;
   void signOut() {
     FirebaseAuth.instance.signOut();
   }
+  Future<String> UploadFile(File image) async {
+    final storageRef = FirebaseStorage.instance.ref();
+    final filename = "${DateTime.now().millisecondsSinceEpoch}.png";
+    final mountainsRef = storageRef.child(filename);
+    final mountainImagesRef = storageRef.child("images/${filename}");
+    File file = File(image.path);
+    await mountainsRef.putFile(file);
+    final downloadUrl = await mountainsRef.getDownloadURL();
+    return downloadUrl;
+  }
+
+  Future<DocumentReference> addItem(
+      String URL, String type,String title, int price, String description) {
+    return FirebaseFirestore.instance
+        .collection('post')
+        .add(<String, dynamic>{
+      'image': URL,
+      'type': type,
+      'title': title,
+      'price': price,
+      'description': description,
+      'create': FieldValue.serverTimestamp(),
+      'modify': FieldValue.serverTimestamp(),
+      'creator': FirebaseAuth.instance.currentUser!.uid,
+    });
+  }
 
 
+}
 
+class Profile {
+  Profile(
+      {required this.name,
+        required this.id,
+        required this.email,
+        required this.photo,
+        required this.followers,
+        required this.uid});
+  String name;
+  String id;
+  String photo;
+  String email;
+  String followers;
+  String uid;
+}
+class Post {
+  Post(
+      {required this.docId,
+        required this.image,
+        required this.title,
+        required this.price,
+        required this.type,
+        required this.description,
+        required this.create,
+        required this.modify,
+        required this.creator});
+  String docId;
+  String image;
+  String title;
+  int price;
+  String type;
+  String description;
+  Timestamp create;
+  Timestamp modify;
+  String creator;
 }
