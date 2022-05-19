@@ -15,7 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:shrine/signup.dart';
 
-import 'home.dart';
+import 'myProfile.dart';
 import 'login.dart';
 import 'login.dart';
 import 'supplemental/cut_corners_border.dart';
@@ -60,6 +60,7 @@ class ShrineApp extends StatelessWidget {
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
+
         '/': (BuildContext context) => const HomePage(),
 
 
