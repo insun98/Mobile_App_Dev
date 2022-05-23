@@ -15,6 +15,8 @@
 import 'package:flutter/material.dart';
 import 'package:shrine/signup.dart';
 
+import 'home.dart';
+import 'hot.dart';
 import 'myProfile.dart';
 import 'login.dart';
 import 'login.dart';
@@ -33,7 +35,7 @@ class ShrineApp extends StatelessWidget {
         fontFamily: 'Yras',// 앱 배경색
         appBarTheme: const AppBarTheme(
           shadowColor: Colors.white,
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.white,
         ),  // 상단바 그림자, 배경색
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Colors.blue,
@@ -60,8 +62,9 @@ class ShrineApp extends StatelessWidget {
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
-
-        '/': (BuildContext context) => const HomePage(),
+        '/mypage': (BuildContext context) => const HomePage(),
+        '/': (BuildContext context) => const HomesPage(),
+        '/hot': (BuildContext context) => const HotPage(),
 
 
       },
