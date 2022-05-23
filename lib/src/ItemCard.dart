@@ -44,7 +44,8 @@ class _itemCardState extends State<itemCard> {
                 child: Container(
                   margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
                   child: Image.network(
-                    'post.image',
+
+                    post.image,
                     width: 20,
                     height: 20,
                     fit: BoxFit.fill,
@@ -66,12 +67,12 @@ class _itemCardState extends State<itemCard> {
                       style: theme.textTheme.headline6,
                       maxLines: 1,
                     ),
+                    SizedBox(height:15),
                     Row(
                       children: [
-                        Text(post.price.toString(), style: TextStyle(fontSize: 10)),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(80, 20, 0, 0),
-                          child: TextButton(
+                        SizedBox(height:50,width:150,child:Text(post.description, style: TextStyle(fontSize: 15))),
+
+                         TextButton(
                             child:
                             const Text('more', style: TextStyle(fontSize: 8)),
                             onPressed: () {
@@ -79,7 +80,7 @@ class _itemCardState extends State<itemCard> {
 
                             },
                           ),
-                        ),
+
                       ],
                     ),
                   ],
