@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fs;
@@ -6,24 +5,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'Provider/AuthProvider.dart';
+import 'home.dart';
 import 'src/ItemCard.dart';
 import 'package:image_picker/image_picker.dart';
 import 'hot.dart';
 import 'login.dart';
 import 'myProfile.dart';
 
-class HomesPage extends StatefulWidget {
-  const HomesPage({Key? key}) : super(key: key);
+class HotPage extends StatefulWidget {
+  const HotPage({Key? key}) : super(key: key);
 
   @override
-  _HomesPageState createState() => _HomesPageState();
+  _HotPageState createState() => _HotPageState();
 }
 
-class _HomesPageState extends State<HomesPage> {
+class _HotPageState extends State<HotPage> {
+  bool _isFavorited  = true;
   int _currentIndex = 0;
-  //String profile = " ";
- // String ids = " ";
-  bool _isFavorited  = false;
+  String profile = " ";
+  String ids = " ";
   final List<Widget> _children = [HomesPage(), HotPage(), HomePage(), HotPage(), HomePage()];
   void _onTap(int index) {
     setState(() {
@@ -39,12 +39,7 @@ class _HomesPageState extends State<HomesPage> {
         leading: Column(
           children: const <Widget>[
 
-            Text('Yori',
-                style: TextStyle(
-                    fontFamily: 'Yrsa',
-                    color: Color(0xFF961D36),
-                    fontSize: 23)),
-            Text('Jori',
+            Text('Hot',
                 style: TextStyle(
                     fontFamily: 'Yrsa',
                     color: Color(0xFF961D36),
@@ -79,25 +74,25 @@ class _HomesPageState extends State<HomesPage> {
         ],
         title: Container(width: 0,),
       ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Color(0xFF961D36),
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white.withOpacity(.60),
-          selectedFontSize: 14,
-          unselectedFontSize: 14,
-          currentIndex: _currentIndex,
-          onTap: _onTap,
-          //현재 선택된 Index
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Color(0xFF961D36),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white.withOpacity(.60),
+        selectedFontSize: 14,
+        unselectedFontSize: 14,
+        currentIndex: _currentIndex,
+        onTap: _onTap,
+        //현재 선택된 Index
 
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.whatshot), label: 'Hot'),
-            BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'profile'),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-            BottomNavigationBarItem(icon: Icon(Icons.addchart), label: 'Ranking'),
-          ],
-        ),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.whatshot), label: 'Hot'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          BottomNavigationBarItem(icon: Icon(Icons.addchart), label: 'Ranking'),
+        ],
+      ),
       body:StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
@@ -108,75 +103,9 @@ class _HomesPageState extends State<HomesPage> {
             return Center(
               child: Column(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFF961D36),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          TextButton(
-                            child: Text(
-                              '양식',
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState((){
-                                kind = "양식";
-                              });
-                            },
-                          ),
-                          TextButton(
-                            child: Text(
-                              '한식',
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState((){
-                                kind = "한식";
-                              });
-                            },
-                          ),
-                          TextButton(
-                            child: Text(
-                              '중식',
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState((){
-                                kind = "중식";
-                              });
-                            },
-                          ),
-                          TextButton(
-                            child: Text(
-                              '일식',
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState((){
-                                kind = "일식";
-                              });
-                            },
-                          ),
-                        ],
-                    ),
-                  ),
                   Expanded(
                     child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                      stream: FirebaseFirestore.instance.collection('post').snapshots(),
+                      stream: FirebaseFirestore.instance.collection('post').orderBy('like',descending: true).snapshots(),
                       builder: (context, snapshot){
                         final docum = snapshot.data!.docs;
                         int i = docum.length;
@@ -200,14 +129,13 @@ class _HomesPageState extends State<HomesPage> {
                               String title = data['title'];
                               String type = data['type'];
                               String file = data['image'];
-                             // int like = data['like'];
-                              /*final usercol = FirebaseFirestore.instance.collection("user").doc("$creator").get().then((value) => { //값을 읽으면서, 그 값을 변수로 넣는 부분
+                              int like = data['like'];
+                              final usercol = FirebaseFirestore.instance.collection("user").doc("$creator");
+                              usercol.get().then((value) => { //값을 읽으면서, 그 값을 변수로 넣는 부분
                                 profile = value['image'],
                                 ids = value['id'],
                               });
-
-                               */
-                              if(type == kind) {
+                              print("${ids}");
                                 return Card(
                                   clipBehavior: Clip.antiAlias,
                                   child: Wrap(
@@ -217,25 +145,21 @@ class _HomesPageState extends State<HomesPage> {
                                         children: [
                                           Row(
                                             children: [
-                                             /* CircleAvatar(
+                                              CircleAvatar(
                                                 radius: 20.0,
                                                 backgroundImage: NetworkImage(
-                                                  profile,),
+                                                    profile),
                                                 backgroundColor: Colors
                                                     .transparent,
                                               ),
-
-                                              */
                                               SizedBox(width: 20,),
-                                              /*Text(
-                                               // '$ids',
+                                              Text(
+                                                '$ids',
                                                 style: TextStyle(
                                                   fontSize: 13,
                                                 ),
                                                 maxLines: 2,
                                               ),
-
-                                               */
                                             ],
                                           ),
                                           Text(
@@ -303,40 +227,34 @@ class _HomesPageState extends State<HomesPage> {
                                               Row(
                                                 children: [
                                                   IconButton(
-                                                    icon:(_isFavorited
-                                                        ? const Icon(Icons.favorite)
-                                                        : const Icon(Icons.favorite_border)),
-                                                    color: Colors.red,
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        if (_isFavorited) {
-                                                        //  like -= 1;
-                                                          _isFavorited = false;
+                                                      icon:(_isFavorited
+                                                          ? const Icon(Icons.favorite)
+                                                          : const Icon(Icons.favorite_border)),
+                                                      color: Colors.red,
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          if (_isFavorited) {
+                                                            like -= 1;
+                                                            _isFavorited = false;
 
-                                                        } else {
-                                                         // like += 1;
-                                                          _isFavorited = true;
-                                                         /* FirebaseFirestore
-                                                              .instance
-                                                              .collection('post')
-                                                              .doc("${FieldPath.documentId}")
-                                                              .update(
-                                                              <String, dynamic>{
-                                                                'favoritenum': like,
-                                                              });
-
-                                                          */
-                                                        }
-                                                      });
-
-
-                                                    }
+                                                          } else {
+                                                            like += 1;
+                                                            _isFavorited = true;
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection('post')
+                                                                .doc("${FieldPath.documentId}")
+                                                                .update(
+                                                                <String, dynamic>{
+                                                                  'favoritenum': like,
+                                                                });
+                                                          }
+                                                        });
+                                                      }
                                                   ),
-                                                 /* Text(
+                                                  Text(
                                                     '${like}',
                                                   ),
-
-                                                  */
                                                   IconButton(
                                                     icon: const Icon(
                                                       Icons.chat_outlined,
@@ -371,12 +289,6 @@ class _HomesPageState extends State<HomesPage> {
                                     ],
                                   ),
                                 );
-                              }
-                              else{
-                                return Container(
-                                    child: SizedBox(width: 0, height: 0,),
-                                );
-                              }
                             }
                         );
                       },
