@@ -20,7 +20,7 @@ import 'package:shrine/Provider/AuthProvider.dart';
 
 import 'app.dart';
 
-import 'login.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

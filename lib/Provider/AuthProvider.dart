@@ -17,12 +17,13 @@ class ApplicationState extends ChangeNotifier {
   }
 
   Future<void> init() async {
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
     StreamSubscription<DocumentSnapshot>? _profileSubscription;
     StreamSubscription<QuerySnapshot>? ItemSubscription;
-    StreamSubscription<DocumentSnapshot>? _likeSubscription;
+    StreamSubscription<QuerySnapshot>? _userSubscription;
     final storageRef = FirebaseStorage.instance.ref();
     final filename = "defaultProfile.png";
     final  defaultProPicRef = storageRef.child(filename);
@@ -30,6 +31,7 @@ class ApplicationState extends ChangeNotifier {
 
     final downloadUrl = await defaultProPicRef.getDownloadURL();
     _defaultImage = downloadUrl;
+
 
     FirebaseAuth.instance.userChanges().listen((user) {
       _profileSubscription = FirebaseFirestore.instance
@@ -40,7 +42,8 @@ class ApplicationState extends ChangeNotifier {
         if (snapshot.data() != null) {
           _profile.name = snapshot.data()!['name'];
           _profile.email = snapshot.data()!['email'];
-          _profile.followers = snapshot.data()!['followers'];
+          _profile.subscribers = snapshot.data()!['subscribers'];
+          _profile.subscribing = snapshot.data()!['subscribing'];
           _profile.photo = snapshot.data()!['image'];
           _profile.uid = snapshot.data()!['uid'];
           notifyListeners();
@@ -58,7 +61,7 @@ class ApplicationState extends ChangeNotifier {
             Post(
               docId: document.id,
               title: document.data()['title'] as String,
-              image: document.data()['image'] as String,
+              image: document.data()['image'],
               description: document.data()['description'] as String,
               type: document.data()['type'] as String,
               create: document.data()['create'],
@@ -67,13 +70,35 @@ class ApplicationState extends ChangeNotifier {
               price: document.data()['price'],
             ),
           );
+          print(document.data()['image']);
+        }
+        notifyListeners();
+      });
+      _userSubscription = FirebaseFirestore.instance
+          .collection('user')
+          .snapshots()
+          .listen((snapshot) {
+        _MyPost = [];
+        for (final document in snapshot.docs) {
+          _MyPost.add(
+            Post(
+              docId: document.id,
+              title: document.data()['title'] as String,
+              image: document.data()['image'],
+              description: document.data()['description'] as String,
+              type: document.data()['type'] as String,
+              create: document.data()['create'],
+              modify: document.data()['modify'],
+              creator: document.data()['creator'] as String,
+              price: document.data()['price'],
+            ),
+          );
+          print(document.data()['image']);
         }
         notifyListeners();
       });
 
     });}
-
-
   Future<void> set() async {
     FirebaseFirestore.instance
         .collection('user')
@@ -84,14 +109,60 @@ class ApplicationState extends ChangeNotifier {
         _profile.name = snapshot.data()!['name'];
         _profile.email = snapshot.data()!['email'];
         _profile.id = snapshot.data()!['id'];
-        _profile.followers = snapshot.data()!['followers'];
+        _profile.subscribers = snapshot.data()!['subscribers'];
         _profile.photo = snapshot.data()!['image'];
         _profile.uid = snapshot.data()!['uid'];
         notifyListeners();
       }
     });
   }
+  Future<void> getPosts(String std) async {
+    FirebaseFirestore.instance
+        .collection('user')
+        .orderBy(std, descending: false)
+        .snapshots()
+        .listen((snapshot) {
+      _MyPost = [];
+      for (final document in snapshot.docs) {
+        _MyPost.add(
+          Post(
+            docId: document.id,
+            title: document.data()['title'] as String,
+            image: document.data()['image'],
+            description: document.data()['description'] as String,
+            type: document.data()['type'] as String,
+            create: document.data()['create'],
+            modify: document.data()['modify'],
+            creator: document.data()['creator'] as String,
+            price: document.data()['price'],
+          ),
+        );
+      }
 
+    });
+    notifyListeners();
+  }
+  Future<bool> getFriend(String uid) async {
+    bool check = true;
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(uid)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.data() != null) {
+        _friendprofile.name = snapshot.data()!['name'];
+        _friendprofile.email = snapshot.data()!['email'];
+        _friendprofile.subscribers = snapshot.data()!['subscribers'];
+        _friendprofile.subscribing = snapshot.data()!['subscribing'];
+        _friendprofile.photo = snapshot.data()!['image'];
+        _friendprofile.uid = snapshot.data()!['uid'];
+        notifyListeners();
+
+      }
+
+    });
+    return check;
+  }
   bool? _checkUser;
 
   Profile _profile = Profile(
@@ -99,9 +170,21 @@ class ApplicationState extends ChangeNotifier {
       id: ' ',
       photo: 'https://firebasestorage.googleapis.com/v0/b/yorijori-52f2a.appspot.com/o/defaultProfile.png?alt=media&token=127cd072-80b8-4b77-ab22-a50a0dfa5206',
       email: '',
-      followers: '',
+      subscribers: [],
+      subscribing: [],
+      profession: "",
+      uid: ' ');
+  Profile _friendprofile = Profile(
+      name: '',
+      id: ' ',
+      photo: 'https://firebasestorage.googleapis.com/v0/b/yorijori-52f2a.appspot.com/o/defaultProfile.png?alt=media&token=127cd072-80b8-4b77-ab22-a50a0dfa5206',
+      email: '',
+      subscribers: [],
+      subscribing: [],
+      profession: "",
       uid: ' ');
   Profile get profile => _profile;
+  Profile get friendProfile => _profile;
   Future<bool?> verifyEmail(
       String email,
 
@@ -146,14 +229,15 @@ class ApplicationState extends ChangeNotifier {
 
   Future<void> registerAccount(
       String email,
-      String displayName,
+      String id,
       String password,
       String name,
+      String profession,
       void Function(FirebaseAuthException e) errorCallback) async {
     try {
       var credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-      await credential.user!.updateDisplayName(displayName);
+      await credential.user!.updateDisplayName(id);
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
@@ -164,18 +248,18 @@ class ApplicationState extends ChangeNotifier {
           'image':"https://firebasestorage.googleapis.com/v0/b/yorijori-52f2a.appspot.com/o/defaultProfile.png?alt=media&token=127cd072-80b8-4b77-ab22-a50a0dfa5206",
       'email': email,
       'name': name,
-      'id': displayName,
+      'id': id,
+      'profession':profession,
       'password': password,
-      'followers': "20",
-      'uid': FirebaseAuth.instance.currentUser!.uid,
+      'subscriber':[],
+      'subscribing':[],
+
     });
 
   }
   List<Post> _MyPost = [];
   List<Post> get MyPost => _MyPost;
-  void signOut() {
-    FirebaseAuth.instance.signOut();
-  }
+
   Future<String> UploadFile(File image) async {
     final storageRef = FirebaseStorage.instance.ref();
     final filename = "${DateTime.now().millisecondsSinceEpoch}.png";
@@ -202,6 +286,10 @@ class ApplicationState extends ChangeNotifier {
       'creator': FirebaseAuth.instance.currentUser!.uid,
     });
   }
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+    notifyListeners();
+  }
 
 
 }
@@ -212,14 +300,20 @@ class Profile {
         required this.id,
         required this.email,
         required this.photo,
-        required this.followers,
-        required this.uid});
+        required this.uid,
+        required this.profession,
+        required this.subscribers,
+        required this.subscribing,
+        });
   String name;
   String id;
   String photo;
   String email;
-  String followers;
   String uid;
+  String profession;
+  List<String> subscribers= [];
+  List<String> subscribing= [];
+
 }
 class Post {
   Post(

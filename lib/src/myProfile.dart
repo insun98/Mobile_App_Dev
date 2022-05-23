@@ -2,22 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
-import 'Provider/AuthProvider.dart';
-import 'src/ItemCard.dart';
+
+import '../src/ItemCard.dart';
+import '../src/friendProfile.dart';
+import '../Provider/AuthProvider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class myProfile extends StatefulWidget {
+  const myProfile({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _myProfileState createState() => _myProfileState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _myProfileState extends State<myProfile> {
   int _selectedIndex = 0;
   File? _image;
-
+  String dropdownValue = '인기순';
   Widget build(BuildContext context) {
     ApplicationState authProvider = Provider.of<ApplicationState>(context);
     return Scaffold(
@@ -38,17 +40,79 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.grey,
                 semanticLabel: 'filter',
               ),
-              onPressed: () {getImageFromGallery(ImageSource.gallery);
+              onPressed: () async{
+
+                bool check = await getImageFromGallery(ImageSource.gallery);
+
+                if(check==true){
                Navigator.push(context,  MaterialPageRoute(builder: (context) => addPostPage(image: _image)));
-              }) ,
-          IconButton(
-            icon: Icon(
-              Icons.menu,
-              color: Colors.grey,
+              }}) ,
+          Builder(
+            builder: (context) => IconButton(
+              color: Colors.black,
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
             ),
-            onPressed: () {},
           ),
         ],
+      ),
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            const Padding(
+              child: Text('Yori  Jori',
+                  style: TextStyle(color: Color(0xFF961D36), fontFamily: 'Yrsa',fontSize: 30)),
+              padding: EdgeInsets.only(top: 40, left: 10),
+            ),
+            const Divider(),
+
+            ListTile(
+              leading: const Icon(
+                Icons.people,
+                color: Color(0xFF961D36),
+              ),
+              title: const Text(
+                'Subscribers',
+                style: TextStyle(color: Color(0xFF961D36)),
+              ),
+              onTap: () async {
+                bool check = await authProvider.getFriend(
+                    authProvider.profile.subscribers[0]);
+                if (check == true) {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) =>
+                          friendProfile(profile: authProvider.friendProfile)));
+                }
+              },
+
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.photo_filter_outlined,
+                color: Colors.black,
+              ),
+              title: const Text('Posts'),
+              onTap: () {
+                Navigator.pushNamed(context, '/friendlist');
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(
+                Icons.settings,
+                color: Color(0xFF961D36),
+              ),
+              title: const Text('Settings'),
+              onTap: () {},
+            ),
+
+
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -88,6 +152,20 @@ class _HomePageState extends State<HomePage> {
 
           profile: authProvider.profile,
         ),
+        Container(margin: EdgeInsets.only(left:35), child: DropdownButton<String>(
+          value: dropdownValue,
+          icon: const Icon(Icons.arrow_drop_down_outlined),
+          elevation: 0,
+
+          style: const TextStyle(color: Colors.black),
+          items: dropdownItems,
+          onChanged: (String? newValue) {
+            setState(() {
+              dropdownValue = newValue!;
+              authProvider.getPosts(dropdownValue);
+            });
+          },
+        ),),
         itemCard(
           posts: authProvider.MyPost,
         ),
@@ -98,13 +176,29 @@ class _HomePageState extends State<HomePage> {
 
 
     );
+
   }
-  Future getImageFromGallery(ImageSource imageSource) async {
+ Future<bool> getImageFromGallery(ImageSource imageSource)  async{
     var image = await ImagePicker.platform
         .pickImage(source: imageSource, maxWidth: 650, maxHeight: 100);
     setState(() {
-      _image = File(image!.path);
+      _image= File(image!.path);
     });
+    if(image != null){
+      return true;
+    }else {
+        return false;
+    }
+
+  }
+  List<DropdownMenuItem<String>> get dropdownItems{
+    List<DropdownMenuItem<String>> menuItems = [
+      DropdownMenuItem(child: Text("인기순"),value: "인기순"),
+      DropdownMenuItem(child: Text("가장 오래된 순"),value: "가장 오래된 순"),
+      DropdownMenuItem(child: Text("최신순"),value: "최신순"),
+
+    ];
+    return menuItems;
   }
 }
 
@@ -115,6 +209,7 @@ class profileBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ApplicationState authProvider = Provider.of<ApplicationState>(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -130,17 +225,25 @@ class profileBody extends StatelessWidget {
           Text(profile.name,
               style: TextStyle(fontSize: 15, color: Colors.black)),
           const SizedBox(height: 10.0),
-          Text('Subscribers:${profile.followers}',
+          Text('Subscribers:${profile.subscribers.length}',
               style: TextStyle(fontSize: 15, color: Colors.black)),
           const SizedBox(height: 10.0),
-          Row(
+         Row(
+           mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
                 child: const Text('프로필 편집'),
                 style: ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
                 onPressed: () async {},
               ),
+              SizedBox(width:30),
+              ElevatedButton(
+                child: const Text('로그아웃'),
+                style: ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
+                onPressed: () async {authProvider.signOut();Navigator.pushNamed(context, '/login');},
+              ),
             ],
+
           ),
         ],
       ),
