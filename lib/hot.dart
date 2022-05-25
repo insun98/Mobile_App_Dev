@@ -3,7 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fs;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+
+import 'package:shrine/src/HomeCard.dart';
+=======
 import 'package:shrine/search.dart';
+
 import 'dart:io';
 import 'Provider/AuthProvider.dart';
 import 'home.dart';
@@ -25,7 +29,9 @@ class _HotPageState extends State<HotPage> {
   int _currentIndex = 0;
   String profile = " ";
   String ids = " ";
+
   final List<Widget> _children = [HomesPage(), HotPage(), HomesPage(), SearchScreen(), HomesPage()];
+
   void _onTap(int index) {
     setState(() {
       _currentIndex = index;
@@ -34,7 +40,9 @@ class _HotPageState extends State<HotPage> {
   String kind = "한식";
   @override
   Widget build(BuildContext context) {
-    print("here is homepage");
+    ApplicationState postProvider = Provider.of<ApplicationState>(context);
+    //postProvider.getPosts("like");
+    print("here is hotpage");
     return Scaffold(
       appBar: AppBar(
         leading: Column(
@@ -94,212 +102,17 @@ class _HotPageState extends State<HotPage> {
           BottomNavigationBarItem(icon: Icon(Icons.addchart), label: 'Ranking'),
         ],
       ),
-      body:StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-          if (!snapshot.hasData) {
-            return LoginPage();
-          } else {
-            _children[_currentIndex];
-            return Center(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                      stream: FirebaseFirestore.instance.collection('post').orderBy('like',descending: true).snapshots(),
-                      builder: (context, snapshot){
-                        final docum = snapshot.data!.docs;
-                        int i = docum.length;
-                        int count = 0;
-                        /*for(int y=0;y<i;y++){
-                          final data = docum[y].data();
-                          String type = data['type'];
-                          if(type == kind) {
-                            count++;
-                          }
-                        }
-                        print("${count}");
-                         */
-                        return GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1,),
-                            itemCount: docum.length,
-                            itemBuilder: (_, i){
-                              final data = docum[i].data();
-                              int price = data['price'];
-                              String creator = data['creator'];
-                              String descript = data['description'];
-                              String title = data['title'];
-                              String type = data['type'];
-                              String file = data['image'];
-                              int like = data['like'];
-                              final usercol = FirebaseFirestore.instance.collection("user").doc("$creator");
-                              usercol.get().then((value) => { //값을 읽으면서, 그 값을 변수로 넣는 부분
-                                profile = value['image'],
-                                ids = value['id'],
-                              });
-                              print("${ids}");
-                                return Card(
-                                  clipBehavior: Clip.antiAlias,
-                                  child: Wrap(
-                                    //crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              CircleAvatar(
-                                                radius: 20.0,
-                                                backgroundImage: NetworkImage(
-                                                    profile),
-                                                backgroundColor: Colors
-                                                    .transparent,
-                                              ),
-                                              SizedBox(width: 20,),
-                                              Text(
-                                                '$ids',
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                ),
-                                                maxLines: 2,
-                                              ),
-                                            ],
-                                          ),
-                                          Text(
-                                            '$descript',
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                            ),
-                                            maxLines: 2,
-                                          ),
-                                        ],
-                                      ),
-                                      AspectRatio(
-                                        aspectRatio: 25 / 11,
-                                        child:
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10),
-                                          ),
-                                          child: Image.network(
-                                            file,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              20, 5, 0, 0),
-                                          child: Column(
-                                            // TODO: Align labels to the bottom and center (103)
-                                            crossAxisAlignment: CrossAxisAlignment
-                                                .start,
-                                            // TODO: Change innermost Column (103)
-                                            children: <Widget>[
-                                              /*Text(
-                                              '$name',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 13,
-                                              ),
-                                              maxLines: 1,
-                                            ),*/
-                                              // TODO: Handle overflowing labels (103)
-                                              Text(
-                                                '열량: ',
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                ),
-                                                maxLines: 1,
-                                              ),
-                                              Text(
-                                                '가격: $price',
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                ),
-                                                maxLines: 1,
-                                              ),
-                                              Text(
-                                                '재료: 양파(200g), 파(100g), 돼지고기(300g)',
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                ),
-                                                maxLines: 2,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  IconButton(
-                                                      icon:(_isFavorited
-                                                          ? const Icon(Icons.favorite)
-                                                          : const Icon(Icons.favorite_border)),
-                                                      color: Colors.red,
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          if (_isFavorited) {
-                                                            like -= 1;
-                                                            _isFavorited = false;
+      body:Consumer<ApplicationState>(
+        builder: (context, appState, _) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            homeCard(
+              posts: postProvider.MyPosts,
+              profile: postProvider.profile,
+            ),
+          ],
 
-                                                          } else {
-                                                            like += 1;
-                                                            _isFavorited = true;
-                                                            FirebaseFirestore
-                                                                .instance
-                                                                .collection('post')
-                                                                .doc("${FieldPath.documentId}")
-                                                                .update(
-                                                                <String, dynamic>{
-                                                                  'favoritenum': like,
-                                                                });
-                                                          }
-                                                        });
-                                                      }
-                                                  ),
-                                                  Text(
-                                                    '${like}',
-                                                  ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Icons.chat_outlined,
-                                                      semanticLabel: 'chatting',
-                                                      color: Colors.black,
-                                                      size: 30,
-                                                    ),
-                                                    onPressed: () {
-
-                                                    },
-                                                  ),
-
-                                                  IconButton(
-                                                    alignment: Alignment
-                                                        .centerRight,
-                                                    icon: const Icon(
-                                                      Icons.book_outlined,
-                                                      semanticLabel: 'bookmark',
-                                                      color: Colors.black,
-                                                      size: 30,
-                                                    ),
-                                                    onPressed: () {
-
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                            }
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-        },
+        ),
       ),
     );
   }
