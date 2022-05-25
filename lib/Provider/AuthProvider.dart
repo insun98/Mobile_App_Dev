@@ -24,6 +24,7 @@ class ApplicationState extends ChangeNotifier {
     StreamSubscription<DocumentSnapshot>? _profileSubscription;
     StreamSubscription<QuerySnapshot>? ItemSubscription;
     StreamSubscription<QuerySnapshot>? _userSubscription;
+    StreamSubscription<QuerySnapshot>? PostSubscription;
     final storageRef = FirebaseStorage.instance.ref();
     final filename = "defaultProfile.png";
     final  defaultProPicRef = storageRef.child(filename);
@@ -44,6 +45,7 @@ class ApplicationState extends ChangeNotifier {
           _profile.email = snapshot.data()!['email'];
           _profile.subscribers = snapshot.data()!['subscribers'];
           _profile.subscribing = snapshot.data()!['subscribing'];
+          _profile.bookmark = snapshot.data()!['bookmark'];
           _profile.photo = snapshot.data()!['image'];
           _profile.uid = snapshot.data()!['uid'];
           notifyListeners();
@@ -68,12 +70,42 @@ class ApplicationState extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               price: document.data()['price'],
+              like: document.data()['like'],
+              islike: document.data()['islike'],
             ),
           );
           print(document.data()['image']);
         }
         notifyListeners();
       });
+
+      PostSubscription = FirebaseFirestore.instance
+          .collection('post')
+          .orderBy('like', descending: true)
+          .snapshots()
+          .listen((snapshot) {
+        _MyPosts = [];
+        for (final document in snapshot.docs) {
+          _MyPosts.add(
+            Post(
+              docId: document.id,
+              title: document.data()['title'] as String,
+              image: document.data()['image'],
+              description: document.data()['description'] as String,
+              type: document.data()['type'] as String,
+              create: document.data()['create'],
+              modify: document.data()['modify'],
+              creator: document.data()['creator'] as String,
+              price: document.data()['price'],
+              like: document.data()['like'],
+              islike: document.data()['islike'],
+            ),
+          );
+          print(document.data()['image']);
+        }
+        notifyListeners();
+      });
+
       _userSubscription = FirebaseFirestore.instance
           .collection('user')
           .snapshots()
@@ -91,6 +123,8 @@ class ApplicationState extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               price: document.data()['price'],
+              like: document.data()['like'],
+              islike: document.data()['islike'],
             ),
           );
           print(document.data()['image']);
@@ -99,6 +133,7 @@ class ApplicationState extends ChangeNotifier {
       });
 
     });}
+
   Future<void> set() async {
     FirebaseFirestore.instance
         .collection('user')
@@ -110,12 +145,52 @@ class ApplicationState extends ChangeNotifier {
         _profile.email = snapshot.data()!['email'];
         _profile.id = snapshot.data()!['id'];
         _profile.subscribers = snapshot.data()!['subscribers'];
+        _profile.bookmark = snapshot.data()!['bookmark'];
         _profile.photo = snapshot.data()!['image'];
         _profile.uid = snapshot.data()!['uid'];
         notifyListeners();
       }
     });
   }
+
+ Future<void> getTypePost(String std) async {
+    FirebaseFirestore.instance
+        .collection('post')
+        .snapshots()
+        .listen((snapshot) {
+      _MyPosts = [];
+      for (final document in snapshot.docs) {
+        if(document.data()['type'] == std) {
+          _MyPosts.add(
+            Post(
+              docId: document.id,
+              title: document.data()['title'] as String,
+              image: document.data()['image'],
+              description: document.data()['description'] as String,
+              type: document.data()['type'] as String,
+              create: document.data()['create'],
+              modify: document.data()['modify'],
+              creator: document.data()['creator'] as String,
+              price: document.data()['price'],
+              like: document.data()['like'],
+              islike: document.data()['islike'],
+            ),
+          );
+        }
+      }
+
+    });
+    notifyListeners();
+  }
+
+  Future<void> updateDoc(String docID, int like, bool islike) async {
+    FirebaseFirestore.instance.collection("post").doc(docID).update({
+      "like": like,
+      "islike": islike,
+    });
+    notifyListeners();
+  }
+
   Future<void> getPosts(String std) async {
     FirebaseFirestore.instance
         .collection('user')
@@ -135,6 +210,8 @@ class ApplicationState extends ChangeNotifier {
             modify: document.data()['modify'],
             creator: document.data()['creator'] as String,
             price: document.data()['price'],
+            like: document.data()['like'],
+            islike: document.data()['islike'],
           ),
         );
       }
@@ -154,6 +231,7 @@ class ApplicationState extends ChangeNotifier {
         _friendprofile.email = snapshot.data()!['email'];
         _friendprofile.subscribers = snapshot.data()!['subscribers'];
         _friendprofile.subscribing = snapshot.data()!['subscribing'];
+        _friendprofile.bookmark = snapshot.data()!['bookmark'];
         _friendprofile.photo = snapshot.data()!['image'];
         _friendprofile.uid = snapshot.data()!['uid'];
         notifyListeners();
@@ -172,6 +250,7 @@ class ApplicationState extends ChangeNotifier {
       email: '',
       subscribers: [],
       subscribing: [],
+      bookmark: [],
       profession: "",
       uid: ' ');
   Profile _friendprofile = Profile(
@@ -181,6 +260,7 @@ class ApplicationState extends ChangeNotifier {
       email: '',
       subscribers: [],
       subscribing: [],
+      bookmark: [],
       profession: "",
       uid: ' ');
   Profile get profile => _profile;
@@ -253,12 +333,17 @@ class ApplicationState extends ChangeNotifier {
       'password': password,
       'subscriber':[],
       'subscribing':[],
-
+      'bookmark' : [],
     });
 
   }
   List<Post> _MyPost = [];
   List<Post> get MyPost => _MyPost;
+  List<Post> _MyPosts = [];
+  List<Post> get MyPosts => _MyPosts;
+  List<Post> _MyPostbook = [];
+  List<Post> get MyPostbook => _MyPostbook;
+
 
   Future<String> UploadFile(File image) async {
     final storageRef = FirebaseStorage.instance.ref();
@@ -304,6 +389,7 @@ class Profile {
         required this.profession,
         required this.subscribers,
         required this.subscribing,
+        required this.bookmark,
         });
   String name;
   String id;
@@ -313,6 +399,7 @@ class Profile {
   String profession;
   List<String> subscribers= [];
   List<String> subscribing= [];
+  List<String> bookmark= [];
 
 }
 class Post {
@@ -321,6 +408,8 @@ class Post {
         required this.image,
         required this.title,
         required this.price,
+        required this.like,
+        required this.islike,
         required this.type,
         required this.description,
         required this.create,
@@ -330,6 +419,8 @@ class Post {
   String image;
   String title;
   int price;
+  int like;
+  bool islike;
   String type;
   String description;
   Timestamp create;
