@@ -13,12 +13,18 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:shrine/signup.dart';
+import 'package:shrine/search.dart';
+import 'book.dart';
+import 'src/signup.dart';
+import 'package:shrine/src/signup.dart';
 
-import 'myProfile.dart';
-import 'login.dart';
-import 'login.dart';
-import 'supplemental/cut_corners_border.dart';
+import 'home.dart';
+import 'hot.dart';
+import 'src/myProfile.dart';
+import 'src/login.dart';
+import 'src/login.dart';
+//import 'supplemental/cut_corners_border.dart';
+
 // TODO: Convert ShrineApp to stateful widget (104)
 class ShrineApp extends StatelessWidget {
   const ShrineApp({Key? key}) : super(key: key);
@@ -33,7 +39,7 @@ class ShrineApp extends StatelessWidget {
         fontFamily: 'Yras',// 앱 배경색
         appBarTheme: const AppBarTheme(
           shadowColor: Colors.white,
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.white,
         ),  // 상단바 그림자, 배경색
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Colors.blue,
@@ -60,8 +66,10 @@ class ShrineApp extends StatelessWidget {
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
+        '/mypage': (BuildContext context) => const myProfile(),
+        '/': (BuildContext context) => const HomesPage(),
+        '/hot': (BuildContext context) => const HotPage(),
 
-        '/': (BuildContext context) => const HomePage(),
 
 
       },

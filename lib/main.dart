@@ -16,8 +16,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shrine/Provider/AuthProvider.dart';
-
-
 import 'app.dart';
 
 
@@ -35,6 +33,10 @@ class Myapp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<ApplicationState>(
             create: (_) => ApplicationState()),
+       /* ChangeNotifierProvider<ApplicationStates>(
+            create: (_) => ApplicationStates()),
+        */
+
         // ChangeNotifierProvider<LoginProvider>(create: (_) => LoginProvider()),
       ],
       child: ShrineApp(),
