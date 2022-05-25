@@ -13,12 +13,16 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:shrine/signup.dart';
+import 'package:shrine/hot.dart';
+import 'package:shrine/ranking.dart';
+import 'package:shrine/search.dart';
+import 'package:shrine/src/signup.dart';
 
-import 'myProfile.dart';
-import 'login.dart';
-import 'login.dart';
-import 'supplemental/cut_corners_border.dart';
+import 'home.dart';
+import 'src/myProfile.dart';
+import 'src/login.dart';
+import 'src/login.dart';
+//import 'supplemental/cut_corners_border.dart';
 // TODO: Convert ShrineApp to stateful widget (104)
 class ShrineApp extends StatelessWidget {
   const ShrineApp({Key? key}) : super(key: key);
@@ -56,12 +60,15 @@ class ShrineApp extends StatelessWidget {
         ),
       ),
       title: 'YoriJori',
-      initialRoute: '/login',
+      initialRoute: '/',
+      //      initialRoute: '/login',
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
+        // '/': (BuildContext context) => const HomesPage(),
 
-        '/': (BuildContext context) => const HomePage(),
+       //'/': (BuildContext context) => const SearchScreen(),
+        '/': (BuildContext context) => const rankPage(),
 
 
       },

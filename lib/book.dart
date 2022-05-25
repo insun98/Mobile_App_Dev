@@ -3,14 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fs;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import 'package:shrine/search.dart';
 import 'dart:io';
 import 'Provider/AuthProvider.dart';
 import 'home.dart';
 import 'src/ItemCard.dart';
 import 'package:image_picker/image_picker.dart';
 import 'hot.dart';
-import 'login.dart';
-import 'myProfile.dart';
+import 'src/login.dart';
+import 'src/myProfile.dart';
 
 class HotPage extends StatefulWidget {
   const HotPage({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class _HotPageState extends State<HotPage> {
   int _currentIndex = 0;
   String profile = " ";
   String ids = " ";
-  final List<Widget> _children = [HomesPage(), HotPage(), HomePage(), HotPage(), HomePage()];
+  final List<Widget> _children = [HomesPage(), HotPage(), HomesPage(), SearchScreen (), HomesPage()];
   void _onTap(int index) {
     setState(() {
       _currentIndex = index;
