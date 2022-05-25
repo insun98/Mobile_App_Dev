@@ -13,13 +13,15 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+
+
+
+import 'package:shrine/hot.dart';
+import 'package:shrine/ranking.dart';
 import 'package:shrine/search.dart';
-import 'book.dart';
-import 'src/signup.dart';
 import 'package:shrine/src/signup.dart';
 
 import 'home.dart';
-import 'hot.dart';
 import 'src/myProfile.dart';
 import 'src/login.dart';
 import 'src/login.dart';
@@ -62,13 +64,17 @@ class ShrineApp extends StatelessWidget {
         ),
       ),
       title: 'YoriJori',
-      initialRoute: '/login',
+      initialRoute: '/',
+      //      initialRoute: '/login',
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
+
         '/mypage': (BuildContext context) => const myProfile(),
         '/': (BuildContext context) => const HomesPage(),
         '/hot': (BuildContext context) => const HotPage(),
+
+
 
 
 

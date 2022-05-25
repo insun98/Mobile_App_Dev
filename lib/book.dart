@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fs;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+
 import 'package:shrine/src/HomeCard.dart';
 import 'package:shrine/src/bookmarkcard.dart';
 import 'dart:io';
@@ -26,7 +27,10 @@ class _BookPageState extends State<BookPage> {
   int _currentIndex = 0;
   String profile = " ";
   String ids = " ";
+
   final List<Widget> _children = [HomesPage(), HotPage(), HotPage()];
+
+
   void _onTap(int index) {
     setState(() {
       _currentIndex = index;

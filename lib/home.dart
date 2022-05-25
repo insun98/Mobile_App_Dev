@@ -5,6 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart' as fs;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:shrine/src/HomeCard.dart';
+=======
+import 'package:shrine/search.dart';
 import 'dart:io';
 import 'Provider/AuthProvider.dart';
 import 'src/ItemCard.dart';
@@ -25,7 +27,11 @@ class _HomesPageState extends State<HomesPage> {
   //String profile = " ";
  // String ids = " ";
   bool _isFavorited  = false;
-  final List<Widget> _children = [HomesPage(), HotPage(),];
+
+
+
+  final List<Widget> _children = [HomesPage(), HotPage(), HomesPage(), SearchScreen(), HomesPage()];
+
   void _onTap(int index) {
     setState(() {
       _currentIndex = index;
