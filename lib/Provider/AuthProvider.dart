@@ -184,7 +184,7 @@ class ApplicationState extends ChangeNotifier {
   }
 
   Future<void> updateDoc(String docID, int like, bool islike) async {
-    FirebaseFirestore.instance.collection("post").doc(docID).update({
+    FirebaseFirestore.instance.collection("post").doc(docID).update(<String, dynamic>{
       "like": like,
       "islike": islike,
     });

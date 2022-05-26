@@ -7,13 +7,13 @@ import 'package:provider/provider.dart';
 import 'package:shrine/src/HomeCard.dart';
 import 'package:shrine/src/bookmarkcard.dart';
 import 'dart:io';
-import 'Provider/AuthProvider.dart';
+import '../Provider/AuthProvider.dart';
 import 'home.dart';
-import 'src/ItemCard.dart';
+import 'ItemCard.dart';
 import 'package:image_picker/image_picker.dart';
 import 'hot.dart';
-import 'src/login.dart';
-import 'src/myProfile.dart';
+import 'login.dart';
+import 'myProfile.dart';
 
 class BookPage extends StatefulWidget {
   const BookPage({Key? key}) : super(key: key);
