@@ -22,7 +22,6 @@ class _SearchScreenState extends State<SearchScreen> {
   String profile = " ";
   String ids = " ";
 
-
   final TextEditingController _namefilter = TextEditingController();
 
   final TextEditingController _type = TextEditingController();
@@ -31,48 +30,28 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _maxcalory = TextEditingController();
   final TextEditingController _mincalory  = TextEditingController();
 
-
-
-
   FocusNode focusNode = FocusNode();
 
   String _nameText = "";
-
-
-
   String _typeText = "";
   String _maxpriceText = "";
   String _minpriceText = "";
 
   // String _maxcaloryText = "";
   // String _mincaloryText = "";
-  //
-  bool name= false;
-  bool type= false;
-  // bool calory= false;
-  // bool price= false;
-
-
-  // _SearchScreenState() {
-  //   _namefilter.addListener(() {
-  //     setState(() {
-  //       _nameText = _namefilter.text;
-  //     });
-  //   });
-  // }
 
   _SearchScreenState() {
     _namefilter.addListener(() {
       setState(() {
         _nameText = _namefilter.text;
-        name = true;
+        //name = true;
       });
     });
 
     _type.addListener(() {
       setState(() {
         _typeText = _type.text;
-        type= true;
+       // type= true;
       });
     });
 
@@ -88,10 +67,7 @@ class _SearchScreenState extends State<SearchScreen> {
       });
     });
 
-
   }
-
-
 
   _buildBody(BuildContext context) {
     print(11);
@@ -143,27 +119,13 @@ class _SearchScreenState extends State<SearchScreen> {
                     var new_docum;
                     int count = 0;
                     //
-                    // if(type==true)
-                    //   {
-                    //       new_docum = docum.
-                    //   }
-
                     // for (DocumentSnapshot d in docum) {
                     //   if(
-                    //     ((d.data.toString().contains(_nameText))
-                    //       && ( (type==false)||(type=true)&&(d.where('price',isGreaterThan:300)) )
-                    //         && ( (name==false)||(name==true)&&(d.data.toString().contains(_nameText)) )
-                    //           && ( (name==false)||(name==true)&&(d.data.toString().contains(_nameText)) ) ) {
-                    //
-                    //       count++;
                     //       docum = snapshot.data!.docs;
-                    //
                     //   }
-                    //  // else if ( (type==true) && docum.whereField("type",isEqualTo:_typeText) )
                     // }
                     //else if
-
-                    int i = docum.length;
+                   // int i = docum.length;
 
 
                     return GridView.builder(
@@ -402,33 +364,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     print('hihihi');
 
                     //final data = docum[0].data();
-
-                    //  int p = data['price'];
-                    // print(p);
-                    //  var do = snapshot.data;
                     //   if(docum.['price'] > 90)
                     var new_docum;
                     int count = 0;
-                    //
-                    // if(type==true)
-                    //   {
-                    //       new_docum = docum.
-                    //   }
-
-                    // for (DocumentSnapshot d in docum) {
-                    //   if(
-                    //     ((d.data.toString().contains(_nameText))
-                    //       && ( (type==false)||(type=true)&&(d.where('price',isGreaterThan:300)) )
-                    //         && ( (name==false)||(name==true)&&(d.data.toString().contains(_nameText)) )
-                    //           && ( (name==false)||(name==true)&&(d.data.toString().contains(_nameText)) ) ) {
-                    //
-                    //       count++;
-                    //       docum = snapshot.data!.docs;
-                    //
-                    //   }
-                    //  // else if ( (type==true) && docum.whereField("type",isEqualTo:_typeText) )
-                    // }
-                    //else if
 
                     int i = docum.length;
 
@@ -614,16 +552,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           );
                         }
                     );
-
-                    // return GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1,), itemBuilder: (BuildContext context, int index) {  },
-
-
-                    // return GridView(gridDelegate: gridDelegate)
-
-
                   },
-
-
                 ),
               ),
 
@@ -647,12 +576,6 @@ class _SearchScreenState extends State<SearchScreen> {
                       .where('type', isEqualTo: _typeText)
                       .snapshots(),
 
-                  //.where('type', isEqualTo: _type.text)
-                  //.where('price', isLessThan : _maxprice.text).where('price', isGreaterThanOrEqualTo : _minprice.text)
-                  // .where('calory', isGreaterThanOrEqualTo : _maxcalory.text).where('calory', isGreaterThanOrEqualTo : _mincalory.text)
-
-                  // .where('calory', isGreaterThanOrEqualTo : _maxcalory.text).where('calory', isGreaterThanOrEqualTo : _mincalory.text)
-                  //.snapshots(),
 
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
@@ -779,17 +702,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       // TODO: Align labels to the bottom and center (103)
                                       crossAxisAlignment: CrossAxisAlignment
                                           .start,
-                                      // TODO: Change innermost Column (103)
                                       children: <Widget>[
-                                        /*Text(
-                                                  '$name',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 13,
-                                                  ),
-                                                  maxLines: 1,
-                                                ),*/
-                                        // TODO: Handle overflowing labels (103)
                                         Text(
                                           '열량: ',
                                           style: TextStyle(
@@ -805,14 +718,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                           maxLines: 1,
                                         ),
 
-                                        //재료 추가하기!!
-                                        // Text(
-                                        //   '재료: 양파(200g), 파(100g), 돼지고기(300g)',
-                                        //   style: TextStyle(
-                                        //     fontSize: 13,
-                                        //   ),
-                                        //   maxLines: 2,
-                                        // ),
                                         Row(
                                           children: [
                                             IconButton(
@@ -881,13 +786,6 @@ class _SearchScreenState extends State<SearchScreen> {
                           );
                         }
                     );
-
-                    // return GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1,), itemBuilder: (BuildContext context, int index) {  },
-
-
-                    // return GridView(gridDelegate: gridDelegate)
-
-
                   },
 
 
@@ -902,6 +800,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   }
 
+  //참고자료
   //여기서 쿼리 - > search result 에 포함된 내용있으면 추가해줌
 //   Widget _buildList(BuildContext context, docum {
 // //  List<DocumentSnapshot> snapshot) {
@@ -923,26 +822,6 @@ class _SearchScreenState extends State<SearchScreen> {
 //               .toList()),
 //     );
 //   }
-//
-//   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-//    final docum =  Snapshot.data!.docs;
-//     // final post = Movie.fromSnapshot(data);
-//     return InkWell(
-//       child: Image.network(movie.poster),
-//       onTap: () {
-//         Navigator.of(context).push(MaterialPageRoute<Null>(
-//             fullscreenDialog: true,
-//             builder: (BuildContext context) {
-//               return DetailScreen(movie: movie);
-//             }));
-//       },
-//     );
-//   }
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -1050,21 +929,6 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
 
-                      // Expanded(
-                      //   child: TextButton (
-                      //
-                      //     child: Text('취소'),
-                      //     onPressed: () {
-                      //       setState(() {
-                      //         _type.clear();
-                      //         // _type = "";
-                      //         focusNode.unfocus();
-                      //       });
-                      //     },
-                      //
-                      //   ),
-                      // )
-
                     ],
                   ),
                   SizedBox(height: 15,),
@@ -1120,170 +984,10 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ],
                   ),
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //         flex :6,
-                  //         child:
-                  //
-                  //         Row(
-                  //           children: [
-                  //             SizedBox(width: 20,),
-                  //             Text('가격'),
-                  //             SizedBox(width: 20,),
-                  //             Expanded(
-                  //               child: TextFormField(
-                  //                 decoration: InputDecoration(
-                  //                   labelText: '최소가격',
-                  //                   hintText: '최소가격',
-                  //                   border: OutlineInputBorder(),
-                  //                   contentPadding: EdgeInsets.symmetric(vertical: 10),
-                  //                 ),
-                  //                 controller: _minprice,
-                  //                 // validator: (value) {
-                  //                 //   if (value.isEmpty) return 'Please enter a valid first name.';
-                  //                 //   return null;
-                  //                 // },
-                  //               ),
-                  //             ),
-                  //             SizedBox(width: 10,),
-                  //             Expanded(
-                  //               child: TextFormField(
-                  //                 style:
-                  //                 TextStyle(
-                  //                   fontSize: 15,
-                  //                 ),
-                  //                 decoration: InputDecoration(
-                  //                   labelText: '최대가격',
-                  //                   hintText: '최대가격',
-                  //                   border: OutlineInputBorder(),
-                  //                 ),
-                  //                 controller: _maxprice,
-                  //                 // validator: (value) {
-                  //                 //   if (value.length < 1) return 'Please enter a valid last name.';
-                  //                 //   return null;
-                  //                 // },
-                  //               ),
-                  //             ),
-                  //             // TextField(
-                  //             //   focusNode: focusNode,
-                  //             //   style:
-                  //             //   TextStyle(
-                  //             //     fontSize: 15,
-                  //             //   ),
-                  //             //   autofocus: true,
-                  //             //   controller : _type,
-                  //             //   decoration: InputDecoration (
-                  //             //     filled : true,
-                  //             //     fillColor: Colors.white12,
-                  //             //
-                  //             //
-                  //             //     hintText:'min price  ',
-                  //             //     labelStyle:TextStyle(color: Colors.white),
-                  //             //     focusedBorder: OutlineInputBorder(
-                  //             //         borderSide: BorderSide(color: Colors.transparent),
-                  //             //         borderRadius: BorderRadius.all(Radius.circular(10))),
-                  //             //     enabledBorder: OutlineInputBorder(
-                  //             //         borderSide: BorderSide(color: Colors.transparent),
-                  //             //         borderRadius: BorderRadius.all(Radius.circular(10))),
-                  //             //     border: OutlineInputBorder(
-                  //             //         borderSide: BorderSide(color: Colors.transparent),
-                  //             //         borderRadius: BorderRadius.all(Radius.circular(10))),
-                  //             //
-                  //             //   ),
-                  //             // ),
-                  //           ],
-                  //         )
-                  //     ),
-                  //     IconButton(
-                  //       icon: Icon(
-                  //         Icons.cancel,
-                  //         size:20,
-                  //       ),
-                  //       onPressed : () {
-                  //         setState(() {
-                  //           _maxprice.clear();
-                  //           _minprice.clear();
-                  //           _maxprice.text="";
-                  //           _minprice.text="";
-                  //           //_nameText="";
-                  //         });
-                  //       },
-                  //     ),
-                  //   ],
-                  // ),
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //         flex :6,
-                  //         child:
-                  //
-                  //         Row(
-                  //           children: [
-                  //             Expanded(child:  Text('가격')),
-                  //             Expanded(
-                  //               child: TextFormField(
-                  //                 decoration: InputDecoration(
-                  //                   labelText: '최소열량',
-                  //                   hintText: '최소열량',
-                  //                   border: OutlineInputBorder(),
-                  //                 ),
-                  //                 controller: _mincalory,
-                  //                 // validator: (value) {
-                  //                 //   if (value.isEmpty) return 'Please enter a valid first name.';
-                  //                 //   return null;
-                  //                 // },
-                  //               ),
-                  //             ),
-                  //             SizedBox(width: 10,),
-                  //             // Icon
-                  //             Expanded(
-                  //               child: TextFormField(
-                  //                 decoration: InputDecoration(
-                  //                   labelText: '최대열량',
-                  //                   hintText: '최대열량',
-                  //                   border: OutlineInputBorder(),
-                  //                 ),
-                  //                 controller: _maxcalory,
-                  //                 // validator: (value) {
-                  //                 //   if (value.length < 1) return 'Please enter a valid last name.';
-                  //                 //   return null;
-                  //                 // },
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         )
-                  //
-                  //
-                  //
-                  //
-                  //     ),
-                  //
-                  //     Expanded(
-                  //       child: TextButton (
-                  //
-                  //         child: Text('취소'),
-                  //         onPressed: () {
-                  //           setState(() {
-                  //             _maxcalory.clear();
-                  //             _mincalory.clear();
-                  //
-                  //             // _type = "";
-                  //             focusNode.unfocus();
-                  //           });
-                  //         },
-                  //
-                  //       ),
-                  //     )
-                  //
-                  //   ],
-                  // ),
-                  // TextButton(onPressed: () { _buildBody(context);}, child: Text('검색'),),
+TextButton(onPressed: () { _buildBody(context);}, child: Text('검색'),),
                 ],
               )
           ),
-          //TextButton(onPressed: () { _buildBody(context);}, child: Text('검색'),),
-
           _buildBody(context),
         ],
       ),

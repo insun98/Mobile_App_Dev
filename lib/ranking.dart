@@ -8,10 +8,10 @@ import 'package:provider/provider.dart';
 import 'package:shrine/search.dart';
 import 'dart:io';
 import 'Provider/AuthProvider.dart';
-import 'home.dart';
+import 'src/home.dart';
 import 'src/ItemCard.dart';
 import 'package:image_picker/image_picker.dart';
-import 'hot.dart';
+import 'src/hot.dart';
 import 'src/login.dart';
 import 'src/myProfile.dart';
 
