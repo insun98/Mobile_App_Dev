@@ -24,6 +24,7 @@ class _itemCardState extends State<itemCard> {
       List<Post> posts = widget.posts;
 
       if (posts.isEmpty) {
+        print("empty");
         return const <Card>[];
       }
 
