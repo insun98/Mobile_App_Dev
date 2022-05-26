@@ -17,7 +17,7 @@ class myProfile extends StatefulWidget {
 }
 
 class _myProfileState extends State<myProfile> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
   File? _image;
   String dropdownValue = '인기순';
   Widget build(BuildContext context) {
@@ -125,11 +125,11 @@ class _myProfileState extends State<myProfile> {
         //현재 선택된 Index
         onTap: (int index) {
           switch (index) {
-            case 1:
+            case 0:
               Navigator.pushNamed(context, '/');
               break;
-            case 2:
-              Navigator.pushNamed(context, '/');
+            case 1:
+              Navigator.pushNamed(context, '/hot');
               break;
             default:
           }
