@@ -1118,19 +1118,6 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         ),
                       ),
-                      // Expanded(
-                      //   child: TextButton (
-                      //
-                      //     child: Text('취소'),
-                      //     onPressed: () {
-                      //       setState(() {
-                      //         _namefilter.clear();
-                      //         _nameText = "";
-                      //        // focusNode.unfocus();
-                      //       });
-                      //     },
-                      //   ),
-                      // )
                     ],
                   ),
                   // Row(
@@ -1303,63 +1290,3 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 }
-
-//빌드바디에 구상한것들 넣기
-
-
-
-
-// //import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/material.dart';
-// import 'package:shrine/progress.dart';
-// import 'package:shrine/user.dart';
-//
-// class SearchPage extends StatefulWidget {
-//   @override
-//   _SearchPageState createState() => _SearchPageState();
-// }
-//
-//
-//
-// final userReference = FirebaseFirestore.instance.collection('users');
-//
-//
-// class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMixin<SearchPage>{
-//   // 검색창 입력내용 controller
-//   TextEditingController searchTextEditingController = TextEditingController();
-//   late Future<QuerySnapshot> futureSearchResults;
-//   late CollectionReference database;
-//
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     database = FirebaseFirestore.instance
-//         .collection("user");
-//
-//     //       .orderBy('price');
-//     // }
-//   }
-//
-//   Future<int> countDocuments() async {
-//     QuerySnapshot _myDoc =
-//     await database.get();
-//     List<DocumentSnapshot> _myDocCount = _myDoc.docs;
-//     return _myDocCount.length;
-//   }
-//
-//
-//
-//   emptyTheTextFormField() {
-//     searchTextEditingController.clear();
-//   }
-//
-//   controlSearching(str) {
-//     Future<QuerySnapshot> allUsers = userReference.where('name', isGreaterThanOrEqualTo: str).get();
-//     setState(() {
-//       futureSearchResults = allUsers;
-//     });
-//   }
-//
