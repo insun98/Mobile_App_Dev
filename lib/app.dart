@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:shrine/signup.dart';
 
-import 'myProfile.dart';
-import 'login.dart';
-import 'login.dart';
-import 'supplemental/cut_corners_border.dart';
+
+
+ import 'src/login.dart';
+import 'src/signup.dart';
+ import 'src/home.dart';
 // TODO: Convert ShrineApp to stateful widget (104)
 class ShrineApp extends StatelessWidget {
   const ShrineApp({Key? key}) : super(key: key);
@@ -61,7 +61,7 @@ class ShrineApp extends StatelessWidget {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
 
-        '/': (BuildContext context) => const HomePage(),
+        '/': (BuildContext context) => const HomesPage(),
 
 
       },
