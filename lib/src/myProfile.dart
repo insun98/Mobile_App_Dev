@@ -179,7 +179,7 @@ class _myProfileState extends State<myProfile> {
                   ElevatedButton(
                     child: const Text('프로필 편집'),
                     style: ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
-                    onPressed: () async {},
+                    onPressed: () async {print(FirebaseAuth.instance.currentUser!.uid);},
                   ),
                   SizedBox(width:30),
                   ElevatedButton(
@@ -207,7 +207,7 @@ class _myProfileState extends State<myProfile> {
             });
           },
         ),),
-        itemCard(),
+        itemCard(myPost: postProvider.myPost,),
         ],
 
     ),
