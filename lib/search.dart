@@ -51,7 +51,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _type.addListener(() {
       setState(() {
         _typeText = _type.text;
-       // type= true;
+        // type= true;
       });
     });
 
@@ -125,7 +125,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     //   }
                     // }
                     //else if
-                   // int i = docum.length;
+                    // int i = docum.length;
 
 
                     return GridView.builder(
@@ -361,7 +361,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       );
                     }
                     var docum = snapshot.data!.docs;
-                    print('hihihi');
+                    //  print('hihihi');
 
                     //final data = docum[0].data();
                     //   if(docum.['price'] > 90)
@@ -984,7 +984,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ],
                   ),
-TextButton(onPressed: () { _buildBody(context);}, child: Text('검색'),),
+                  //TextButton(onPressed: () { _buildBody(context);}, child: Text('검색'),),
                 ],
               )
           ),
