@@ -2,16 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../Provider/AuthProvider.dart'
-    ;
+import '../Provider/AuthProvider.dart';
+import '../Provider/PostProvider.dart';
 
 
 
 
 class itemCard extends StatefulWidget {
-  const itemCard({required this.posts});
-
-  final List<Post> posts;
+  const itemCard({Key? key}) : super(key: key);
 
   @override
   _itemCardState createState() => _itemCardState();
@@ -20,8 +18,9 @@ class itemCard extends StatefulWidget {
 class _itemCardState extends State<itemCard> {
   @override
   Widget build(BuildContext context) {
+    PostProvider postProvider= Provider.of<PostProvider>(context);
     List<Card> _buildListCards(BuildContext context) {
-      List<Post> posts = widget.posts;
+      List<Post> posts = postProvider.myPost;
 
       if (posts.isEmpty) {
         print("empty");

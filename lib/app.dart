@@ -62,12 +62,11 @@ class ShrineApp extends StatelessWidget {
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
-
         '/': (BuildContext context) => const HomesPage(),
-        '/hot': (BuildContext context) => const HotPage(),
+       '/hot': (BuildContext context) => const HotPage(),
         '/profile': (BuildContext context) => const myProfile(),
 
-        '/rank': (BuildContext context) => const rankPage(),
+     //   '/rank': (BuildContext context) => const rankPage(),
 
 
       },
