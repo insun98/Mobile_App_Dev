@@ -3,13 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../Provider/AuthProvider.dart';
+import '../Provider/PostProvider.dart';
+import '../Provider/ProfileProvider.dart';
 
 
 
 class homeCard extends StatefulWidget {
-  const homeCard({required this.posts, required this.profile});
-  final Profile profile;
+  const homeCard({required this.posts});
   final List<Post> posts;
 
   @override
@@ -18,6 +18,8 @@ class homeCard extends StatefulWidget {
 
 class _homeCardState extends State<homeCard> {
   bool _isbooked = false;
+  bool _isliked = false;
+  String image = '';
   @override
   Widget build(BuildContext context) {
     List<Card> _buildListCards(BuildContext context) {
@@ -28,9 +30,10 @@ class _homeCardState extends State<homeCard> {
       final ThemeData theme = Theme.of(context);
       final NumberFormat formatter = NumberFormat.simpleCurrency(
           locale: Localizations.localeOf(context).toString());
-      Profile profile = widget.profile;
+
       return posts.map((post) {
         print("${post.creator}");
+
         bool _isFavorited  = false;
         return Card(
           clipBehavior: Clip.antiAlias,
@@ -43,15 +46,15 @@ class _homeCardState extends State<homeCard> {
                     children: [
                       CircleAvatar(
                         radius: 20.0,
-                        backgroundImage: NetworkImage(
-                            profile.photo),
+                        backgroundImage: NetworkImage('https://firebasestorage.googleapis.com/v0/b/yorijori-52f2a.appspot.com/o/defaultProfile.png?alt=media&token=127cd072-80b8-4b77-ab22-a50a0dfa5206'
+                        ),
                         backgroundColor: Colors.transparent,
                       ),
 
 
                       SizedBox(width: 20,),
                       Text(
-                        '${profile.name}',
+                        'hi',
                         style: TextStyle(
                           fontSize: 13,
                         ),
@@ -174,8 +177,8 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
 
   @override
   Widget build(BuildContext context) {
-    ApplicationState postProvider = Provider.of<ApplicationState>(context);
-    return Consumer<ApplicationState>( builder: (context, appState, _) => Row(
+    PostProvider postProvider = Provider.of<PostProvider>(context);
+    return Consumer<PostProvider>( builder: (context, appState, _) => Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
@@ -183,19 +186,21 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
           child: IconButton(
             padding: const EdgeInsets.all(0),
             alignment: Alignment.centerRight,
-            icon: (widget.post.islike
+            icon: (_isFavorited
                 ? const Icon(Icons.favorite)
                 : const Icon(Icons.favorite_border)),
             color: Colors.red,
             onPressed: (){
               setState(() {
-                if (widget.post.islike) {
-                  widget.post.like -= 1;
-                  widget.post.islike = false;
-                  postProvider.updateDoc(widget.post.docId, widget.post.like, widget.post.islike);
+                if (_isFavorited) {
+                  int num = 0;
+                  num = widget.post.like - 1 ;
+                  _isFavorited = false;
+                  postProvider.updateDoc(widget.post.docId, widget.post.like, _isFavorited);
                 } else {
                   widget.post.like += 1;
-                  widget.post.islike = true;
+                  _isFavorited = true;
+                  postProvider.updateDoc(widget.post.docId, widget.post.like, _isFavorited);
                 }
               });
             },
@@ -209,11 +214,25 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
           child: IconButton(
             padding: const EdgeInsets.all(0),
             alignment: Alignment.centerRight,
-            icon: (_isBooked
-                ? const Icon(Icons.book)
-                : const Icon(Icons.book_outlined)),
-            color: Colors.brown,
-            onPressed: _togglebook,
+            icon:
+            const Icon(
+              Icons.book,
+              color: Colors.brown,),
+            onPressed:  (){
+              setState(() {
+                if (_isBooked) {
+                  _isBooked = false;
+                  postProvider.deletebook(widget.post.docId);
+                  Scaffold.of(context)
+                      .showSnackBar(SnackBar(content: const Text("collection added")));
+                } else {
+                  _isBooked = true;
+                  postProvider.updatebook(widget.post.docId);
+                  Scaffold.of(context)
+                      .showSnackBar(SnackBar(content: const Text("collection added")));
+                }
+              });
+            },
           ),
         ),
       ],
@@ -224,14 +243,6 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
 
   }
   void _togglebook() {
-    setState(() {
-      if (_isBooked) {
-        //_favoriteCount -= 1;
-        _isBooked = false;
-      } else {
-        //  _favoriteCount += 1;
-        _isBooked = true;
-      }
-    });
+
   }
 }
