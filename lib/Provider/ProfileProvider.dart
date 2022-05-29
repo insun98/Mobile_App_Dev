@@ -98,18 +98,18 @@ class ProfileProvider extends ChangeNotifier {
             }
           });
 
-          for(var post in _otherProfile.bookmark){
-            FirebaseFirestore.instance
-                .collection('post')
-                .doc(post)
-                .snapshots()
-                .listen((snapshot) {
-
-            bookMarkPost.add(Post(
-
-            ));
+          // for(var post in _otherProfile.bookmark){
+          //   FirebaseFirestore.instance
+          //       .collection('post')
+          //       .doc(post)
+          //       .snapshots()
+          //       .listen((snapshot) {
+          //
+          //   bookMarkPost.add(Post(
+          //
+          //   ));
           }
-        }
+
 // Future<void> set() async {
 //   FirebaseFirestore.instance
 //       .collection('user')
@@ -134,7 +134,7 @@ class ProfileProvider extends ChangeNotifier {
   List<Profile> _allUsers= [];
   List<Profile> get allUsers => _allUsers;
   List<Profile> _bookMarkPost=[];
-  List<Profile> get bookMarkPost= _bookMarkPost;
+  List<Profile> get bookMarkPost=> _bookMarkPost;
   //My profile
   Profile _myProfile = Profile(
       name: '',
