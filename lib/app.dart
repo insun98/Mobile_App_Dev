@@ -66,7 +66,7 @@ class ShrineApp extends StatelessWidget {
        '/hot': (BuildContext context) => const HotPage(),
         '/profile': (BuildContext context) => const myProfile(),
 
-     //   '/rank': (BuildContext context) => const rankPage(),
+      '/rank': (BuildContext context) => const rankPage(),
 
 
       },
