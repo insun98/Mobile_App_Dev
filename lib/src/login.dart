@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                 if(login == true){
                   print(_passwordController);
                   authProvider.signInWithEmailAndPassword(_usernameController.text, _passwordController.text,(e) => _showErrorDialog(context, 'Invalid email', e));
-                  authProvider.set();
+                  print("good");
                   Navigator.pushNamed(context, '/profile');
                 }else{
                   print("false");

@@ -8,7 +8,8 @@ import 'package:shrine/src/HomeCard.dart';
 
 import 'package:shrine/search.dart';
 import 'dart:io';
-import '../Provider/AuthProvider.dart';
+import '../Provider/PostProvider.dart';
+import '../Provider/ProfileProvider.dart';
 import '../src/ItemCard.dart';
 import 'package:image_picker/image_picker.dart';
 import '../src/hot.dart';
@@ -26,17 +27,18 @@ class _HomesPageState extends State<HomesPage> {
 
   int _selectedIndex = 0;
   //String profile = " ";
- // String ids = " ";
+  // String ids = " ";
   bool _isFavorited  = false;
 
 
 
- final List<Widget> _children = [HomesPage(), HotPage(), HomesPage(),  HomesPage()];
+  final List<Widget> _children = [HomesPage(), HotPage(), HomesPage(),  HomesPage()];
 
   String kind = "한식";
   @override
   Widget build(BuildContext context) {
-    ApplicationState postProvider = Provider.of<ApplicationState>(context);
+    PostProvider postProvider = Provider.of<PostProvider>(context);
+    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
     print("here is homepage");
     return Scaffold(
       appBar: AppBar(
@@ -95,7 +97,7 @@ class _HomesPageState extends State<HomesPage> {
           BottomNavigationBarItem(icon: Icon(Icons.addchart), label: 'Ranking'),
         ],
       ),
-      body:Consumer<ApplicationState>(
+      body:Consumer<PostProvider>(
         builder: (context, appState, _) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -170,8 +172,7 @@ class _HomesPageState extends State<HomesPage> {
               ),
             ),
             homeCard(
-              posts: postProvider.MyPosts,
-              profile: postProvider.profile,
+              posts: postProvider.typePosts,
             ),
           ],
 
