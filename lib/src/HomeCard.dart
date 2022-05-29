@@ -30,10 +30,10 @@ class _homeCardState extends State<homeCard> {
       final ThemeData theme = Theme.of(context);
       final NumberFormat formatter = NumberFormat.simpleCurrency(
           locale: Localizations.localeOf(context).toString());
+      ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
 
       return posts.map((post) {
-        print("${post.creator}");
-
+        profileProvider.getUser(post.creator);
         bool _isFavorited  = false;
         return Card(
           clipBehavior: Clip.antiAlias,
@@ -46,15 +46,14 @@ class _homeCardState extends State<homeCard> {
                     children: [
                       CircleAvatar(
                         radius: 20.0,
-                        backgroundImage: NetworkImage('https://firebasestorage.googleapis.com/v0/b/yorijori-52f2a.appspot.com/o/defaultProfile.png?alt=media&token=127cd072-80b8-4b77-ab22-a50a0dfa5206'
-                        ),
+                        backgroundImage: NetworkImage( '${profileProvider.otherProfile.photo}'),
                         backgroundColor: Colors.transparent,
                       ),
 
 
                       SizedBox(width: 20,),
                       Text(
-                        'hi',
+                        '${profileProvider.otherProfile.name}',
                         style: TextStyle(
                           fontSize: 13,
                         ),
@@ -197,10 +196,12 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
                   num = widget.post.like -= 1 ;
                   _isFavorited = false;
                   postProvider.updateDoc(widget.post.docId, widget.post.like, _isFavorited);
+                  postProvider.deletelikeuser(widget.post.docId);
                 } else {
                   widget.post.like += 1;
                   _isFavorited = true;
                   postProvider.updateDoc(widget.post.docId, widget.post.like, _isFavorited);
+                  postProvider.updatelikeuser(widget.post.docId);
                 }
               });
             },
@@ -238,11 +239,5 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
       ],
     ),
     );
-  }
-  void _toggleFavorite() {
-
-  }
-  void _togglebook() {
-
   }
 }
