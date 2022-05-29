@@ -84,6 +84,12 @@ class _HomesPageState extends State<HomesPage> {
             case 2:
               Navigator.pushNamed(context, '/profile');
               break;
+            case 3:
+              Navigator.pushNamed(context, '/');
+              break;
+            case 4:
+              Navigator.pushNamed(context, '/rank');
+              break;
             default:
           }
         },

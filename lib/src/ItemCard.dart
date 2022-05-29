@@ -9,8 +9,9 @@ import '../Provider/PostProvider.dart';
 
 
 class itemCard extends StatefulWidget {
-  const itemCard({Key? key}) : super(key: key);
+   itemCard({required this.myPost});
 
+   List<Post> myPost;
   @override
   _itemCardState createState() => _itemCardState();
 }
@@ -20,7 +21,7 @@ class _itemCardState extends State<itemCard> {
   Widget build(BuildContext context) {
     PostProvider postProvider= Provider.of<PostProvider>(context);
     List<Card> _buildListCards(BuildContext context) {
-      List<Post> posts = postProvider.myPost;
+      List<Post> posts = widget.myPost;
 
       if (posts.isEmpty) {
         print("empty");
