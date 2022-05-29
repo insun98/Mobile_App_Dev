@@ -97,6 +97,18 @@ class ProfileProvider extends ChangeNotifier {
               notifyListeners();
             }
           });
+
+          for(var post in _otherProfile.bookmark){
+            FirebaseFirestore.instance
+                .collection('post')
+                .doc(post)
+                .snapshots()
+                .listen((snapshot) {
+
+            bookMarkPost.add(Post(
+
+            ));
+          }
         }
 // Future<void> set() async {
 //   FirebaseFirestore.instance
@@ -121,7 +133,8 @@ class ProfileProvider extends ChangeNotifier {
   List<Profile> get subscribersProfile => _subscribersProfile;
   List<Profile> _allUsers= [];
   List<Profile> get allUsers => _allUsers;
-
+  List<Profile> _bookMarkPost=[];
+  List<Profile> get bookMarkPost= _bookMarkPost;
   //My profile
   Profile _myProfile = Profile(
       name: '',
@@ -152,6 +165,18 @@ class ProfileProvider extends ChangeNotifier {
 
   StreamSubscription<DocumentSnapshot>? _profileSubscription;
   StreamSubscription<QuerySnapshot>? _allUserSubscription;
+  Future<void> editProfile(String URL, String name, String  id, String profession) async {
+  FirebaseFirestore.instance
+      .collection("user")
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update(<String, dynamic>{
+  "image":URL,
+  "id": id,
+  "name": name,
+  "profession": profession,
+  });
+  notifyListeners();
+}
 }
 
   class Profile {
