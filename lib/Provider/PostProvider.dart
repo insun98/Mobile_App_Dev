@@ -57,6 +57,7 @@ class PostProvider extends ChangeNotifier {
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
             ),
+
           );
           notifyListeners();
           print(document.data()['image']);
@@ -86,6 +87,7 @@ class PostProvider extends ChangeNotifier {
               likeUsers: document.data()['likeUsers'],
             ),
           );
+          notifyListeners();
           print(document.data()['image']);
         }
         notifyListeners();
