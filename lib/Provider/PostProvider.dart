@@ -223,7 +223,7 @@ class Post {
   String image;
   String title;
   int price;
-  List<String> likeUsers;
+  List<dynamic> likeUsers;
   int like;
   String type;
   String description;
