@@ -1,3 +1,4 @@
+
 //scaffold -> 랭킹 리스트로 뽑기 ->
 //
 import 'package:flutter/material.dart';
@@ -237,3 +238,4 @@ class _rankPageState extends State<rankPage> {
   }
 
 }
+

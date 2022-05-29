@@ -9,7 +9,9 @@ import 'package:shrine/src/HomeCard.dart';
 import 'package:shrine/search.dart';
 
 import 'dart:io';
+
 import '../Provider/AuthProvider.dart';
+import '../Provider/PostProvider.dart';
 import 'home.dart';
 import '../src/ItemCard.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,13 +32,13 @@ class _HotPageState extends State<HotPage> {
   String profile = " ";
   String ids = " ";
 
-  final List<Widget> _children = [HomesPage(), HotPage(), HomesPage(),  HomesPage()];
 
 
-  String kind = "한식";
+
+  //String kind = "한식";
   @override
   Widget build(BuildContext context) {
-    ApplicationState postProvider = Provider.of<ApplicationState>(context);
+    PostProvider postProvider = Provider.of<PostProvider>(context);
     //postProvider.getPosts("like");
     print("here is hotpage");
     return Scaffold(
@@ -101,8 +103,8 @@ class _HotPageState extends State<HotPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             homeCard(
-              posts: postProvider.MyPosts,
-              profile: postProvider.profile,
+              posts: postProvider.allPosts,
+              //  profile: postProvider.profile,
             ),
           ],
 
