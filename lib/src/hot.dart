@@ -12,6 +12,7 @@ import 'dart:io';
 
 import '../Provider/AuthProvider.dart';
 import '../Provider/PostProvider.dart';
+import '../Provider/ProfileProvider.dart';
 import 'home.dart';
 import '../src/ItemCard.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,7 +40,6 @@ class _HotPageState extends State<HotPage> {
   @override
   Widget build(BuildContext context) {
     PostProvider postProvider = Provider.of<PostProvider>(context);
-    //postProvider.getPosts("like");
     print("here is hotpage");
     return Scaffold(
       appBar: AppBar(

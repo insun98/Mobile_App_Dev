@@ -68,6 +68,7 @@ class PostProvider extends ChangeNotifier {
       //read All posts
       _allPostSubscription = FirebaseFirestore.instance
           .collection('post')
+          .orderBy('like', descending: false)
           .snapshots()
           .listen((snapshot) {
         _allPosts = [];
@@ -164,7 +165,18 @@ class PostProvider extends ChangeNotifier {
     });
     notifyListeners();
   }
-
+  Future<void> updatelikeuser(String postID) async {
+    FirebaseFirestore.instance.collection("post").doc(postID).update(<String, dynamic>{
+      "likeUsers": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid]),
+    });
+    notifyListeners();
+  }
+  Future<void> deletelikeuser(String postID) async {
+    FirebaseFirestore.instance.collection("post").doc(postID).update(<String, dynamic>{
+      "likeUsers": FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid]),
+    });
+    notifyListeners();
+  }
   Future<void> updatebook(String postID) async {
     FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).update(<String, dynamic>{
       "bookmark": FieldValue.arrayUnion([postID]),
