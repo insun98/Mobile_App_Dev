@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import '../firebase_options.dart';
+import 'PostProvider.dart';
 
 class ProfileProvider extends ChangeNotifier {
   String _defaultImage = '';
@@ -45,6 +46,7 @@ class ProfileProvider extends ChangeNotifier {
           _myProfile.profession = snapshot.data()!['profession'];
           notifyListeners();
         }
+
         print(_myProfile.subscribing.length);
         _subscribingProfile = [];
         for (var subscribingUser in _myProfile.subscribing) {
@@ -65,6 +67,29 @@ class ProfileProvider extends ChangeNotifier {
 
             );
             notifyListeners();
+
+        FirebaseFirestore.instance
+            .collection('user')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get()
+            .then((DocumentSnapshot documentSnapshot) {
+          _myBookPost = [];
+          if(documentSnapshot.exists) {
+            try{
+              dynamic book = snapshot.get(FieldPath(['bookmark']));
+             // _myBookPost.add(
+                print("${book[0]}");
+              //);
+            }on StateError catch(e){
+              print('No field exists!');
+            }
+          }else{
+            print('Document does not exist on the database');
+          }
+          notifyListeners();
+        });
+          });
+
 
           });
           notifyListeners();
@@ -121,6 +146,7 @@ class ProfileProvider extends ChangeNotifier {
       }
     });
 
+
     if(_otherProfile.subscribers.contains(uid)){
       return true;
     }
@@ -174,6 +200,32 @@ class ProfileProvider extends ChangeNotifier {
   //     });
   //   }
   // }
+
+});
+        }
+        Future<void> getUser(String uid) async {
+          FirebaseFirestore.instance
+              .collection('user')
+              .doc(uid)
+              .snapshots()
+              .listen((snapshot) {
+            if (snapshot.data() != null) {
+              _otherProfile.name = snapshot.data()!['name'];
+              _otherProfile.email = snapshot.data()!['email'];
+              _otherProfile.id = snapshot.data()!['id'];
+              _otherProfile.subscribers = snapshot.data()!['subscribers'];
+              _otherProfile.subscribing = snapshot.data()!['subscribing'];
+              _otherProfile.bookmark = snapshot.data()!['bookmark'];
+              _otherProfile.photo = snapshot.data()!['image'];
+              _otherProfile.uid = snapshot.data()!['uid'];
+              _otherProfile.profession = snapshot.data()!['uid'];
+              notifyListeners();
+            }
+          });
+        }
+
+
+
 // Future<void> set() async {
 //   FirebaseFirestore.instance
 //       .collection('user')
@@ -197,8 +249,13 @@ class ProfileProvider extends ChangeNotifier {
   List<Profile> get subscribingProfile => _subscribingProfile;
   List<Profile> _allUsers = [];
   List<Profile> get allUsers => _allUsers;
+
   List<Profile> _bookMarkPost = [];
   List<Profile> get bookMarkPost => _bookMarkPost;
+
+
+  List<String> _myBookPost = [];
+  List<String> get myBookPost => _myBookPost;
 
   //My profile
   Profile _myProfile = Profile(
@@ -248,7 +305,10 @@ class ProfileProvider extends ChangeNotifier {
 }
 
 class Profile {
-  Profile({
+
+  Profile(
+  {
+
     required this.name,
     required this.id,
     required this.email,
@@ -265,7 +325,9 @@ class Profile {
   String email;
   String uid;
   String profession;
+
   List<dynamic> subscribers;
   List<dynamic> subscribing;
   List<dynamic> bookmark;
+
 }
