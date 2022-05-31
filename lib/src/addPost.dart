@@ -10,6 +10,11 @@ import '../Provider/ProfileProvider.dart';
 import '../Provider/PostProvider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 
 class addPostPage extends StatefulWidget {
 
@@ -75,7 +80,7 @@ class _addPostPageState extends State<addPostPage> {
           ),
         ],
       ),
-      body: Form(
+      body: SingleChildScrollView(child: Form(
         key: _formKey,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -136,6 +141,8 @@ class _addPostPageState extends State<addPostPage> {
               },
             ),
 
+
+
             const SizedBox(height: 40.0),
             TextFormField(
               controller: _controller2,
@@ -152,6 +159,7 @@ class _addPostPageState extends State<addPostPage> {
           ],
         ),
       ),
+      ),
     );
   }
   List<DropdownMenuItem<String>> get dropdownItems{
@@ -164,3 +172,4 @@ class _addPostPageState extends State<addPostPage> {
     return menuItems;
   }
 }
+

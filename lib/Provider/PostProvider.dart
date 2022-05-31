@@ -19,8 +19,13 @@ class PostProvider extends ChangeNotifier {
   List<Post> get allPosts => _allPosts;
   List<Post> _typePosts = [];
   List<Post> get typePosts => _typePosts;
+
+  List<Post> _frinedPost = [];
+  List<Post> get frinedPost => _frinedPost;
+
   List<Post> _bookPosts = [];
   List<Post> get bookPosts => _bookPosts;
+
 
   Future<void> init() async {
     await Firebase.initializeApp(
@@ -97,6 +102,38 @@ class PostProvider extends ChangeNotifier {
 
 
     });
+  }
+  Future<void> getPost(String uid) async {
+    FirebaseFirestore.instance
+        .collection('post')
+        .where('creator', isEqualTo: uid)
+        .snapshots()
+        .listen((snapshot) {
+      _frinedPost = [];
+      for (final document in snapshot.docs) {
+        _frinedPost.add(
+          Post(
+            docId: document.id,
+            title: document.data()['title'] as String,
+            image: document.data()['image'],
+            description: document.data()['description'] as String,
+            type: document.data()['type'] as String,
+            create: document.data()['create'],
+            modify: document.data()['modify'],
+            creator: document.data()['creator'] as String,
+            price: document.data()['price'],
+            like: document.data()['like'],
+            likeUsers: document.data()['likeUsers'],
+          ),
+
+        );
+        notifyListeners();
+        print(document.data()['image']);
+      }
+      notifyListeners();
+    });
+
+
   }
 
   Future<void> getTypePost(String std) async {

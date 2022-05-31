@@ -35,6 +35,7 @@ class _homeCardState extends State<homeCard> {
       ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
 
       return posts.map((post) {
+        profileProvider.otherProfile.name="";
         profileProvider.getUser(post.creator);
         name = getName(post.creator, profiles);
         print("${name}");
