@@ -15,6 +15,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:shrine/src/friendProfile.dart';
+import 'package:shrine/src/start.dart';
+import 'package:shrine/src/test.dart';
 import 'package:shrine/src/viewSubsribers.dart';
 
 import 'package:shrine/src/book.dart';
@@ -64,7 +66,7 @@ class ShrineApp extends StatelessWidget {
         ),
       ),
       title: 'YoriJori',
-      initialRoute: '/login',
+      initialRoute: '/test',
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
@@ -72,10 +74,12 @@ class ShrineApp extends StatelessWidget {
        '/hot': (BuildContext context) => const HotPage(),
         '/profile': (BuildContext context) => const myProfile(),
         '/book': (BuildContext context) => const BookPage(),
+        '/start': (BuildContext context) => StartPage(),
 
       '/rank': (BuildContext context) => const rankPage(),
         '/editProfile': (BuildContext context) => const editProfile(),
         '/viewSubscribers': (BuildContext context) => const viewSubscribers(),
+        '/test': (BuildContext context) => const mlKit(),
 
 
 

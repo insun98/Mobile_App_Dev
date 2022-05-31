@@ -12,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter/cupertino.dart';
 class friendProfile extends StatefulWidget {
-   friendProfile({required this.isSubscribed});
+  friendProfile({required this.isSubscribed});
   bool isSubscribed;
   @override
   _friendProfileState createState() => _friendProfileState();
@@ -234,7 +234,4 @@ class _friendProfileState extends State<friendProfile> {
     return menuItems;
   }
 }
-
-
-
 

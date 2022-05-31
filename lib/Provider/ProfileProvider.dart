@@ -56,46 +56,48 @@ class ProfileProvider extends ChangeNotifier {
               .snapshots()
               .listen((snapshot) {
             _subscribingProfile.add(Profile(
-              name:snapshot.data()!['name'],
-              id:snapshot.data()!['id'],
-              email:snapshot.data()!['email'],
-              uid:snapshot.id,
+              name: snapshot.data()!['name'],
+              id: snapshot.data()!['id'],
+              email: snapshot.data()!['email'],
+              uid: snapshot.id,
               bookmark: snapshot.data()!['bookmark'],
               subscribers: snapshot.data()!['subscriber'],
-              subscribing: snapshot.data()!['subscribing'], photo: snapshot.data()!['image'], profession: snapshot.data()!['profession'],
+              subscribing: snapshot.data()!['subscribing'],
+              photo: snapshot.data()!['image'],
+              profession: snapshot.data()!['profession'],
             )
 
             );
             notifyListeners();
+          });}
 
-        FirebaseFirestore.instance
-            .collection('user')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .get()
-            .then((DocumentSnapshot documentSnapshot) {
-          _myBookPost = [];
-          if(documentSnapshot.exists) {
-            try{
-              dynamic book = snapshot.get(FieldPath(['bookmark']));
-             // _myBookPost.add(
-                print("${book[0]}");
-              //);
-            }on StateError catch(e){
-              print('No field exists!');
-            }
-          }else{
-            print('Document does not exist on the database');
-          }
-          notifyListeners();
-        });
-          });
+            FirebaseFirestore.instance
+                .collection('user')
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .get()
+                .then((DocumentSnapshot documentSnapshot) {
+              _myBookPost = [];
+              if (documentSnapshot.exists) {
+                try {
+                  dynamic book = snapshot.get(FieldPath(['bookmark']));
+                  // _myBookPost.add(
+                  print("${book[0]}");
+                  //);
+                } on StateError catch (e) {
+                  print('No field exists!');
+                }
+              } else {
+                print('Document does not exist on the database');
+              }
+              notifyListeners();
+            });});
 
 
-          });
-          notifyListeners();
-        }
 
-      });
+
+
+
+
       if(_myProfile.uid == FirebaseAuth.instance.currentUser!.uid) {
         getFriends();
       }
@@ -201,28 +203,8 @@ class ProfileProvider extends ChangeNotifier {
   //   }
   // }
 
-});
-        }
-        Future<void> getUser(String uid) async {
-          FirebaseFirestore.instance
-              .collection('user')
-              .doc(uid)
-              .snapshots()
-              .listen((snapshot) {
-            if (snapshot.data() != null) {
-              _otherProfile.name = snapshot.data()!['name'];
-              _otherProfile.email = snapshot.data()!['email'];
-              _otherProfile.id = snapshot.data()!['id'];
-              _otherProfile.subscribers = snapshot.data()!['subscribers'];
-              _otherProfile.subscribing = snapshot.data()!['subscribing'];
-              _otherProfile.bookmark = snapshot.data()!['bookmark'];
-              _otherProfile.photo = snapshot.data()!['image'];
-              _otherProfile.uid = snapshot.data()!['uid'];
-              _otherProfile.profession = snapshot.data()!['uid'];
-              notifyListeners();
-            }
-          });
-        }
+
+
 
 
 

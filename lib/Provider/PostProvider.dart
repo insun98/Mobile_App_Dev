@@ -60,6 +60,7 @@ class PostProvider extends ChangeNotifier {
               create: document.data()['create'],
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
+              creatorId: document.data()['creatorId'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
@@ -89,6 +90,7 @@ class PostProvider extends ChangeNotifier {
               create: document.data()['create'],
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
+              creatorId: document.data()['creatorId'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
@@ -121,6 +123,7 @@ class PostProvider extends ChangeNotifier {
             create: document.data()['create'],
             modify: document.data()['modify'],
             creator: document.data()['creator'] as String,
+            creatorId: document.data()['creatorId'] as String,
             price: document.data()['price'],
             like: document.data()['like'],
             likeUsers: document.data()['likeUsers'],
@@ -154,6 +157,7 @@ class PostProvider extends ChangeNotifier {
               create: document.data()['create'],
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
+              creatorId: document.data()['creatorId'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
@@ -182,6 +186,7 @@ class PostProvider extends ChangeNotifier {
               create: document.data()['create'],
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
+              creatorId: document.data()['creatorId'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
@@ -210,6 +215,7 @@ class PostProvider extends ChangeNotifier {
               create: document.data()['create'],
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
+              creatorId: document.data()['creatorId'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
@@ -298,9 +304,11 @@ class Post {
         required this.description,
         required this.create,
         required this.modify,
-        required this.creator});
+        required this.creator,
+        required this.creatorId});
   String docId;
   String image;
+  String creatorId;
   String title;
   int price;
   List<dynamic> likeUsers;

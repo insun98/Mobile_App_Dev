@@ -66,42 +66,7 @@ class _HotPageState extends State<HotPage> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Color(0xFF961D36),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white.withOpacity(.60),
-        selectedFontSize: 14,
-        unselectedFontSize: 14,
-        currentIndex: _selectedIndex,
-        //현재 선택된 Index
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/hot');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/profile');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/book');
-              break;
-            default:
-          }
-        },
 
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.whatshot), label: 'Hot'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle), label: 'profile'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.addchart), label: 'Ranking'),
-        ],
-      ),
       body:Consumer<ApplicationState>(
         builder: (context, appState, _) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
