@@ -30,7 +30,8 @@ class _myProfileState extends State<myProfile> {
     ApplicationState authProvider= Provider.of<ApplicationState>(context);
     PostProvider postProvider= Provider.of<PostProvider>(context);
 
-    return Scaffold(
+    return Consumer<ProfileProvider>(
+      builder: (context, ProfileProvider, _) =>Scaffold(
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.transparent,
@@ -87,14 +88,9 @@ class _myProfileState extends State<myProfile> {
                 'Subscribers',
                 style: TextStyle(color: Color(0xFF961D36)),
               ),
-              onTap: () async {
-                // bool check = await authProvider.getFriend(
-                //     authProvider.profile.subscribers[0]);
-                // if (check == true) {
-                //   Navigator.push(context, MaterialPageRoute(
-                //       builder: (context) =>
-                //           friendProfile(profile: authProvider.friendProfile)));
-                // }
+              onTap: ()  async {
+
+                Navigator.pushNamed(context, '/viewSubscribers');
               },
 
             ),
@@ -155,8 +151,7 @@ class _myProfileState extends State<myProfile> {
           BottomNavigationBarItem(icon: Icon(Icons.addchart), label: 'Ranking'),
         ],
       ),
-      body: Consumer<ProfileProvider>(
-        builder: (context, ProfileProvider, _) => Column(
+      body:  Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
