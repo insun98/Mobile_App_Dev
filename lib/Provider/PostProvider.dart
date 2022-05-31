@@ -19,6 +19,8 @@ class PostProvider extends ChangeNotifier {
   List<Post> get allPosts => _allPosts;
   List<Post> _typePosts = [];
   List<Post> get typePosts => _typePosts;
+  List<Post> _bookPosts = [];
+  List<Post> get bookPosts => _bookPosts;
 
   Future<void> init() async {
     await Firebase.initializeApp(
@@ -68,7 +70,6 @@ class PostProvider extends ChangeNotifier {
       //read All posts
       _allPostSubscription = FirebaseFirestore.instance
           .collection('post')
-          .orderBy('like', descending: false)
           .snapshots()
           .listen((snapshot) {
         _allPosts = [];
@@ -107,6 +108,34 @@ class PostProvider extends ChangeNotifier {
       for (final document in snapshot.docs) {
         if (document.data()['type'] == std) {
           _typePosts.add(
+            Post(
+              docId: document.id,
+              title: document.data()['title'] as String,
+              image: document.data()['image'],
+              description: document.data()['description'] as String,
+              type: document.data()['type'] as String,
+              create: document.data()['create'],
+              modify: document.data()['modify'],
+              creator: document.data()['creator'] as String,
+              price: document.data()['price'],
+              like: document.data()['like'],
+              likeUsers: document.data()['likeUsers'],
+            ),
+          );
+        }
+      }
+    });
+    notifyListeners();
+  }
+  Future<void> getbookPost(String std) async {
+    FirebaseFirestore.instance
+        .collection('post')
+        .snapshots()
+        .listen((snapshot) {
+      _bookPosts = [];
+      for (final document in snapshot.docs) {
+        if (document.id == std) {
+          _bookPosts.add(
             Post(
               docId: document.id,
               title: document.data()['title'] as String,

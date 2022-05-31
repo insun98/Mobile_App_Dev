@@ -40,6 +40,7 @@ class _HotPageState extends State<HotPage> {
   @override
   Widget build(BuildContext context) {
     PostProvider postProvider = Provider.of<PostProvider>(context);
+    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
     print("here is hotpage");
     return Scaffold(
       appBar: AppBar(
@@ -49,7 +50,7 @@ class _HotPageState extends State<HotPage> {
         elevation: 0.0,
         leading: TextButton(
             style: TextButton.styleFrom(),
-            child: Text('Yori \n Jori',
+            child: Text('Hot',
                 style: TextStyle(color: Color(0xFF961D36), fontFamily: 'Yrsa')),
             onPressed: () {}),
         actions: <Widget>[
@@ -85,6 +86,9 @@ class _HotPageState extends State<HotPage> {
             case 2:
               Navigator.pushNamed(context, '/profile');
               break;
+            case 3:
+              Navigator.pushNamed(context, '/book');
+              break;
             default:
           }
         },
@@ -104,7 +108,7 @@ class _HotPageState extends State<HotPage> {
           children: [
             homeCard(
               posts: postProvider.allPosts,
-              //  profile: postProvider.profile,
+              profiles: profileProvider.allUsers,
             ),
           ],
 

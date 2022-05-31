@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:shrine/src/book.dart';
 import 'src/myProfile.dart';
 import 'src/hot.dart';
 import 'ranking.dart';
@@ -65,6 +66,7 @@ class ShrineApp extends StatelessWidget {
         '/': (BuildContext context) => const HomesPage(),
        '/hot': (BuildContext context) => const HotPage(),
         '/profile': (BuildContext context) => const myProfile(),
+        '/book': (BuildContext context) => const BookPage(),
 
       '/rank': (BuildContext context) => const rankPage(),
 

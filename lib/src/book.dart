@@ -9,6 +9,7 @@ import 'package:shrine/src/bookmarkcard.dart';
 import 'dart:io';
 import '../Provider/AuthProvider.dart';
 import '../Provider/PostProvider.dart';
+import '../Provider/ProfileProvider.dart';
 import 'home.dart';
 import 'ItemCard.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,7 +26,7 @@ class BookPage extends StatefulWidget {
 
 class _BookPageState extends State<BookPage> {
   bool _isFavorited  = true;
-  int _currentIndex = 0;
+  int _selectedIndex = 4;
   String profile = " ";
   String ids = " ";
 
@@ -34,17 +35,22 @@ class _BookPageState extends State<BookPage> {
 
   void _onTap(int index) {
     setState(() {
-      _currentIndex = index;
+      _selectedIndex = index;
     });
   }
   String kind = "한식";
   @override
   Widget build(BuildContext context) {
     PostProvider postProvider = Provider.of<PostProvider>(context);
+    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
     //postProvider.getPosts("like");
     print("here is bookpage");
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        bottomOpacity: 0.0,
+        elevation: 0.0,
         leading: Column(
           children: const <Widget>[
 
@@ -90,8 +96,24 @@ class _BookPageState extends State<BookPage> {
         unselectedItemColor: Colors.white.withOpacity(.60),
         selectedFontSize: 14,
         unselectedFontSize: 14,
-        currentIndex: _currentIndex,
-        onTap: _onTap,
+        currentIndex: _selectedIndex,
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, '/');
+              break;
+            case 1:
+              Navigator.pushNamed(context, '/hot');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/profile');
+              break;
+            case 3:
+              Navigator.pushNamed(context, '/book');
+              break;
+            default:
+          }
+        },
         //현재 선택된 Index
 
         items: const [
@@ -107,7 +129,9 @@ class _BookPageState extends State<BookPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             bookCard(
+              mybook: profileProvider.myBookPost,
               posts: postProvider.allPosts,
+              myprofile: profileProvider.myProfile
             ),
           ],
 

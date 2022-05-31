@@ -179,6 +179,7 @@ class _HomesPageState extends State<HomesPage> {
             ),
             homeCard(
               posts: postProvider.typePosts,
+              profiles: profileProvider.allUsers,
             ),
           ],
 

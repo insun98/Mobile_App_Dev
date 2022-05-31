@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import '../firebase_options.dart';
+import 'PostProvider.dart';
 
 
 class ProfileProvider extends ChangeNotifier {
@@ -48,7 +49,27 @@ class ProfileProvider extends ChangeNotifier {
           _myProfile.profession = snapshot.data()!['profession'];
           notifyListeners();
         }
-      });
+        FirebaseFirestore.instance
+            .collection('user')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get()
+            .then((DocumentSnapshot documentSnapshot) {
+          _myBookPost = [];
+          if(documentSnapshot.exists) {
+            try{
+              dynamic book = snapshot.get(FieldPath(['bookmark']));
+             // _myBookPost.add(
+                print("${book[0]}");
+              //);
+            }on StateError catch(e){
+              print('No field exists!');
+            }
+          }else{
+            print('Document does not exist on the database');
+          }
+          notifyListeners();
+        });
+          });
 
 
       //All users
@@ -98,6 +119,8 @@ class ProfileProvider extends ChangeNotifier {
             }
           });
         }
+
+
 // Future<void> set() async {
 //   FirebaseFirestore.instance
 //       .collection('user')
@@ -121,7 +144,8 @@ class ProfileProvider extends ChangeNotifier {
   List<Profile> get subscribersProfile => _subscribersProfile;
   List<Profile> _allUsers= [];
   List<Profile> get allUsers => _allUsers;
-
+  List<String> _myBookPost = [];
+  List<String> get myBookPost => _myBookPost;
   //My profile
   Profile _myProfile = Profile(
       name: '',
@@ -154,17 +178,18 @@ class ProfileProvider extends ChangeNotifier {
   StreamSubscription<QuerySnapshot>? _allUserSubscription;
 }
 
-  class Profile {
+class Profile {
   Profile(
-  {required this.name,
-  required this.id,
-  required this.email,
-  required this.photo,
-  required this.uid,
-  required this.profession,
-  required this.subscribers,
-  required this.subscribing,
-  required this.bookmark,
+  {
+    required this.name,
+    required this.id,
+    required this.email,
+    required this.photo,
+    required this.uid,
+    required this.profession,
+    required this.subscribers,
+    required this.subscribing,
+    required this.bookmark,
   });
   String name;
   String id;
@@ -175,5 +200,4 @@ class ProfileProvider extends ChangeNotifier {
   List<String> subscribers= [];
   List<String> subscribing= [];
   List<String> bookmark= [];
-
-  }
+}
