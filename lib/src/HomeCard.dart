@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shrine/src/comments.dart';
 import '../Provider/PostProvider.dart';
 import '../Provider/ProfileProvider.dart';
 
@@ -134,8 +135,28 @@ class _homeCardState extends State<homeCard> {
                               color: Colors.black,
                               size: 25,
                             ),
-                            onPressed: () {
-                            },
+
+
+
+                              onPressed: (){
+
+
+
+                                //CommentPage("${post.docId}");
+
+                                //  Navigator.pushNamed(context, '/');
+
+                                  Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => screen(postid: "${post.docId}"),
+                                  ),
+                                );
+                              },
+
+
+
+//                            },
                           ),
                         ],
                       ),
