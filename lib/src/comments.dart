@@ -44,7 +44,7 @@ class _screenState extends State<screen> {
                 GuestBook(
                   addMessage: (message) =>
                       appState.addMessageToGuestBook(message,widget.postid),
-                  comment: appState.guestBookMessages, // new
+                  comment: appState.comments, // new
                   //messages
                 ),
               ],
@@ -106,8 +106,38 @@ class CommentPage extends ChangeNotifier {
   var s;
   var doc_image;
 
+List<Com> _comments =[];
+List<Com> get comments => _comments;
 
-  Future<DocumentReference> addMessageToGuestBook(String message, String postId) async{
+  List<Com> _guestBookMessages = [];
+
+  List<Com> get guestBookMessages => _guestBookMessages;
+
+Future<void> readComments (String docId) async
+{
+  FirebaseFirestore.instance
+      .collection('post')
+      .doc(doc_id)
+      .collection('comment')
+      .snapshots()
+      .listen((snapshot) {
+    _comments = [];
+    for(var comment in snapshot.docs){
+      _comments.add(Com(
+        name:comment.data()['name'],
+        image_url: comment.data()['image_url'],
+        message: comment.data()['text'],
+        formattedDate:
+
+      )
+
+      )
+
+    _users = snapshot.docs.length;
+    notifyListeners();
+  });
+
+}  Future<DocumentReference> addMessageToGuestBook(String message, String postId) async{
 
 
     return FirebaseFirestore.instance
@@ -191,9 +221,6 @@ class CommentPage extends ChangeNotifier {
 
 
   StreamSubscription<QuerySnapshot>? _guestBookSubscription;
-  List<Com> _guestBookMessages = [];
-
-  List<Com> get guestBookMessages => _guestBookMessages;
 
 
 }

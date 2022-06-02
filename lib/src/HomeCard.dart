@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shrine/src/comments.dart';
 import '../Provider/PostProvider.dart';
 import '../Provider/ProfileProvider.dart';
+import 'comments.dart';
 
 
 
@@ -34,7 +35,7 @@ class _homeCardState extends State<homeCard> {
       final NumberFormat formatter = NumberFormat.simpleCurrency(
           locale: Localizations.localeOf(context).toString());
       ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
-
+      CommentPage commentPage = Provider.of<CommentPage>(context);
       return posts.map((post) {
         profileProvider.otherProfile.name="";
         profileProvider.getUser(post.creator);
@@ -142,17 +143,20 @@ class _homeCardState extends State<homeCard> {
 
 
 
-                              onPressed: (){
+                              onPressed: () async {
 
 
 
                                 //CommentPage("${post.docId}");
 
                                 //  Navigator.pushNamed(context, '/');
+                                await commentPage.readComments(post.docId);
 
                                   Navigator.push(
                                   context,
                                   MaterialPageRoute(
+
+
                                     builder: (context) => screen(postid: "${post.docId}"),
                                   ),
                                 );
