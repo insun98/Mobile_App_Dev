@@ -10,9 +10,9 @@ import '../Provider/ProfileProvider.dart';
 
 
 class homeCard extends StatefulWidget {
-  const homeCard({required this.posts});
+  const homeCard({required this.posts, required this.profiles});
   final List<Post> posts;
-
+  final List<Profile> profiles;
   @override
   _homeCardState createState() => _homeCardState();
 }
@@ -25,16 +25,21 @@ class _homeCardState extends State<homeCard> {
   Widget build(BuildContext context) {
     List<Card> _buildListCards(BuildContext context) {
       List<Post> posts = widget.posts;
+      List<Profile> profiles = widget.profiles;
+      String name;
       if (posts.isEmpty) {
         return const <Card>[];
       }
       final ThemeData theme = Theme.of(context);
       final NumberFormat formatter = NumberFormat.simpleCurrency(
           locale: Localizations.localeOf(context).toString());
+      ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
 
       return posts.map((post) {
-        print("${post.creator}");
-
+        profileProvider.otherProfile.name="";
+        profileProvider.getUser(post.creator);
+        name = getName(post.creator, profiles);
+        print("${name}");
         bool _isFavorited  = false;
         return Card(
           clipBehavior: Clip.antiAlias,
@@ -47,15 +52,14 @@ class _homeCardState extends State<homeCard> {
                     children: [
                       CircleAvatar(
                         radius: 20.0,
-                        backgroundImage: NetworkImage('https://firebasestorage.googleapis.com/v0/b/yorijori-52f2a.appspot.com/o/defaultProfile.png?alt=media&token=127cd072-80b8-4b77-ab22-a50a0dfa5206'
-                        ),
+                        backgroundImage: NetworkImage( '${profileProvider.otherProfile.photo}'),
                         backgroundColor: Colors.transparent,
                       ),
 
 
                       SizedBox(width: 20,),
                       Text(
-                        'hi',
+                        '${name}',
                         style: TextStyle(
                           fontSize: 13,
                         ),
@@ -95,14 +99,14 @@ class _homeCardState extends State<homeCard> {
                         .start,
                     // TODO: Change innermost Column (103)
                     children: <Widget>[
-                      /*Text(
+                      Text(
                                               '$name',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 13,
                                               ),
                                               maxLines: 1,
-                                            ),*/
+                      ),
                       // TODO: Handle overflowing labels (103)
                       Text(
                         '열량: ',
@@ -181,6 +185,16 @@ class _homeCardState extends State<homeCard> {
     );
   }
 
+  String getName(String creatorId, List<Profile> profiles) {
+    String name = "";
+    for(int i=0; i < profiles.length; i++){
+      if(profiles[i].uid == creatorId){
+         name = profiles[i].id;
+         print("${name}");
+      }
+    }
+    return name;
+  }
 }
 
 class FavoriteWidget extends StatefulWidget{
@@ -218,10 +232,12 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
                   num = widget.post.like -= 1 ;
                   _isFavorited = false;
                   postProvider.updateDoc(widget.post.docId, widget.post.like, _isFavorited);
+                  postProvider.deletelikeuser(widget.post.docId);
                 } else {
                   widget.post.like += 1;
                   _isFavorited = true;
                   postProvider.updateDoc(widget.post.docId, widget.post.like, _isFavorited);
+                  postProvider.updatelikeuser(widget.post.docId);
                 }
               });
             },
@@ -260,10 +276,5 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
     ),
     );
   }
-  void _toggleFavorite() {
-
-  }
-  void _togglebook() {
-
-  }
 }
+
