@@ -27,17 +27,12 @@ class _rankPageState extends State<rankPage> {
   var i = 0;
 
   bool _isFavorited  = true;
-  int _currentIndex = 0;
+
   String profile = " ";
   String ids = " ";
-  final List<Widget> _children = [HomesPage(), HotPage(), HomesPage(), SearchScreen(), HomesPage()];
-  void _onTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-  String kind = "한식";
 
+  String kind = "한식";
+  int _selectedIndex = 0;
 
   List<InkWell> _buildListCards(
       BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -179,18 +174,39 @@ class _rankPageState extends State<rankPage> {
         unselectedItemColor: Colors.white.withOpacity(.60),
         selectedFontSize: 14,
         unselectedFontSize: 14,
-        currentIndex: _currentIndex,
-        onTap: _onTap,
+        currentIndex: _selectedIndex,
         //현재 선택된 Index
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, '/');
+              break;
+            case 1:
+              Navigator.pushNamed(context, '/hot');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/profile');
+              break;
+            case 3:
+              Navigator.pushNamed(context, '/');
+              break;
+            case 4:
+              Navigator.pushNamed(context, '/rank');
+              break;
+            default:
+          }
+        },
 
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.whatshot), label: 'Hot'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'profile'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle), label: 'profile'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(icon: Icon(Icons.addchart), label: 'Ranking'),
         ],
       ),
+
       body:StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
@@ -200,7 +216,7 @@ class _rankPageState extends State<rankPage> {
 
 
 
-            _children[_currentIndex];
+
             return Column(
               children: <Widget>[
                 Expanded(

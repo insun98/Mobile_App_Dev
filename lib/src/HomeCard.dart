@@ -215,7 +215,7 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
               setState(() {
                 if (_isFavorited) {
                   int num = 0;
-                  num = widget.post.like - 1 ;
+                  num = widget.post.like -= 1 ;
                   _isFavorited = false;
                   postProvider.updateDoc(widget.post.docId, widget.post.like, _isFavorited);
                 } else {
@@ -245,7 +245,7 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
                   _isBooked = false;
                   postProvider.deletebook(widget.post.docId);
                   Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: const Text("collection added")));
+                      .showSnackBar(SnackBar(content: const Text("collection deleted")));
                 } else {
                   _isBooked = true;
                   postProvider.updatebook(widget.post.docId);
