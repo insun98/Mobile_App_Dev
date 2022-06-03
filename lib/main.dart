@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:shrine/Provider/AuthProvider.dart';
 import 'package:shrine/Provider/PostProvider.dart';
 import 'package:shrine/Provider/ProfileProvider.dart';
+import 'package:shrine/src/comments.dart';
 import 'app.dart';
 
 
@@ -39,6 +40,8 @@ class Myapp extends StatelessWidget {
             create: (_) => PostProvider()),
         ChangeNotifierProvider<ProfileProvider>(
             create: (_) => ProfileProvider()),
+        // ChangeNotifierProvider<CommentPage>(
+        //     create: (_) => CommentPage ("")),
 
         // ChangeNotifierProvider<LoginProvider>(create: (_) => LoginProvider()),
       ],

@@ -138,6 +138,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           int price = data['price'];
                           String creator = data['creator'];
                           String descript = data['description'];
+                          //String descriptt = data['subscriber'].length;
+
                           String title = data['title'];
                           String type = data['type'];
                           String file = data['image'];
