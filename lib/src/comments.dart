@@ -13,6 +13,7 @@ import 'package:shrine/src/LoginState.dart';
 
 int _users = 0;
 int get users => _users;
+String idid="";
 
 
 class screen extends StatefulWidget {
@@ -26,9 +27,16 @@ class screen extends StatefulWidget {
 
 
 class _screenState extends State<screen> {
- //String postId = widget.postid
+
+
+  //String postId = widget.postid
   @override
   Widget build(BuildContext context) {
+    // String ss(){
+    //   return widget.postid;
+    // }
+    idid= widget.postid;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('댓글'),
@@ -36,7 +44,6 @@ class _screenState extends State<screen> {
       ),
       body: ListView(
         children: [
-
           Consumer<CommentPage>(
             builder: (context, appState, _) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,8 +106,10 @@ class CommentPage extends ChangeNotifier {
   late String doc_id = "23Eak9GbU2B1HAKMmKKi";
 
  CommentPage(String d_id) {
+   // String s=ss();
+    print("나는양:");print(idid);
     init();
-    doc_id = "23Eak9GbU2B1HAKMmKKi";
+    doc_id = "";
   }
 
   var s;
@@ -109,10 +118,13 @@ class CommentPage extends ChangeNotifier {
 
   Future<DocumentReference> addMessageToGuestBook(String message, String postId) async{
 
+    print("하이");
+    print(idid);
+
 
     return FirebaseFirestore.instance
         .collection('post')
-        .doc(doc_id)
+        .doc(postId)
         .collection('comment')
         .add(<String, dynamic>{
       'text': message,
@@ -129,6 +141,9 @@ class CommentPage extends ChangeNotifier {
   }
 
   Future<void> init() async {
+    doc_id = idid;
+    print("ㅗㅑㅗㅑㅗㅑ");
+    print(idid);
     doc_image = await FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser?.uid).get();
 
     FirebaseFirestore.instance
