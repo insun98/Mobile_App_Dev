@@ -104,8 +104,11 @@ class CommentPage extends ChangeNotifier {
 
   late String doc_id = "23Eak9GbU2B1HAKMmKKi";
 
+
   CommentPage(String d_id) {
     // String s=ss();
+
+
     print("나는양:");print(idid);
     init();
     doc_id = "";

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fs;
@@ -147,7 +148,9 @@ class _rankPageState extends State<rankPage> {
                     // /subscriber.length
                     //  stream: FirebaseFirestore.instance.collection('user').orderBy('email', descending: true).limit(3).snapshots(),
                     //stream: FirebaseFirestore.instance.collection('user').orderBy('email', descending: true).limit(3).snapshots(),
+
                     stream: FirebaseFirestore.instance.collection('user').orderBy('followers', descending: true).limit(3).snapshots(),
+
                     //stream: FirebaseFirestore.instance.collection('followers').snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
