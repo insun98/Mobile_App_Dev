@@ -1,6 +1,3 @@
-
-//scaffold -> 랭킹 리스트로 뽑기 ->
-//
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fs;
@@ -23,6 +20,14 @@ class rankPage extends StatefulWidget {
   _rankPageState createState() => _rankPageState();
 }
 
+
+// let len = 0
+// const ref = firebase.firestore().collection("users").doc(user.uid).get().then(snap => {
+// len = snap.data().disliked1.length
+// console.log(len)
+// })
+
+
 class _rankPageState extends State<rankPage> {
   var i = 0;
 
@@ -33,6 +38,7 @@ class _rankPageState extends State<rankPage> {
 
   String kind = "한식";
   int _selectedIndex = 0;
+
 
   List<InkWell> _buildListCards(
       BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -84,19 +90,19 @@ class _rankPageState extends State<rankPage> {
                                 height: 10,
                               ),
                               Text(
-                                document['Name'],
+                                document['name'],
                                 style: theme.textTheme.headline6,
                                 maxLines: 1,
                               ),
                               const SizedBox(height: 8.0),
                               Text(
-                                document['Email'],
+                                document['email'],
                                 style: theme.textTheme.subtitle2,
                               ),
-                              Text(
-                                "Followers: "+document['followers'].toString(),
-                                style: theme.textTheme.subtitle2,
-                              ),
+                              // Text(
+                              //   "Followers: "+document['followers'].toString(),
+                              //   style: theme.textTheme.subtitle2,
+                              // ),
                             ],
                           ),
                         ),
@@ -134,7 +140,7 @@ class _rankPageState extends State<rankPage> {
                   style: TextStyle(
                       fontFamily: 'Yrsa',
                       color: Color(0xFF961D36),
-                      fontSize: 23)),
+                      fontSize: 20)),
             ),
 
           ],
@@ -221,7 +227,12 @@ class _rankPageState extends State<rankPage> {
               children: <Widget>[
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
+
+                    // /subscriber.length
+                    //  stream: FirebaseFirestore.instance.collection('user').orderBy('email', descending: true).limit(3).snapshots(),
+                    //stream: FirebaseFirestore.instance.collection('user').orderBy('email', descending: true).limit(3).snapshots(),
                     stream: FirebaseFirestore.instance.collection('user').orderBy('followers', descending: true).limit(3).snapshots(),
+                    //stream: FirebaseFirestore.instance.collection('followers').snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.hasError) {
@@ -232,7 +243,7 @@ class _rankPageState extends State<rankPage> {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
                           return const Center(
-                            child: Text('Loading...'),
+                            child: Text('Loading…'),
                           );
                         default:
                           return ListView(
@@ -254,4 +265,5 @@ class _rankPageState extends State<rankPage> {
   }
 
 }
+
 
