@@ -37,7 +37,7 @@ class _HotPageState extends State<HotPage> {
       children: [
         Consumer<PostProvider>(
           builder: (context, postProvider, _) => homeCard(
-            posts: postProvider.allPosts,
+            posts: postProvider.orderPosts,
             profiles: profileProvider.allUsers,
           ),
         ),

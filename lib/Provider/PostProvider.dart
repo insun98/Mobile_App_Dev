@@ -17,6 +17,8 @@ class PostProvider extends ChangeNotifier {
   List<Post> get myPost => _myPost;
   List<Post> _allPosts = [];
   List<Post> get allPosts => _allPosts;
+  List<Post> _orderPosts = [];
+  List<Post> get orderPosts => _orderPosts;
   List<Post> _typePosts = [];
   List<Post> get typePosts => _typePosts;
 
@@ -26,6 +28,8 @@ class PostProvider extends ChangeNotifier {
   List<Post> _bookPosts = [];
   List<Post> get bookPosts => _bookPosts;
 
+  List<Post> _myBookPost = [];
+  List<Post> get myBookPost => _myBookPost;
 
   Future<void> init() async {
     await Firebase.initializeApp(
@@ -33,6 +37,7 @@ class PostProvider extends ChangeNotifier {
     );
     StreamSubscription<QuerySnapshot>? _myPostSubscription;
     StreamSubscription<QuerySnapshot>? _allPostSubscription;
+    StreamSubscription<QuerySnapshot>? _orderPostSubscription;
     StreamSubscription<QuerySnapshot>? _postSubscription;
     final storageRef = FirebaseStorage.instance.ref();
     final filename = "defaultProfile.png";
@@ -61,6 +66,7 @@ class PostProvider extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
@@ -91,6 +97,7 @@ class PostProvider extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
@@ -102,9 +109,39 @@ class PostProvider extends ChangeNotifier {
         notifyListeners();
       });
 
+      _orderPostSubscription = FirebaseFirestore.instance
+          .collection('post')
+          .orderBy('like', descending: true)
+          .snapshots()
+          .listen((snapshot) {
+        _orderPosts = [];
+        for (final document in snapshot.docs) {
+          _orderPosts.add(
+            Post(
+              docId: document.id,
+              title: document.data()['title'] as String,
+              image: document.data()['image'],
+              description: document.data()['description'] as String,
+              type: document.data()['type'] as String,
+              create: document.data()['create'],
+              modify: document.data()['modify'],
+              creator: document.data()['creator'] as String,
+              creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
+              price: document.data()['price'],
+              like: document.data()['like'],
+              likeUsers: document.data()['likeUsers'],
+            ),
+          );
+          notifyListeners();
+          print(document.data()['image']);
+        }
+        notifyListeners();
+      });
 
     });
   }
+
   Future<void> getPost(String uid) async {
     FirebaseFirestore.instance
         .collection('post')
@@ -124,6 +161,7 @@ class PostProvider extends ChangeNotifier {
             modify: document.data()['modify'],
             creator: document.data()['creator'] as String,
             creatorId: document.data()['creatorId'] as String,
+            creatorImage: document.data()['creatorImage'] as String,
             price: document.data()['price'],
             like: document.data()['like'],
             likeUsers: document.data()['likeUsers'],
@@ -158,6 +196,7 @@ class PostProvider extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
@@ -187,6 +226,7 @@ class PostProvider extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
@@ -216,6 +256,7 @@ class PostProvider extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
@@ -227,6 +268,30 @@ class PostProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // getBookmark()  {
+  //   for (var bookMarkPost in myProfile.bookmark) {
+  //     FirebaseFirestore.instance
+  //         .collection('user')
+  //         .doc(bookMarkPost)
+  //         .snapshots()
+  //         .listen((snapshot) {
+  //       myBookPost.add(Post(
+  //         docId: snapshot.id,
+  //         title: snapshot.data()!['title'] as String,
+  //         image: snapshot.data()!['image'],
+  //         description: snapshot.data()!['description'] as String,
+  //         type: snapshot.data()!['type'] as String,
+  //         create: snapshot.data()!['create'],
+  //         modify: snapshot.data()!['modify'],
+  //         creator: snapshot.data()!['creator'] as String,
+  //         price: snapshot.data()!['price'],
+  //         like: snapshot.data()!['like'],
+  //         likeUsers: snapshot.data()!['likeUsers'],
+  //       )
+  //       );
+  //     });
+  //   }
+  // }
   Future<void> updateDoc(String docID, int like, bool islike) async {
     FirebaseFirestore.instance
         .collection("post")
@@ -305,7 +370,8 @@ class Post {
         required this.create,
         required this.modify,
         required this.creator,
-        required this.creatorId});
+        required this.creatorId,
+        required this.creatorImage});
   String docId;
   String image;
   String creatorId;
@@ -318,4 +384,5 @@ class Post {
   Timestamp create;
   Timestamp modify;
   String creator;
+  String creatorImage;
 }
