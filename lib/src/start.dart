@@ -8,6 +8,8 @@ import 'package:shrine/src/hot.dart';
 import 'package:shrine/src/myProfile.dart';
 import 'package:shrine/src/home.dart';
 
+import '../ranking.dart';
+import '../search.dart';
 import 'addPost.dart';
 
 class StartPage extends StatefulWidget {
@@ -21,7 +23,9 @@ class _StartPageState extends State<StartPage> {
   final _pageOptions = [
     HomesPage(),
     HotPage(),
-    myProfile()
+    myProfile(),
+    SearchScreen(),
+    rankPage()
   ];
 
 
@@ -121,7 +125,7 @@ class _StartPageState extends State<StartPage> {
 
         bottomNavigationBar: BottomNavigationBar(
 
-          items: [
+          items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(icon: Icon(Icons.whatshot), label: 'Hot'),
             BottomNavigationBarItem(

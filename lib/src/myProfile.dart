@@ -101,19 +101,6 @@ class _myProfileState extends State<myProfile> {
     );
   }
 
-  Future<bool> getImageFromGallery(ImageSource imageSource) async {
-    var image = await ImagePicker.platform
-        .pickImage(source: imageSource, maxWidth: 650, maxHeight: 100);
-    setState(() {
-      _image = File(image!.path);
-    });
-    if (image != null) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
       DropdownMenuItem(child: Text("인기순"), value: "인기순"),

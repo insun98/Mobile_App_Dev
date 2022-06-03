@@ -31,15 +31,6 @@ class rankPage extends StatefulWidget {
 class _rankPageState extends State<rankPage> {
   var i = 0;
 
-  bool _isFavorited  = true;
-
-  String profile = " ";
-  String ids = " ";
-
-  String kind = "한식";
-  int _selectedIndex = 0;
-
-
   List<InkWell> _buildListCards(
       BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
     final ThemeData theme = Theme.of(context);
@@ -49,7 +40,8 @@ class _rankPageState extends State<rankPage> {
 
       //DateTime _dateTime =
       //DateTime.parse(document['expirationDate'].toDate().toString());
-      return InkWell(
+      return
+        InkWell(
 
 
           onTap: () {
@@ -58,6 +50,7 @@ class _rankPageState extends State<rankPage> {
           },
           child: Column (
               children: [
+
                 Container(
                     margin: const EdgeInsets.only(bottom: 25),
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -129,91 +122,7 @@ class _rankPageState extends State<rankPage> {
   @override
   Widget build(BuildContext context) {
     // print("here is homepage");
-    return Scaffold(
-      appBar: AppBar(
-        leading: Column(
-          children: const <Widget>[
-            SizedBox(
-
-              child:
-              Text('  Ranking',
-                  style: TextStyle(
-                      fontFamily: 'Yrsa',
-                      color: Color(0xFF961D36),
-                      fontSize: 20)),
-            ),
-
-          ],
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.account_circle_outlined,
-              semanticLabel: 'mypage',
-              color: Colors.black,
-              size: 30,
-            ),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.pushNamed(context, '/mypage');
-            },
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.menu,
-              semanticLabel: 'logout',
-              color: Colors.black,
-              size: 30,
-            ),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.pushNamed(context, '/login');
-            },
-          ),
-        ],
-        title: Container(width: 0,),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Color(0xFF961D36),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white.withOpacity(.60),
-        selectedFontSize: 14,
-        unselectedFontSize: 14,
-        currentIndex: _selectedIndex,
-        //현재 선택된 Index
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/hot');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/profile');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/');
-              break;
-            case 4:
-              Navigator.pushNamed(context, '/rank');
-              break;
-            default:
-          }
-        },
-
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.whatshot), label: 'Hot'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle), label: 'profile'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.addchart), label: 'Ranking'),
-        ],
-      ),
-
-      body:StreamBuilder(
+    return StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
           if (!snapshot.hasData) {
@@ -224,7 +133,14 @@ class _rankPageState extends State<rankPage> {
 
 
             return Column(
+
               children: <Widget>[
+                Container(
+                  padding:EdgeInsets.all(10),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF961D36),
+                  ),
+                  child: Row(children:const [ Text('Ranking', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),)],),),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
 
@@ -260,7 +176,7 @@ class _rankPageState extends State<rankPage> {
             //  );
           }
         },
-      ),
+
     );
   }
 
