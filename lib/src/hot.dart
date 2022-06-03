@@ -28,58 +28,20 @@ class HotPage extends StatefulWidget {
 }
 
 class _HotPageState extends State<HotPage> {
-  bool _isFavorited  = true;
-  int _selectedIndex = 1;
-  String profile = " ";
-  String ids = " ";
-
-
-
-
-  //String kind = "한식";
   @override
   Widget build(BuildContext context) {
-    PostProvider postProvider = Provider.of<PostProvider>(context);
     ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
-    print("here is hotpage");
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-        leading: TextButton(
-            style: TextButton.styleFrom(),
-            child: Text('Hot',
-                style: TextStyle(color: Color(0xFF961D36), fontFamily: 'Yrsa')),
-            onPressed: () {}),
-        actions: <Widget>[
 
-          Builder(
-            builder: (context) => IconButton(
-              color: Colors.black,
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Consumer<PostProvider>(
+          builder: (context, postProvider, _) => homeCard(
+            posts: postProvider.allPosts,
+            profiles: profileProvider.allUsers,
           ),
-        ],
-      ),
-
-      body:Consumer<ApplicationState>(
-        builder: (context, appState, _) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            homeCard(
-              posts: postProvider.allPosts,
-              profiles: profileProvider.allUsers,
-            ),
-          ],
-
         ),
-      ),
+      ],
     );
   }
-
 }

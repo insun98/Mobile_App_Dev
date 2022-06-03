@@ -6,10 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // new
 import 'package:firebase_auth/firebase_auth.dart'; // new
 import 'package:firebase_core/firebase_core.dart'; // new
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart'; // new
 import 'package:intl/intl.dart';
-import 'package:shrine/src/LoginState.dart';
+
 
 int _users = 0;
 int get users => _users;
@@ -17,7 +16,7 @@ String idid="";
 
 
 class screen extends StatefulWidget {
-   screen({required this.postid});
+  screen({required this.postid});
 
   String postid;
   @override
@@ -105,8 +104,11 @@ class CommentPage extends ChangeNotifier {
 
   late String doc_id = "23Eak9GbU2B1HAKMmKKi";
 
- CommentPage(String d_id) {
-   // String s=ss();
+
+  CommentPage(String d_id) {
+    // String s=ss();
+
+
     print("나는양:");print(idid);
     init();
     doc_id = "";
@@ -155,7 +157,7 @@ class CommentPage extends ChangeNotifier {
       _users = snapshot.docs.length;
       notifyListeners();
     });
-    
+
     // FirebaseFirestore.instance
     //     .collection('user')
     //     .snapshots()
@@ -166,7 +168,7 @@ class CommentPage extends ChangeNotifier {
 
     FirebaseAuth.instance.userChanges().listen((user) {
       if (user != null) {
-      //  _loginState = ApplicationState.loggedIn;
+        //  _loginState = ApplicationState.loggedIn;
         _guestBookSubscription = FirebaseFirestore.instance
             .collection('post').doc(doc_id)
             .collection('comment')
@@ -177,19 +179,19 @@ class CommentPage extends ChangeNotifier {
           for (final document in snapshot.docs) {
             _guestBookMessages.add(
               Com(
-              name: document.data()['name'] as String,
-              message: document.data()['text'] as String,
-              formattedDate: DateFormat('yyyy-MM-dd HH:mm:ss')
-                  .format(DateTime.now()) as String,
+                name: document.data()['name'] as String,
+                message: document.data()['text'] as String,
+                formattedDate: DateFormat('yyyy-MM-dd HH:mm:ss')
+                    .format(DateTime.now()) as String,
                 image_url: document.data()['image_url'] as String,
-            ),
+              ),
             );
           }
           notifyListeners();
         });
       }
       else {
-       //_loginState = ApplicationState.signOut();
+        //_loginState = ApplicationState.signOut();
         _guestBookMessages = [];
         _guestBookSubscription?.cancel();
       }
@@ -198,9 +200,7 @@ class CommentPage extends ChangeNotifier {
   }
 
 
-  ApplicationLoginState _loginState = ApplicationLoginState.loggedOut;
 
-  ApplicationLoginState get loginState => _loginState;
 
   //user 선언
 
@@ -237,66 +237,66 @@ class _GuestBookState extends State<GuestBook> {
           padding: const EdgeInsets.all(15.0),
           child: Form(
             key: _formKey,
-           child:Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _controller ,
-                  decoration : const InputDecoration(
-                    hintText: '댓글을 입력하세요..',
-                  ),
-                  validator: (value) {
-                    if(value == null || value.isEmpty ) {
-                  return '다시 입력하세요';
-                  }
-                    return null;
+            child:Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _controller ,
+                    decoration : const InputDecoration(
+                      hintText: '댓글을 입력하세요..',
+                    ),
+                    validator: (value) {
+                      if(value == null || value.isEmpty ) {
+                        return '다시 입력하세요';
+                      }
+                      return null;
                     },
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-               IconButton(
+                const SizedBox(width: 8),
+                IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: () async {
-    if(_formKey.currentState!.validate())
-    await widget.addMessage(_controller.text);
-    _controller.clear();
-    },
-    ),
+                    if(_formKey.currentState!.validate())
+                      await widget.addMessage(_controller.text);
+                    _controller.clear();
+                  },
+                ),
 
-  ],
-              ),
+              ],
+            ),
           ),
-                    // const SizedBox(width:)
+          // const SizedBox(width:)
 
-          ),
+        ),
 
         // const SizedBox(height: 8),
         for( var com in widget.comment)
           Column( children:[
-          Row(
-            children: [
-              const SizedBox(width: 10),
+            Row(
+              children: [
+                const SizedBox(width: 10),
 
-          SizedBox(width:30,height:30,child:Image.network(
-              '${com.image_url}' ,
-          ),
-                // child: CircleAvatar(child: Text(_name[0])),
-              ),
-             // ),
-              const SizedBox(width: 10),
+                SizedBox(width:30,height:30,child:Image.network(
+                  '${com.image_url}' ,
+                ),
+                  // child: CircleAvatar(child: Text(_name[0])),
+                ),
+                // ),
+                const SizedBox(width: 10),
 
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: 5, height: 8,
-                  ),
-                  Text('${com.name}', style: TextStyle(fontSize: 13.0),),
-                  SizedBox(height: 8,),
-                  Container(
-                    margin: const EdgeInsets.only(top: 5.0),
-                    child: Column (
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: 5, height: 8,
+                    ),
+                    Text('${com.name}', style: TextStyle(fontSize: 13.0),),
+                    SizedBox(height: 8,),
+                    Container(
+                      margin: const EdgeInsets.only(top: 5.0),
+                      child: Column (
                         crossAxisAlignment: CrossAxisAlignment.start,
 
                         children :[
@@ -313,31 +313,31 @@ class _GuestBookState extends State<GuestBook> {
                           //               )
 
                         ],
+                      ),
+
                     ),
-
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
 
 
-          //       children:[
-          //         //Paragraph('${comment.name}'),
-          // ],
-          //     ),
+                //       children:[
+                //         //Paragraph('${comment.name}'),
+                // ],
+                //     ),
 
 
 
 
 
 
-            ],
-                  ),
+              ],
+            ),
             Divider(height: 10,color: Colors.grey,),
-    ],
-    ),
+          ],
+          ),
       ],
-        );
+    );
 
 
   }

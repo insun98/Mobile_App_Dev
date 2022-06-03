@@ -66,7 +66,7 @@ class ShrineApp extends StatelessWidget {
         ),
       ),
       title: 'YoriJori',
-      initialRoute: '/test',
+      initialRoute: '/login',
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
