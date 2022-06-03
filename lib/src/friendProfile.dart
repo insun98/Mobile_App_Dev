@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 
 import 'package:provider/provider.dart';
 import 'dart:io';
@@ -22,6 +23,8 @@ class _friendProfileState extends State<friendProfile> {
   int _selectedIndex = 2;
   File? _image;
   String dropdownValue = '인기순';
+  List<String>prediction =[];
+  bool textScanning= false;
   Widget build(BuildContext context) {
     ApplicationState authProvider= Provider.of<ApplicationState>(context);
     PostProvider postProvider= Provider.of<PostProvider>(context);
@@ -50,7 +53,7 @@ class _friendProfileState extends State<friendProfile> {
                   bool check = await getImageFromGallery(ImageSource.gallery);
 
                   if(check==true){
-                    Navigator.push(context,  MaterialPageRoute(builder: (context) => addPostPage(image: _image)));
+                    Navigator.push(context,  MaterialPageRoute(builder: (context) => addPostPage(image: _image, prediction: prediction,)));
                   }}) ,
             Builder(
               builder: (context) => IconButton(
@@ -216,13 +219,37 @@ class _friendProfileState extends State<friendProfile> {
         .pickImage(source: imageSource, maxWidth: 650, maxHeight: 100);
     setState(() {
       _image= File(image!.path);
+      print("good");
     });
     if(image != null){
+      print("good");
+      textScanning =true;
+      setState(() {});
+      getRecognisedText1(_image!);
       return true;
     }else {
       return false;
     }
 
+  }
+  void getRecognisedText1 (File image) async{
+    ImageLabelerOptions option = ImageLabelerOptions();
+    final inputImage =InputImage.fromFilePath(image.path);
+    print("success1");
+    final ImageLabelerOptions options = ImageLabelerOptions(confidenceThreshold: 0.5);
+    print("success2");
+
+    final imageLabeler = GoogleMlKit.vision.imageLabeler();
+    print("success3");
+    final List<ImageLabel> imagelabel = await imageLabeler.processImage(inputImage);
+    print("success3");
+    prediction = [];
+    for(ImageLabel one in imagelabel){
+      print("success");
+      prediction.add(one.label);
+    }
+    textScanning = false;
+    setState(() {});
   }
   List<DropdownMenuItem<String>> get dropdownItems{
     List<DropdownMenuItem<String>> menuItems = [

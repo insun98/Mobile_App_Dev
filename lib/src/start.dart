@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shrine/src/hot.dart';
 import 'package:shrine/src/myProfile.dart';
@@ -20,6 +21,8 @@ class StartPage extends StatefulWidget {
 class _StartPageState extends State<StartPage> {
   int selectedPage = 0;
   File? _image;
+  List<String>prediction =[];
+  bool textScanning= false;
   final _pageOptions = [
     HomesPage(),
     HotPage(),
@@ -55,7 +58,7 @@ class _StartPageState extends State<StartPage> {
                   bool check = await getImageFromGallery(ImageSource.gallery);
 
                   if(check==true){
-                    Navigator.push(context,  MaterialPageRoute(builder: (context) => addPostPage(image: _image)));
+                    Navigator.push(context,  MaterialPageRoute(builder: (context) => addPostPage(image: _image, prediction: prediction,)));
                   }}) ,
 
             Builder(
@@ -149,17 +152,44 @@ class _StartPageState extends State<StartPage> {
     );
 
   }
-  Future<bool> getImageFromGallery(ImageSource imageSource) async {
+  Future<bool> getImageFromGallery(ImageSource imageSource)  async{
     var image = await ImagePicker.platform
         .pickImage(source: imageSource, maxWidth: 650, maxHeight: 100);
     setState(() {
-      _image = File(image!.path);
+      _image= File(image!.path);
+      print("good");
     });
-    if (image != null) {
+    if(image != null){
+      print("good");
+      textScanning =true;
+      setState(() {});
+       await getRecognisedText1(_image!);
       return true;
-    } else {
+    }else {
       return false;
     }
+
+  }
+  Future<bool> getRecognisedText1 (File image) async{
+    ImageLabelerOptions option = ImageLabelerOptions();
+    final inputImage =InputImage.fromFilePath(image.path);
+    print("success1");
+    final ImageLabelerOptions options = ImageLabelerOptions(confidenceThreshold: 0.5);
+    print("success2");
+
+    final imageLabeler = GoogleMlKit.vision.imageLabeler();
+    print("success3");
+    final List<ImageLabel> imagelabel = await imageLabeler.processImage(inputImage);
+    print("success3");
+    prediction = [];
+    for(ImageLabel one in imagelabel){
+      print("success");
+      prediction.add(one.label);
+      print("label ${one.label}");
+    }
+    textScanning = false;
+    setState(() {});
+    return true;
   }
 
 }
