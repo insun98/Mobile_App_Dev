@@ -35,12 +35,11 @@ class _homeCardState extends State<homeCard> {
       final NumberFormat formatter = NumberFormat.simpleCurrency(
           locale: Localizations.localeOf(context).toString());
       ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
-      CommentPage commentPage = Provider.of<CommentPage>(context);
       return posts.map((post) {
         profileProvider.otherProfile.name="";
         profileProvider.getUser(post.creator);
         name = getName(post.creator, profiles);
-        print("${name}");
+
         bool _isFavorited  = false;
         return Card(
           clipBehavior: Clip.antiAlias,
@@ -90,8 +89,8 @@ class _homeCardState extends State<homeCard> {
                   ),
                 ),
               ),
-              Expanded(
-                child: Padding(
+
+                Padding(
                   padding: const EdgeInsets.fromLTRB(
                       20, 5, 0, 0),
                   child: Column(
@@ -150,16 +149,15 @@ class _homeCardState extends State<homeCard> {
                                 //CommentPage("${post.docId}");
 
                                 //  Navigator.pushNamed(context, '/');
-                                await commentPage.readComments(post.docId);
+                               // await commentPage.readComments(post.docId);
 
-                                  Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-
-
-                                    builder: (context) => screen(postid: "${post.docId}"),
-                                  ),
-                                );
+                                  // Navigator.push(
+                                  // context,
+                                  // MaterialPageRoute(
+                                  //
+                                  //
+                                  //   builder: (context) => screen(postid: "${post.docId}"),
+                               // );
                               },
 
 
@@ -171,7 +169,7 @@ class _homeCardState extends State<homeCard> {
                     ],
                   ),
                 ),
-              ),
+
             ],
           ),
         );
@@ -194,7 +192,7 @@ class _homeCardState extends State<homeCard> {
     for(int i=0; i < profiles.length; i++){
       if(profiles[i].uid == creatorId){
          name = profiles[i].id;
-         print("${name}");
+
       }
     }
     return name;
