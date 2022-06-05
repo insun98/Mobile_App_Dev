@@ -138,18 +138,19 @@ class _homeCardState extends State<homeCard> {
 
 
 
-                                //CommentPage("${post.docId}");
+                                init_com("${post.docId}");
 
-                                //  Navigator.pushNamed(context, '/');
-                               // await commentPage.readComments(post.docId);
+                               //  Navigator.pushNamed(context, '/');
+                              // await commentPage.readComments(post.docId);
 
-                                  // Navigator.push(
-                                  // context,
-                                  // MaterialPageRoute(
-                                  //
-                                  //
-                                  //   builder: (context) => screen(postid: "${post.docId}"),
-                               // );
+                                  Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+
+
+                                    builder: (context) => screen(postid: "${post.docId}"),
+                                  )
+                               );
                               },
 
 

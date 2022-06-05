@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:shrine/src/alarm.dart';
 
 import 'package:shrine/src/friendProfile.dart';
 import 'package:shrine/src/logoAnimation.dart';
@@ -72,7 +73,7 @@ class ShrineApp extends StatelessWidget {
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
-        '/': (BuildContext context) => const HomesPage(),
+        '/': (BuildContext context) => const rankPage(),
        '/hot': (BuildContext context) => const HotPage(),
         '/profile': (BuildContext context) => const myProfile(),
         '/book': (BuildContext context) => const BookPage(),
@@ -82,8 +83,13 @@ class ShrineApp extends StatelessWidget {
         '/editProfile': (BuildContext context) => const editProfile(),
         '/viewSubscribers': (BuildContext context) => const viewSubscribers(),
 
+
         '/map':(BuildContext context) => const MyMap(),
       
+
+       
+        '/alarm': (BuildContext context) => const alarmPage(),
+
 
 
         '/postDetail': (BuildContext context) => const PostDetail(),
