@@ -827,51 +827,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-
-
-        leading: Column(
-
-          children: const <Widget>[
-
-            Text('Search',
-                style: TextStyle(
-                    fontFamily: 'Yrsa',
-                    color: Color(0xFF961D36),
-                    fontSize: 20)),
-          ],
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.account_circle_outlined,
-              semanticLabel: 'mypage',
-              color: Colors.black,
-              size: 30,
-            ),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.pushNamed(context, '/mypage');
-            },
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.menu,
-              semanticLabel: 'logout',
-              color: Colors.black,
-              size: 30,
-            ),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.pushNamed(context, '/login');
-            },
-          ),
-        ],
-        title: Container(width: 0,),
-      ),
-
-      body: Column(
+    return Column(
         children: [
           // Container(color: Colors.deepOrange.shade100, height: 50),
           Container(
@@ -992,7 +948,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           _buildBody(context),
         ],
-      ),
+
     );
   }
 }
