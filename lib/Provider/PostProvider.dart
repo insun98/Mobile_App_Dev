@@ -30,7 +30,7 @@ class PostProvider extends ChangeNotifier {
   List<Post> _bookPosts = [];
   List<Post> get bookPosts => _bookPosts;
 
-  Post _singlePost = Post(docId: "", image: "", title: "", price: 0, like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "");
+  Post _singlePost = Post(docId: "", image: "", title: "", price: 0, like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "", creatorImage: '', lat: 0.0, lng: 0.0);
   Post get singlePost => _singlePost;
 
 
@@ -198,7 +198,7 @@ class PostProvider extends ChangeNotifier {
         .doc(docId)
         .snapshots()
         .listen((snapshot) {
-      _singlePost = Post(docId: "", image: "", title: "", price: 0, like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "");
+      _singlePost = Post(docId: "", image: "", title: "", price: 0, like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "", creatorImage: '', lat: 0.0, lng: 0.0);
 
       if (snapshot.data() != null) {
         _singlePost.docId = snapshot.id;

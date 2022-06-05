@@ -138,7 +138,7 @@ class _homeCardState extends State<homeCard> {
 
 
 
-                                init_com("${post.docId}");
+
 
                                //  Navigator.pushNamed(context, '/');
                               // await commentPage.readComments(post.docId);
