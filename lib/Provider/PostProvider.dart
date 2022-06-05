@@ -30,6 +30,10 @@ class PostProvider extends ChangeNotifier {
   List<Post> _bookPosts = [];
   List<Post> get bookPosts => _bookPosts;
 
+  Post _singlePost = Post(docId: "", image: "", title: "", price: 0, like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "");
+  Post get singlePost => _singlePost;
+
+
   List<Marker> _mapPost = [];
   List<Marker> get mapPost => _mapPost;
 
@@ -188,7 +192,35 @@ class PostProvider extends ChangeNotifier {
 
 
   }
+  Future<void> getSinglePost(String docId) async {
+    await FirebaseFirestore.instance
+        .collection('post')
+        .doc(docId)
+        .snapshots()
+        .listen((snapshot) {
+      _singlePost = Post(docId: "", image: "", title: "", price: 0, like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "");
 
+      if (snapshot.data() != null) {
+        _singlePost.docId = snapshot.id;
+        _singlePost.image = snapshot.data()!['image'];
+        _singlePost.title = snapshot.data()!['title'];
+        _singlePost.price = snapshot.data()!['price'];
+
+        _singlePost.like = snapshot.data()!['like'];
+        _singlePost.likeUsers = snapshot.data()!['likeUsers'];
+        _singlePost.type = snapshot.data()!['type'];
+        _singlePost.description = snapshot.data()!['description'];
+        _singlePost.create = snapshot.data()!['create'];
+        _singlePost.modify = snapshot.data()!['modify'];
+        _singlePost.creator = snapshot.data()!['creator'];
+        _singlePost.creatorId = snapshot.data()!['creatorId'];
+      }
+      notifyListeners();
+    });
+
+
+
+  }
   Future<void> getTypePost(String std) async {
     FirebaseFirestore.instance
         .collection('post')
