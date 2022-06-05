@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
-
+import 'package:location/location.dart';
 import '../src/ItemCard.dart';
 import '../src/friendProfile.dart';
 import '../Provider/AuthProvider.dart';
@@ -15,11 +17,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+
+//String locateApiKey = 'AIzaSyC1s4E9It3tVo6o8tqN3Z1OkVRkpuZ2LZY';
 
 class addPostPage extends StatefulWidget {
 
   final File? image;
-  const addPostPage({required this.image});
+  final List<String> prediction;
+  const addPostPage({required this.image, required this.prediction});
   @override
   _addPostPageState createState() => _addPostPageState();
 }
@@ -33,12 +39,42 @@ class _addPostPageState extends State<addPostPage> {
   bool order =true;
 
 
+  double lat = 0;
+  double lng = 0;
+  Location location = new Location();
+  bool _serviceEnabled = true;
+  late PermissionStatus _permissionGranted;
+
+  _locateMe() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    // Track user Movements
+    location.onLocationChanged.listen((res) {
+      setState(() {
+        lat = res.latitude!;
+        lng = res.longitude!;
+      });
+    });
+  }
+
   String dropdownValue = '한식';
   @override
   Widget build(BuildContext context) {
     PostProvider postProvider= Provider.of<PostProvider>(context);
-
-
 
     return Scaffold(
       resizeToAvoidBottomInset : false,
@@ -69,7 +105,7 @@ class _addPostPageState extends State<addPostPage> {
 
               if (_formKey.currentState!.validate()) {
                 await postProvider.addPost(URL, dropdownValue,_controller.text,
-                    int.parse(_controller1.text), _controller2.text);
+                    int.parse(_controller1.text), _controller2.text, lat, lng);
                 _controller.clear();
                 _controller1.clear();
                 _controller2.clear();
@@ -86,14 +122,32 @@ class _addPostPageState extends State<addPostPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Image.file(File(widget.image!.path),height: 200, width:500,fit:BoxFit.fill),
+           Row(
+           children:[
+             Text("요리 제목 추천: "),
+             SizedBox( height:50, child:ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: widget.prediction.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                return TextButton(
+                        onPressed: ()  async {
+                          _controller.text = widget.prediction[index];
+                        },
+                        child: Text(
+                        widget.prediction[index], style: const TextStyle(color: Colors.black),
+                        ),
+
+                );
+              },
+
+
+            ),),],),
             Container(
 
               margin: EdgeInsets.all(10),
               child:Row(
-
                 children:[
-
-
 
                   Expanded(child: TextFormField(
                     controller: _controller,
@@ -122,9 +176,7 @@ class _addPostPageState extends State<addPostPage> {
                     },
                   ),
                   const SizedBox(width: 20.0),
-
                 ],
-
               ),
             ),
             const SizedBox(height: 12.0),
@@ -155,6 +207,19 @@ class _addPostPageState extends State<addPostPage> {
                 }
                 return null;
               },
+            ),
+            const SizedBox(height: 40.0),
+            Container(
+              child: Center(
+                child: Text("Lat: $lat, Lng: $lng"),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: RaisedButton(
+                child: Text("Locate Me"),
+                onPressed: () => _locateMe(),
+              ),
             ),
           ],
         ),

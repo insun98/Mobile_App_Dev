@@ -94,11 +94,9 @@ class _BookPageState extends State<BookPage> {
         builder: (context, appState, _) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            bookCard(
-              mybook: profileProvider.myBookPost,
-              posts: postProvider.allPosts,
-              myprofile: profileProvider.myProfile
-            ),
+            // bookCard(
+            //   mybook: profileProvider.myBookPost,
+            // ),
           ],
 
         ),
