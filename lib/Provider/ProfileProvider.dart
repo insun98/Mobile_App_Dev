@@ -49,6 +49,7 @@ class ProfileProvider extends ChangeNotifier {
 
 
 
+
             FirebaseFirestore.instance
                 .collection('user')
                 .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -69,6 +70,56 @@ class ProfileProvider extends ChangeNotifier {
               }
               notifyListeners();
             });});
+
+
+        print(_myProfile.subscribing.length);
+        _subscribingProfile = [];
+        for (var subscribingUser in _myProfile.subscribing) {
+          FirebaseFirestore.instance
+              .collection('user')
+              .doc(subscribingUser)
+              .snapshots()
+              .listen((snapshot) {
+            _subscribingProfile.add(Profile(
+              name:snapshot.data()!['name'],
+              id:snapshot.data()!['id'],
+              email:snapshot.data()!['email'],
+              uid:snapshot.id,
+              bookmark: snapshot.data()!['bookmark'],
+              subscribers: snapshot.data()!['subscriber'],
+              subscribing: snapshot.data()!['subscribing'], photo: snapshot.data()!['image'], profession: snapshot.data()!['profession'],
+            ));
+            notifyListeners();
+          });
+          notifyListeners();
+        }
+        for(var userBookMark in _myProfile.bookmark){
+          FirebaseFirestore.instance
+              .collection('user')
+              .doc(userBookMark)
+              .snapshots()
+              .listen((snapshot){
+                _myBookPost.add(Post(
+                  docId: snapshot.id,
+                  title: snapshot.data()!['title'] as String,
+                  image: snapshot.data()!['image'],
+                  description: snapshot.data()!['description'] as String,
+                  type: snapshot.data()!['type'] as String,
+                  create: snapshot.data()!['create'],
+                  modify: snapshot.data()!['modify'],
+                  creator: snapshot.data()!['creator'] as String,
+                  creatorId: snapshot.data()!['creatorId'] as String,
+                  creatorImage: snapshot.data()!['creatorImage'] as String,
+                  price: snapshot.data()!['price'],
+                  like: snapshot.data()!['like'],
+                  likeUsers: snapshot.data()!['likeUsers'],
+                  lat: snapshot.data()!['lat'],
+                  lng: snapshot.data()!['lng'],
+                ));
+          });
+
+        }
+      });
 
       if(_myProfile.uid == FirebaseAuth.instance.currentUser!.uid) {
         getFriends();
@@ -187,6 +238,7 @@ class ProfileProvider extends ChangeNotifier {
     }
 
 
+
   bool? _checkUser;
   List<Profile> _subscribingProfile = [];
   List<Profile> get subscribingProfile => _subscribingProfile;
@@ -197,8 +249,8 @@ class ProfileProvider extends ChangeNotifier {
   List<Profile> get bookMarkPost => _bookMarkPost;
 
 
-  List<String> _myBookPost = [];
-  List<String> get myBookPost => _myBookPost;
+  List<Post> _myBookPost = [];
+  List<Post> get myBookPost => _myBookPost;
 
   //My profile
   Profile _myProfile = Profile(

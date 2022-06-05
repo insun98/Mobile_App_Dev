@@ -52,14 +52,14 @@ class _homeCardState extends State<homeCard> {
                     children: [
                       CircleAvatar(
                         radius: 20.0,
-                        backgroundImage: NetworkImage( '${profileProvider.otherProfile.photo}'),
+                        backgroundImage: NetworkImage( '${post.creatorImage}'),
                         backgroundColor: Colors.transparent,
                       ),
 
 
                       SizedBox(width: 20,),
                       Text(
-                        '${name}',
+                        '${post.creatorId}',
                         style: TextStyle(
                           fontSize: 13,
                         ),
@@ -99,14 +99,6 @@ class _homeCardState extends State<homeCard> {
                         .start,
                     // TODO: Change innermost Column (103)
                     children: <Widget>[
-                      Text(
-                                              '$name',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 13,
-                                              ),
-                                              maxLines: 1,
-                      ),
                       // TODO: Handle overflowing labels (103)
                       Text(
                         '열량: ',

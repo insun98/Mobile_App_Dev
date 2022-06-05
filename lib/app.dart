@@ -24,6 +24,7 @@ import 'package:shrine/src/book.dart';
 
 import 'src/myProfile.dart';
 import 'src/hot.dart';
+import 'src/map.dart';
 import 'ranking.dart';
 
 
@@ -80,6 +81,10 @@ class ShrineApp extends StatelessWidget {
       '/rank': (BuildContext context) => const rankPage(),
         '/editProfile': (BuildContext context) => const editProfile(),
         '/viewSubscribers': (BuildContext context) => const viewSubscribers(),
+
+        '/map':(BuildContext context) => const MyMap(),
+      
+
 
         '/postDetail': (BuildContext context) => const PostDetail(),
     '/logo': (BuildContext context) => const Logo(),

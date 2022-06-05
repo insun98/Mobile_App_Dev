@@ -106,9 +106,9 @@ class _StartPageState extends State<StartPage> {
                   Icons.photo_filter_outlined,
                   color: Colors.black,
                 ),
-                title: const Text('Posts'),
+                title: const Text('Map'),
                 onTap: () {
-                  // Navigator.pushNamed(context, '/friendlist');
+                  Navigator.pushNamed(context, '/map');
                 },
               ),
               const Divider(),

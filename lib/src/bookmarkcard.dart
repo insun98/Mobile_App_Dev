@@ -14,7 +14,7 @@ class bookCard extends StatefulWidget {
   const bookCard({required this.mybook, required this.posts, required this.myprofile});
    final List<Post> posts;
    final Profile myprofile;
-   final List<String> mybook;
+   final List<Post> mybook;
   @override
   _bookCardState createState() => _bookCardState();
 }
@@ -26,10 +26,11 @@ class _bookCardState extends State<bookCard> {
   Widget build(BuildContext context) {
     ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
     List<Card> _buildListCards(BuildContext context) {
-      List<Post> posts = widget.posts;
-      List<String> book = widget.mybook;
-      print("${book.length}");
-      List<Post> posts1 = [];
+      //profileProvider.getBookmark();
+      List<Post> posts =  profileProvider.myBookPost;
+      List<Post> book = widget.mybook;
+      print("${posts.length}");
+
       if (posts.isEmpty) {
         return const <Card>[];
       }
@@ -37,19 +38,11 @@ class _bookCardState extends State<bookCard> {
       final ThemeData theme = Theme.of(context);
       final NumberFormat formatter = NumberFormat.simpleCurrency(
           locale: Localizations.localeOf(context).toString());
-      for(int i=0;i<posts.length;i++){
-        for(int j=0;j<book.length;j++){
-          print("${posts[i].docId}");
-          if(posts[i].docId == book[j]){
-          posts1.add(posts[i]);
-          }
-        }
-      }
-      if (posts1.isEmpty) {
+      if (posts.isEmpty) {
         print("empty");
         return const <Card>[];
       }
-      return posts1.map((post) {
+      return posts.map((post) {
         profileProvider.getUser(post.creator);
         return Card(
           clipBehavior: Clip.antiAlias,
@@ -63,14 +56,14 @@ class _bookCardState extends State<bookCard> {
                       CircleAvatar(
                         radius: 20.0,
                         backgroundImage: NetworkImage(
-                            '${profileProvider.otherProfile.photo}'),
+                            '${post.creatorImage}'),
                         backgroundColor: Colors.transparent,
                       ),
 
 
                       SizedBox(width: 20,),
                       Text(
-                        '${profileProvider.otherProfile.name}',
+                        '${post.creatorId}',
                         style: TextStyle(
                           fontSize: 13,
                         ),
