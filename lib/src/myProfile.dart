@@ -46,7 +46,7 @@ class _myProfileState extends State<myProfile> {
                     style: const TextStyle(fontSize: 15, color: Colors.black)),
                 const SizedBox(height: 10.0),
                 Text(
-                    'Subscribers:${ProfileProvider.myProfile.subscribers.length}',
+                    '구독자:${ProfileProvider.myProfile.subscribers.length}',
                     style: const TextStyle(fontSize: 15, color: Colors.black)),
                 const SizedBox(height: 10.0),
                 Row(
@@ -262,4 +262,82 @@ class _editProfileState extends State<editProfile> {
       return false;
     }
   }
+}
+class PostDetail extends StatefulWidget {
+  const PostDetail({Key? key}) : super(key: key);
+
+  @override
+  _PostDetaileState createState() => _PostDetaileState();
+}
+
+class _PostDetaileState extends State<PostDetail> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    PostProvider postProvider = Provider.of<PostProvider>(context);
+    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        bottomOpacity: 0.0,
+        elevation: 0.0,
+        title:  Text(
+          postProvider.singlePost.title,
+          style: TextStyle(color: Colors.black),
+        ),
+        leading: IconButton(
+        icon: Icon(Icons.clear),
+          onPressed: () async {
+            Navigator.pop(context);
+          }
+        ),
+
+      ),
+      body: Consumer<ProfileProvider>(
+        builder: (context, ProfileProvider, _) => SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+
+                Image.network(
+                  postProvider.singlePost.image,
+                  height: 200.0,
+                  width: 300.0,
+                ),
+
+
+              Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:[
+
+                    Text('음식종류: ${postProvider.singlePost.type}',
+                        style: TextStyle(
+                            fontSize: 17, color: Colors.grey[600])),
+                  Text('재료: ',
+                      style: TextStyle(
+                          fontSize: 17, color: Colors.grey[600])),
+                  Text('방법: ',
+                      style: TextStyle(
+                          fontSize: 17, color: Colors.grey[600])),
+
+                  Text(postProvider.singlePost.description,
+                      style: TextStyle(
+                          fontSize: 17, color: Colors.grey[600])),
+
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+    );
+  }
+
 }

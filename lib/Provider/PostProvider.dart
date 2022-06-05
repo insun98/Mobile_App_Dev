@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../firebase_options.dart';
 
 class PostProvider extends ChangeNotifier {
@@ -17,6 +19,8 @@ class PostProvider extends ChangeNotifier {
   List<Post> get myPost => _myPost;
   List<Post> _allPosts = [];
   List<Post> get allPosts => _allPosts;
+  List<Post> _orderPosts = [];
+  List<Post> get orderPosts => _orderPosts;
   List<Post> _typePosts = [];
   List<Post> get typePosts => _typePosts;
 
@@ -26,6 +30,12 @@ class PostProvider extends ChangeNotifier {
   List<Post> _bookPosts = [];
   List<Post> get bookPosts => _bookPosts;
 
+  Post _singlePost = Post(docId: "", image: "", title: "", price: 0, like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "");
+  Post get singlePost => _singlePost;
+
+
+  List<Marker> _mapPost = [];
+  List<Marker> get mapPost => _mapPost;
 
   Future<void> init() async {
     await Firebase.initializeApp(
@@ -33,7 +43,9 @@ class PostProvider extends ChangeNotifier {
     );
     StreamSubscription<QuerySnapshot>? _myPostSubscription;
     StreamSubscription<QuerySnapshot>? _allPostSubscription;
+    StreamSubscription<QuerySnapshot>? _orderPostSubscription;
     StreamSubscription<QuerySnapshot>? _postSubscription;
+    StreamSubscription<QuerySnapshot>? _mapSubscription;
     final storageRef = FirebaseStorage.instance.ref();
     final filename = "defaultProfile.png";
     final defaultProPicRef = storageRef.child(filename);
@@ -61,9 +73,12 @@ class PostProvider extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
 
           );
@@ -91,9 +106,12 @@ class PostProvider extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
           );
           notifyListeners();
@@ -102,9 +120,42 @@ class PostProvider extends ChangeNotifier {
         notifyListeners();
       });
 
+      _orderPostSubscription = FirebaseFirestore.instance
+          .collection('post')
+          .orderBy('like', descending: true)
+          .snapshots()
+          .listen((snapshot) {
+        _orderPosts = [];
+        for (final document in snapshot.docs) {
+          _orderPosts.add(
+            Post(
+              docId: document.id,
+              title: document.data()['title'] as String,
+              image: document.data()['image'],
+              description: document.data()['description'] as String,
+              type: document.data()['type'] as String,
+              create: document.data()['create'],
+              modify: document.data()['modify'],
+              creator: document.data()['creator'] as String,
+              creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
+              price: document.data()['price'],
+              like: document.data()['like'],
+              likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
+            ),
+          );
+          notifyListeners();
+          print(document.data()['image']);
+        }
+        notifyListeners();
+      });
 
     });
   }
+
+
   Future<void> getPost(String uid) async {
     FirebaseFirestore.instance
         .collection('post')
@@ -124,9 +175,12 @@ class PostProvider extends ChangeNotifier {
             modify: document.data()['modify'],
             creator: document.data()['creator'] as String,
             creatorId: document.data()['creatorId'] as String,
+            creatorImage: document.data()['creatorImage'] as String,
             price: document.data()['price'],
             like: document.data()['like'],
             likeUsers: document.data()['likeUsers'],
+            lat: document.data()['lat'],
+            lng: document.data()['lng'],
           ),
 
         );
@@ -138,7 +192,35 @@ class PostProvider extends ChangeNotifier {
 
 
   }
+  Future<void> getSinglePost(String docId) async {
+    await FirebaseFirestore.instance
+        .collection('post')
+        .doc(docId)
+        .snapshots()
+        .listen((snapshot) {
+      _singlePost = Post(docId: "", image: "", title: "", price: 0, like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "");
 
+      if (snapshot.data() != null) {
+        _singlePost.docId = snapshot.id;
+        _singlePost.image = snapshot.data()!['image'];
+        _singlePost.title = snapshot.data()!['title'];
+        _singlePost.price = snapshot.data()!['price'];
+
+        _singlePost.like = snapshot.data()!['like'];
+        _singlePost.likeUsers = snapshot.data()!['likeUsers'];
+        _singlePost.type = snapshot.data()!['type'];
+        _singlePost.description = snapshot.data()!['description'];
+        _singlePost.create = snapshot.data()!['create'];
+        _singlePost.modify = snapshot.data()!['modify'];
+        _singlePost.creator = snapshot.data()!['creator'];
+        _singlePost.creatorId = snapshot.data()!['creatorId'];
+      }
+      notifyListeners();
+    });
+
+
+
+  }
   Future<void> getTypePost(String std) async {
     FirebaseFirestore.instance
         .collection('post')
@@ -158,9 +240,12 @@ class PostProvider extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
           );
         }
@@ -187,9 +272,12 @@ class PostProvider extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
           );
         }
@@ -216,9 +304,12 @@ class PostProvider extends ChangeNotifier {
               modify: document.data()['modify'],
               creator: document.data()['creator'] as String,
               creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
           );
         }
@@ -227,6 +318,30 @@ class PostProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // getBookmark()  {
+  //   for (var bookMarkPost in myProfile.bookmark) {
+  //     FirebaseFirestore.instance
+  //         .collection('user')
+  //         .doc(bookMarkPost)
+  //         .snapshots()
+  //         .listen((snapshot) {
+  //       myBookPost.add(Post(
+  //         docId: snapshot.id,
+  //         title: snapshot.data()!['title'] as String,
+  //         image: snapshot.data()!['image'],
+  //         description: snapshot.data()!['description'] as String,
+  //         type: snapshot.data()!['type'] as String,
+  //         create: snapshot.data()!['create'],
+  //         modify: snapshot.data()!['modify'],
+  //         creator: snapshot.data()!['creator'] as String,
+  //         price: snapshot.data()!['price'],
+  //         like: snapshot.data()!['like'],
+  //         likeUsers: snapshot.data()!['likeUsers'],
+  //       )
+  //       );
+  //     });
+  //   }
+  // }
   Future<void> updateDoc(String docID, int like, bool islike) async {
     FirebaseFirestore.instance
         .collection("post")
@@ -276,7 +391,7 @@ class PostProvider extends ChangeNotifier {
   }
 
   Future<DocumentReference> addPost(
-      String URL, String type, String title, int price, String description) {
+      String URL, String type, String title, int price, String description, double lat, double lng) {
     return FirebaseFirestore.instance.collection('post').add(<String, dynamic>{
       'image': URL,
       'type': type,
@@ -288,6 +403,8 @@ class PostProvider extends ChangeNotifier {
       'create': FieldValue.serverTimestamp(),
       'modify': FieldValue.serverTimestamp(),
       'creator': FirebaseAuth.instance.currentUser!.uid,
+      'lat': lat,
+      'lng': lng,
     });
   }
 }
@@ -305,7 +422,10 @@ class Post {
         required this.create,
         required this.modify,
         required this.creator,
-        required this.creatorId});
+        required this.creatorId,
+        required this.creatorImage,
+        required this.lat,
+        required this.lng});
   String docId;
   String image;
   String creatorId;
@@ -318,4 +438,7 @@ class Post {
   Timestamp create;
   Timestamp modify;
   String creator;
+  String creatorImage;
+  double lat;
+  double lng;
 }

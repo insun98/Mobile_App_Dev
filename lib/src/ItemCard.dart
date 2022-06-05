@@ -41,9 +41,14 @@ class _itemCardState extends State<itemCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               AspectRatio(
-                aspectRatio: 7 / 6,
+                aspectRatio: 6/ 6,
                 child: Container(
                   margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                  child:InkWell(
+                    onTap:() async {
+                      await postProvider.getSinglePost(post.docId);
+                      Navigator.pushNamed(context, '/postDetail');
+                    },
                   child: Image.network(
 
                     post.image,
@@ -52,41 +57,7 @@ class _itemCardState extends State<itemCard> {
                     fit: BoxFit.fill,
                   ),
                 ),
-              ),
-              // Expanded(
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 15, 0.0, 0.0),
-                child: Column(
-                  // TODO: Align labels to the bottom and center (103)
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  // TODO: Change innermost Column (103)
-                  children: <Widget>[
-
-                    const SizedBox(height: 5.0),
-                    Text(
-                      post.title,
-                      style: theme.textTheme.headline6,
-                      maxLines: 1,
-                    ),
-                    SizedBox(height:15),
-                    Row(
-                      children: [
-                        SizedBox(height:50,width:150,child:Text(post.description, style: TextStyle(fontSize: 15))),
-
-                         TextButton(
-                            child:
-                            const Text('more', style: TextStyle(fontSize: 8)),
-                            onPressed: () {
-
-
-                            },
-                          ),
-
-                      ],
-                    ),
-                  ],
                 ),
-                // ),
               ),
             ],
           ),
@@ -94,12 +65,11 @@ class _itemCardState extends State<itemCard> {
       }).toList();
     }
 
-    // TODO: implement build
     return Flexible(
       child: GridView.count(
-        crossAxisCount: 1,
-        padding: const EdgeInsets.all(16.0),
-        childAspectRatio: 3 / 1,
+        crossAxisCount: 3,
+        padding: const EdgeInsets.all(10.0),
+        childAspectRatio: 1 / 1,
         children: _buildListCards(context),
       ),
     );
