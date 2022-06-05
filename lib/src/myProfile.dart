@@ -62,6 +62,15 @@ class _myProfileState extends State<myProfile> {
                     ),
                     SizedBox(width: 30),
                     ElevatedButton(
+                      child: const Text('알람설정'),
+                      style:
+                      ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
+                      onPressed: () async {
+                        Navigator.pushNamed(context, '/alarm');
+                      },
+                    ),
+                    SizedBox(width: 30),
+                    ElevatedButton(
                       child: const Text('로그아웃'),
                       style:
                           ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
