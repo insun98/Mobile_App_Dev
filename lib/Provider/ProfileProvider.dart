@@ -56,48 +56,45 @@ class ProfileProvider extends ChangeNotifier {
               .snapshots()
               .listen((snapshot) {
             _subscribingProfile.add(Profile(
-              name: snapshot.data()!['name'],
-              id: snapshot.data()!['id'],
-              email: snapshot.data()!['email'],
-              uid: snapshot.id,
+              name:snapshot.data()!['name'],
+              id:snapshot.data()!['id'],
+              email:snapshot.data()!['email'],
+              uid:snapshot.id,
               bookmark: snapshot.data()!['bookmark'],
               subscribers: snapshot.data()!['subscriber'],
-              subscribing: snapshot.data()!['subscribing'],
-              photo: snapshot.data()!['image'],
-              profession: snapshot.data()!['profession'],
-            )
-
-            );
+              subscribing: snapshot.data()!['subscribing'], photo: snapshot.data()!['image'], profession: snapshot.data()!['profession'],
+            ));
             notifyListeners();
-          });}
+          });
+          notifyListeners();
+        }
+        for(var userBookMark in _myProfile.bookmark){
+          FirebaseFirestore.instance
+              .collection('user')
+              .doc(userBookMark)
+              .snapshots()
+              .listen((snapshot){
+                _myBookPost.add(Post(
+                  docId: snapshot.id,
+                  title: snapshot.data()!['title'] as String,
+                  image: snapshot.data()!['image'],
+                  description: snapshot.data()!['description'] as String,
+                  type: snapshot.data()!['type'] as String,
+                  create: snapshot.data()!['create'],
+                  modify: snapshot.data()!['modify'],
+                  creator: snapshot.data()!['creator'] as String,
+                  creatorId: snapshot.data()!['creatorId'] as String,
+                  creatorImage: snapshot.data()!['creatorImage'] as String,
+                  price: snapshot.data()!['price'],
+                  like: snapshot.data()!['like'],
+                  likeUsers: snapshot.data()!['likeUsers'],
+                  lat: snapshot.data()!['lat'],
+                  lng: snapshot.data()!['lng'],
+                ));
+          });
 
-            FirebaseFirestore.instance
-                .collection('user')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .get()
-                .then((DocumentSnapshot documentSnapshot) {
-              _myBookPost = [];
-              if (documentSnapshot.exists) {
-                try {
-                  dynamic book = snapshot.get(FieldPath(['bookmark']));
-                  // _myBookPost.add(
-                  print("${book[0]}");
-                  //);
-                } on StateError catch (e) {
-                  print('No field exists!');
-                }
-              } else {
-                print('Document does not exist on the database');
-              }
-              notifyListeners();
-            });});
-
-
-
-
-
-
-
+        }
+      });
       if(_myProfile.uid == FirebaseAuth.instance.currentUser!.uid) {
         getFriends();
       }
@@ -163,17 +160,14 @@ class ProfileProvider extends ChangeNotifier {
           .snapshots()
           .listen((snapshot) {
         subscribingProfile.add(Profile(
-             name:snapshot.data()!['name'],
-              id:snapshot.data()!['id'],
-        email:snapshot.data()!['email'],
-        uid:snapshot.id,
-        bookmark: snapshot.data()!['bookmark'],
-        subscribers: snapshot.data()!['subscriber'],
-        subscribing: snapshot.data()!['subscribing'], photo: snapshot.data()!['image'], profession: snapshot.data()!['profession'],
-        )
-
-          );
-
+          name:snapshot.data()!['name'],
+          id:snapshot.data()!['id'],
+          email:snapshot.data()!['email'],
+          uid:snapshot.id,
+          bookmark: snapshot.data()!['bookmark'],
+          subscribers: snapshot.data()!['subscriber'],
+          subscribing: snapshot.data()!['subscribing'], photo: snapshot.data()!['image'], profession: snapshot.data()!['profession'],
+        ));
         });
       }
     }
@@ -203,8 +197,28 @@ class ProfileProvider extends ChangeNotifier {
   //   }
   // }
 
-
-
+//});
+//        }
+//         Future<void> getUser(String uid) async {
+//           FirebaseFirestore.instance
+//               .collection('user')
+//               .doc(uid)
+//               .snapshots()
+//               .listen((snapshot) {
+//             if (snapshot.data() != null) {
+//               _otherProfile.name = snapshot.data()!['name'];
+//               _otherProfile.email = snapshot.data()!['email'];
+//               _otherProfile.id = snapshot.data()!['id'];
+//               _otherProfile.subscribers = snapshot.data()!['subscribers'];
+//               _otherProfile.subscribing = snapshot.data()!['subscribing'];
+//               _otherProfile.bookmark = snapshot.data()!['bookmark'];
+//               _otherProfile.photo = snapshot.data()!['image'];
+//               _otherProfile.uid = snapshot.data()!['uid'];
+//               _otherProfile.profession = snapshot.data()!['uid'];
+//               notifyListeners();
+//             }
+//           });
+//         }
 
 
 
@@ -236,8 +250,8 @@ class ProfileProvider extends ChangeNotifier {
   List<Profile> get bookMarkPost => _bookMarkPost;
 
 
-  List<String> _myBookPost = [];
-  List<String> get myBookPost => _myBookPost;
+  List<Post> _myBookPost = [];
+  List<Post> get myBookPost => _myBookPost;
 
   //My profile
   Profile _myProfile = Profile(

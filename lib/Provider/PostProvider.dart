@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../firebase_options.dart';
 
 class PostProvider extends ChangeNotifier {
@@ -28,8 +30,8 @@ class PostProvider extends ChangeNotifier {
   List<Post> _bookPosts = [];
   List<Post> get bookPosts => _bookPosts;
 
-  List<Post> _myBookPost = [];
-  List<Post> get myBookPost => _myBookPost;
+  List<Marker> _mapPost = [];
+  List<Marker> get mapPost => _mapPost;
 
   Future<void> init() async {
     await Firebase.initializeApp(
@@ -39,6 +41,7 @@ class PostProvider extends ChangeNotifier {
     StreamSubscription<QuerySnapshot>? _allPostSubscription;
     StreamSubscription<QuerySnapshot>? _orderPostSubscription;
     StreamSubscription<QuerySnapshot>? _postSubscription;
+    StreamSubscription<QuerySnapshot>? _mapSubscription;
     final storageRef = FirebaseStorage.instance.ref();
     final filename = "defaultProfile.png";
     final defaultProPicRef = storageRef.child(filename);
@@ -70,6 +73,8 @@ class PostProvider extends ChangeNotifier {
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
 
           );
@@ -101,6 +106,8 @@ class PostProvider extends ChangeNotifier {
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
           );
           notifyListeners();
@@ -131,6 +138,8 @@ class PostProvider extends ChangeNotifier {
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
           );
           notifyListeners();
@@ -141,6 +150,7 @@ class PostProvider extends ChangeNotifier {
 
     });
   }
+
 
   Future<void> getPost(String uid) async {
     FirebaseFirestore.instance
@@ -165,6 +175,8 @@ class PostProvider extends ChangeNotifier {
             price: document.data()['price'],
             like: document.data()['like'],
             likeUsers: document.data()['likeUsers'],
+            lat: document.data()['lat'],
+            lng: document.data()['lng'],
           ),
 
         );
@@ -200,6 +212,8 @@ class PostProvider extends ChangeNotifier {
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
           );
         }
@@ -230,6 +244,8 @@ class PostProvider extends ChangeNotifier {
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
           );
         }
@@ -260,6 +276,8 @@ class PostProvider extends ChangeNotifier {
               price: document.data()['price'],
               like: document.data()['like'],
               likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
             ),
           );
         }
@@ -341,7 +359,7 @@ class PostProvider extends ChangeNotifier {
   }
 
   Future<DocumentReference> addPost(
-      String URL, String type, String title, int price, String description) {
+      String URL, String type, String title, int price, String description, double lat, double lng) {
     return FirebaseFirestore.instance.collection('post').add(<String, dynamic>{
       'image': URL,
       'type': type,
@@ -353,6 +371,8 @@ class PostProvider extends ChangeNotifier {
       'create': FieldValue.serverTimestamp(),
       'modify': FieldValue.serverTimestamp(),
       'creator': FirebaseAuth.instance.currentUser!.uid,
+      'lat': lat,
+      'lng': lng,
     });
   }
 }
@@ -371,7 +391,9 @@ class Post {
         required this.modify,
         required this.creator,
         required this.creatorId,
-        required this.creatorImage});
+        required this.creatorImage,
+        required this.lat,
+        required this.lng});
   String docId;
   String image;
   String creatorId;
@@ -385,4 +407,6 @@ class Post {
   Timestamp modify;
   String creator;
   String creatorImage;
+  double lat;
+  double lng;
 }
