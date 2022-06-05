@@ -13,10 +13,11 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:shrine/src/alarm.dart';
 
 import 'package:shrine/src/friendProfile.dart';
 import 'package:shrine/src/start.dart';
-import 'package:shrine/src/test.dart';
+
 import 'package:shrine/src/viewSubsribers.dart';
 
 import 'package:shrine/src/book.dart';
@@ -70,7 +71,7 @@ class ShrineApp extends StatelessWidget {
       routes: {
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignupPage(),
-        '/': (BuildContext context) => const HomesPage(),
+        '/': (BuildContext context) => const rankPage(),
        '/hot': (BuildContext context) => const HotPage(),
         '/profile': (BuildContext context) => const myProfile(),
         '/book': (BuildContext context) => const BookPage(),
@@ -79,7 +80,8 @@ class ShrineApp extends StatelessWidget {
       '/rank': (BuildContext context) => const rankPage(),
         '/editProfile': (BuildContext context) => const editProfile(),
         '/viewSubscribers': (BuildContext context) => const viewSubscribers(),
-        '/test': (BuildContext context) => const mlKit(),
+        //'/test': (BuildContext context) => const mlKit(),
+        '/alarm': (BuildContext context) => const alarmPage(),
 
 
 

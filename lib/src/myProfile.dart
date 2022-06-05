@@ -62,6 +62,15 @@ class _myProfileState extends State<myProfile> {
                     ),
                     SizedBox(width: 30),
                     ElevatedButton(
+                      child: const Text('알람설정'),
+                      style:
+                      ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
+                      onPressed: () async {
+                        Navigator.pushNamed(context, '/alarm');
+                      },
+                    ),
+                    SizedBox(width: 30),
+                    ElevatedButton(
                       child: const Text('로그아웃'),
                       style:
                           ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
@@ -99,19 +108,6 @@ class _myProfileState extends State<myProfile> {
         ),
       ],
     );
-  }
-
-  Future<bool> getImageFromGallery(ImageSource imageSource) async {
-    var image = await ImagePicker.platform
-        .pickImage(source: imageSource, maxWidth: 650, maxHeight: 100);
-    setState(() {
-      _image = File(image!.path);
-    });
-    if (image != null) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   List<DropdownMenuItem<String>> get dropdownItems {
