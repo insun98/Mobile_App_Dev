@@ -15,8 +15,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:shrine/src/friendProfile.dart';
+import 'package:shrine/src/logoAnimation.dart';
 import 'package:shrine/src/start.dart';
-//import 'package:shrine/src/test.dart';
+
 import 'package:shrine/src/viewSubsribers.dart';
 
 import 'package:shrine/src/book.dart';
@@ -80,10 +81,13 @@ class ShrineApp extends StatelessWidget {
       '/rank': (BuildContext context) => const rankPage(),
         '/editProfile': (BuildContext context) => const editProfile(),
         '/viewSubscribers': (BuildContext context) => const viewSubscribers(),
+
         '/map':(BuildContext context) => const MyMap(),
-       // '/test': (BuildContext context) => const mlKit(),
+      
 
 
+        '/postDetail': (BuildContext context) => const PostDetail(),
+    '/logo': (BuildContext context) => const Logo(),
 
       },
 

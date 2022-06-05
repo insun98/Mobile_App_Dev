@@ -24,7 +24,8 @@ import 'package:http/http.dart' as http;
 class addPostPage extends StatefulWidget {
 
   final File? image;
-  const addPostPage({required this.image});
+  final List<String> prediction;
+  const addPostPage({required this.image, required this.prediction});
   @override
   _addPostPageState createState() => _addPostPageState();
 }
@@ -121,11 +122,33 @@ class _addPostPageState extends State<addPostPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Image.file(File(widget.image!.path),height: 200, width:500,fit:BoxFit.fill),
+           Row(
+           children:[
+             Text("요리 제목 추천: "),
+             SizedBox( height:50, child:ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: widget.prediction.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                return TextButton(
+                        onPressed: ()  async {
+                          _controller.text = widget.prediction[index];
+                        },
+                        child: Text(
+                        widget.prediction[index], style: const TextStyle(color: Colors.black),
+                        ),
+
+                );
+              },
+
+
+            ),),],),
             Container(
 
               margin: EdgeInsets.all(10),
               child:Row(
                 children:[
+
                   Expanded(child: TextFormField(
                     controller: _controller,
                     decoration: const InputDecoration(

@@ -29,8 +29,6 @@ class _viewSubscribersState extends State<viewSubscribers> {
     PostProvider postProvider = Provider.of<PostProvider>(context);
 
     return Scaffold(
-
-
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.transparent,
@@ -62,7 +60,7 @@ class _viewSubscribersState extends State<viewSubscribers> {
              decoration: const BoxDecoration(
                color: Color(0xFF961D36),
              ),
-           child: Row(children:const [ Text('Subsribing', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),)],),),
+           child: Row(children:const [ Text('구독', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),)],),),
       SizedBox(
         height:500,
            child:ListView.separated(
@@ -83,11 +81,10 @@ class _viewSubscribersState extends State<viewSubscribers> {
                   onPressed: ()  async {
                     bool isSubscribed = await ProfileProvider.getUser(ProfileProvider.subscribingProfile[index].uid);
                     await postProvider.getPost(ProfileProvider.subscribingProfile[index].uid);
-                    Navigator.push(
+                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => friendProfile(isSubscribed: isSubscribed)));
-
                   },
                   child: Text(
                     "${ProfileProvider.subscribingProfile[index].id} ",

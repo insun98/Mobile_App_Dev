@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 
 import 'package:provider/provider.dart';
 import 'dart:io';
@@ -19,9 +20,11 @@ class friendProfile extends StatefulWidget {
 }
 
 class _friendProfileState extends State<friendProfile> {
-  int _selectedIndex = 2;
+
   File? _image;
   String dropdownValue = '인기순';
+  List<String>prediction =[];
+  bool textScanning= false;
   Widget build(BuildContext context) {
     ApplicationState authProvider= Provider.of<ApplicationState>(context);
     PostProvider postProvider= Provider.of<PostProvider>(context);
@@ -50,7 +53,7 @@ class _friendProfileState extends State<friendProfile> {
                   bool check = await getImageFromGallery(ImageSource.gallery);
 
                   if(check==true){
-                    Navigator.push(context,  MaterialPageRoute(builder: (context) => addPostPage(image: _image)));
+                    Navigator.push(context,  MaterialPageRoute(builder: (context) => addPostPage(image: _image, prediction: prediction,)));
                   }}) ,
             Builder(
               builder: (context) => IconButton(
@@ -114,39 +117,7 @@ class _friendProfileState extends State<friendProfile> {
             ],
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Color(0xFF961D36),
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white.withOpacity(.60),
-          selectedFontSize: 14,
-          unselectedFontSize: 14,
-          currentIndex: _selectedIndex,
-          //현재 선택된 Index
-          onTap: (int index) {
-            switch (index) {
-              case 0:
-                Navigator.pushNamed(context, '/');
-                break;
-              case 1:
-                Navigator.pushNamed(context, '/hot');
-                break;
-              case 2:
-                Navigator.pushNamed(context, '/profile');
-                break;
-              default:
-            }
-          },
 
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.whatshot), label: 'Hot'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle), label: 'profile'),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-            BottomNavigationBarItem(icon: Icon(Icons.addchart), label: 'Ranking'),
-          ],
-        ),
         body:  Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -171,14 +142,20 @@ class _friendProfileState extends State<friendProfile> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      widget.isSubscribed? ElevatedButton(
-                        child: const Text('Subscribed'),
-                        style: ElevatedButton.styleFrom(primary: Color(0xFF961D35)),
-                        onPressed: () async {Navigator.pushNamed(context, '/editProfile');},
+                      widget.isSubscribed == true? ElevatedButton(
+                        child: const Text('구독중', style: TextStyle(color: Color(0xFF961D35)),),
+                        style: ElevatedButton.styleFrom(primary: Color(0xFFFBF7F7)),
+                        onPressed: () async {ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('이미 구독중입니다.'),
+                        ));},
                       ):ElevatedButton(
-                        child: const Text('Subscribe'),
-                        style: ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
-                        onPressed: () async {Navigator.pushNamed(context, '/editProfile');},
+                        child: const Text('구독하기'),
+                        style: ElevatedButton.styleFrom(primary: Color(0xFF961D35)),
+                        onPressed: () async {ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('구독을 시작합니다.'),
+                        ));
+                          ProfileProvider.addSubscriber(ProfileProvider.otherProfile.uid);
+                          },
                       ),
 
                     ],
@@ -216,13 +193,37 @@ class _friendProfileState extends State<friendProfile> {
         .pickImage(source: imageSource, maxWidth: 650, maxHeight: 100);
     setState(() {
       _image= File(image!.path);
+      print("good");
     });
     if(image != null){
+      print("good");
+      textScanning =true;
+      setState(() {});
+      getRecognisedText1(_image!);
       return true;
     }else {
       return false;
     }
 
+  }
+  void getRecognisedText1 (File image) async{
+    ImageLabelerOptions option = ImageLabelerOptions();
+    final inputImage =InputImage.fromFilePath(image.path);
+    print("success1");
+    final ImageLabelerOptions options = ImageLabelerOptions(confidenceThreshold: 0.5);
+    print("success2");
+
+    final imageLabeler = GoogleMlKit.vision.imageLabeler();
+    print("success3");
+    final List<ImageLabel> imagelabel = await imageLabeler.processImage(inputImage);
+    print("success3");
+    prediction = [];
+    for(ImageLabel one in imagelabel){
+      print("success");
+      prediction.add(one.label);
+    }
+    textScanning = false;
+    setState(() {});
   }
   List<DropdownMenuItem<String>> get dropdownItems{
     List<DropdownMenuItem<String>> menuItems = [
