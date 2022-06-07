@@ -110,7 +110,6 @@ class ProfileProvider extends ChangeNotifier {
               creator: snapshot.data()!['creator'] as String,
               creatorId: snapshot.data()!['creatorId'] as String,
               creatorImage: snapshot.data()!['creatorImage'] as String,
-              price: snapshot.data()!['price'],
               like: snapshot.data()!['like'],
               likeUsers: snapshot.data()!['likeUsers'],
               lat: snapshot.data()!['lat'],
@@ -327,5 +326,4 @@ class Profile {
   List<dynamic> subscribers;
   List<dynamic> subscribing;
   List<dynamic> bookmark;
-
 }

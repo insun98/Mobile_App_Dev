@@ -104,6 +104,8 @@ class CommentPage extends ChangeNotifier {
 
   late String doc_id = "23Eak9GbU2B1HAKMmKKi";
 
+  List<Com> _postComment = [];
+  List<Com> get postComment => _postComment;
 
   CommentPage(String d_id) {
     // String s=ss();
@@ -198,19 +200,33 @@ class CommentPage extends ChangeNotifier {
       notifyListeners();
     });
   }
-
-
-
-
   //user 선언
-
-
   StreamSubscription<QuerySnapshot>? _guestBookSubscription;
   List<Com> _guestBookMessages = [];
 
   List<Com> get guestBookMessages => _guestBookMessages;
 
-
+  // Future<void> getPostComment(String std) async {
+  //   FirebaseFirestore.instance
+  //       .collection('post').doc(std)
+  //       .collection('comment')
+  //       .orderBy('timestamp', descending: true)
+  //       .snapshots()
+  //       .listen((snapshot) {
+  //     _postComment = [];
+  //     for (final document in snapshot.docs) {
+  //         _postComment.add(
+  //           Com(
+  //             name: document.data()['name'],
+  //             message: document.data()['message'],
+  //             formattedDate: document.data()['formattedDate'],
+  //             image_url: document.data()['image_url'],
+  //           ),
+  //         );
+  //     }
+  //   });
+  //   notifyListeners();
+  // }
 }
 
 class GuestBook extends StatefulWidget {
