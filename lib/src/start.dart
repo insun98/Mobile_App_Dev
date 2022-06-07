@@ -57,11 +57,13 @@ class _StartPageState extends State<StartPage> {
                 ),
                 onPressed: () async{
 
-                  bool check = await getImageFromGallery(ImageSource.gallery);
-
+                  await getImageFromGallery(ImageSource.gallery);
+                  bool check = await getRecognisedText1(_image!);
                   if(check==true){
-                    Navigator.push(context,  MaterialPageRoute(builder: (context) => addPostPage(image: _image, prediction: prediction,)));
-                  }}) ,
+                    print("save");
+                    Navigator.push(context,  MaterialPageRoute(builder: (context) => addPostPage(image: _image, prediction: prediction)));
+                 }
+  }) ,
 
             Builder(
               builder: (context) => IconButton(
@@ -162,17 +164,16 @@ class _StartPageState extends State<StartPage> {
       print("good");
     });
     if(image != null){
-      print("good");
-      textScanning =true;
-      setState(() {});
-       await getRecognisedText1(_image!);
-      return true;
+
+
+         return true;
+
     }else {
       return false;
     }
 
   }
-  Future<bool> getRecognisedText1 (File image) async{
+ Future<bool> getRecognisedText1 (File image) async {
     ImageLabelerOptions option = ImageLabelerOptions();
     final inputImage =InputImage.fromFilePath(image.path);
     print("success1");
@@ -181,7 +182,7 @@ class _StartPageState extends State<StartPage> {
 
     final imageLabeler = GoogleMlKit.vision.imageLabeler();
     print("success3");
-    final List<ImageLabel> imagelabel = await imageLabeler.processImage(inputImage);
+    final List<ImageLabel> imagelabel =  await imageLabeler.processImage(inputImage);
     print("success3");
     prediction = [];
     for(ImageLabel one in imagelabel){

@@ -32,7 +32,7 @@ class _LogoState extends State<Logo> {
 
 
               SizedBox(
-              width: 250.0,
+              width: 200.0,
               child: TextLiquidFill(
                 text: 'YORI',
                 waveColor: Color(0xFF961D36),
@@ -46,7 +46,7 @@ class _LogoState extends State<Logo> {
               ),
             ),
                 SizedBox(
-                  width: 250.0,
+                  width: 200.0,
                   child: TextLiquidFill(
                     text: 'JORI',
                     waveColor: Color(0xFF961D36),
