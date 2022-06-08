@@ -327,5 +327,4 @@ class Profile {
   List<dynamic> subscribers;
   List<dynamic> subscribing;
   List<dynamic> bookmark;
-
 }

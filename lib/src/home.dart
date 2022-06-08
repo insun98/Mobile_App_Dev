@@ -11,14 +11,15 @@ class HomesPage extends StatefulWidget {
   @override
   _HomesPageState createState() => _HomesPageState();
 }
-
+String kind = "양식";
 class _HomesPageState extends State<HomesPage> {
-  String kind = "한식";
   @override
   Widget build(BuildContext context) {
     PostProvider postProvider = Provider.of<PostProvider>(context);
     ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
-
+    if(kind == "양식") {
+      postProvider.getTypePost('양식');
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -95,7 +96,7 @@ class _HomesPageState extends State<HomesPage> {
         Consumer<PostProvider>(
           builder: (context, postProvider, _) => homeCard(
             posts: postProvider.typePosts,
-            profiles: profileProvider.allUsers,
+            profiles: profileProvider.myProfile,
           ),
         ),
       ],

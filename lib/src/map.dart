@@ -44,25 +44,27 @@ class _MarkState extends State<Mark> {
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-
-    void _showDialog(BuildContext context, String title, String image){
+    PostProvider postProvider = Provider.of<PostProvider>(context);
+    void _showDialog(BuildContext context, String title, String image, String id){
       showDialog(
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) {
             return AlertDialog(
-              content: Text(title),
+              title: Text(title),
+              content: Image.network(
+                image,
+              ),
               actions: [
                 FlatButton(
                   child: Text('게시물 보기'),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await postProvider.getSinglePost(id);
+                    Navigator.pushNamed(context, '/postDetail');
+                  },
                 ),
                 FlatButton(
                   child: Text('아니오'),
@@ -73,6 +75,7 @@ class _MarkState extends State<Mark> {
           }
       );
     }
+
     for(var pst in widget.marker) {
       double lat = pst.lat;
       double lng = pst.lng;
@@ -83,9 +86,10 @@ class _MarkState extends State<Mark> {
           Marker(
               markerId: MarkerId("${id}"),
               draggable: true,
-              onTap: () => _showDialog(context, title, image),
+              onTap: () => _showDialog(context, title, image, id),
               position: LatLng(lat, lng))
       );
+      print(_markers);
     }
 
     return Container(

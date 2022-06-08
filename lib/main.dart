@@ -41,8 +41,10 @@ class Myapp extends StatelessWidget {
             create: (_) => PostProvider()),
         ChangeNotifierProvider<ProfileProvider>(
             create: (_) => ProfileProvider()),
+
         ChangeNotifierProvider<CommentProvider>(
             create: (_) => CommentProvider ("")),
+
       ],
       child: ShrineApp(),
     );
