@@ -119,6 +119,7 @@ class _bookCardState extends State<bookCard> {
                         ),
                         maxLines: 1,
                       ),
+
                       Text(
                         '재료: 양파(200g), 파(100g), 돼지고기(300g)',
                         style: TextStyle(

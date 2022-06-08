@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shrine/Provider/ProfileProvider.dart';
 import '../Provider/AuthProvider.dart';
+import '../Provider/CommentProvider.dart';
 import '../Provider/PostProvider.dart';
 
 
@@ -19,7 +21,10 @@ class itemCard extends StatefulWidget {
 class _itemCardState extends State<itemCard> {
   @override
   Widget build(BuildContext context) {
+
     PostProvider postProvider= Provider.of<PostProvider>(context);
+    ProfileProvider profileProvider= Provider.of<ProfileProvider>(context);
+    CommentProvider commentProvider= Provider.of<CommentProvider>(context);
     List<Card> _buildListCards(BuildContext context) {
       List<Post> posts = widget.myPost;
 
@@ -46,7 +51,9 @@ class _itemCardState extends State<itemCard> {
                   margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
                   child:InkWell(
                     onTap:() async {
+                      await profileProvider.getUser(post.creator);
                       await postProvider.getSinglePost(post.docId);
+                      await commentProvider.init(post.docId);
                       Navigator.pushNamed(context, '/postDetail');
                     },
                   child: Image.network(

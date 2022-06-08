@@ -95,13 +95,13 @@ class ProfileProvider extends ChangeNotifier {
         }
         for (var userBookMark in _myProfile.bookmark) {
           FirebaseFirestore.instance
-              .collection('user')
+              .collection('post')
               .doc(userBookMark)
               .snapshots()
               .listen((snapshot) {
             _myBookPost.add(Post(
               docId: snapshot.id,
-              title: snapshot.data()!['title'] as String,
+              title: snapshot.data()!['title'],
               image: snapshot.data()!['image'],
               description: snapshot.data()!['description'] as String,
               type: snapshot.data()!['type'] as String,
@@ -110,6 +110,7 @@ class ProfileProvider extends ChangeNotifier {
               creator: snapshot.data()!['creator'] as String,
               creatorId: snapshot.data()!['creatorId'] as String,
               creatorImage: snapshot.data()!['creatorImage'] as String,
+
               like: snapshot.data()!['like'],
               likeUsers: snapshot.data()!['likeUsers'],
               lat: snapshot.data()!['lat'],

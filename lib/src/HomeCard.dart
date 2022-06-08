@@ -102,6 +102,7 @@ class _homeCardState extends State<homeCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+
                       Text(
                         '${post.title}',
                         style: TextStyle(
@@ -110,6 +111,7 @@ class _homeCardState extends State<homeCard> {
                         ),
                         maxLines: 2,
                       ),
+
                       Text(
                         '${post.description}',
                         style: TextStyle(
@@ -126,14 +128,14 @@ class _homeCardState extends State<homeCard> {
                               size: 25,
                             ),
                               onPressed: () async {
-                               //  Navigator.pushNamed(context, '/');
-                              // await commentPage.readComments(post.docId);
+
                                   Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => screen(postid: "${post.docId}"),
                                   )
                                );
+
                               },
                           ),*/
                     ],

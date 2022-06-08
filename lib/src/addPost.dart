@@ -75,6 +75,7 @@ class _addPostPageState extends State<addPostPage> {
   @override
   Widget build(BuildContext context) {
     PostProvider postProvider= Provider.of<PostProvider>(context);
+    ProfileProvider profileProvider= Provider.of<ProfileProvider>(context);
 
     return Scaffold(
       resizeToAvoidBottomInset : false,
@@ -105,7 +106,7 @@ class _addPostPageState extends State<addPostPage> {
 
               if (_formKey.currentState!.validate()) {
                 await postProvider.addPost(URL, dropdownValue,_controller.text,
-                    int.parse(_controller1.text), _controller2.text, lat, lng);
+                    int.parse(_controller1.text), _controller2.text, lat, lng, profileProvider.myProfile.id,profileProvider.myProfile.photo);
                 _controller.clear();
                 _controller1.clear();
                 _controller2.clear();
@@ -122,27 +123,25 @@ class _addPostPageState extends State<addPostPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Image.file(File(widget.image!.path),height: 200, width:500,fit:BoxFit.fill),
-           Row(
-           children:[
-             Text("요리 제목 추천: "),
-             SizedBox( height:50, child:ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: widget.prediction.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (BuildContext context, int index) {
-                return TextButton(
-                        onPressed: ()  async {
-                          _controller.text = widget.prediction[index];
-                        },
-                        child: Text(
+
+                SizedBox( height:50, child:ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: widget.prediction.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (BuildContext context, int index) {
+                    return TextButton(
+                      onPressed: ()  async {
+                        _controller.text = widget.prediction[index];
+                      },
+                      child: Text(
                         widget.prediction[index], style: const TextStyle(color: Colors.black),
-                        ),
+                      ),
 
-                );
-              },
+                    );
+                  },
 
 
-            ),),],),
+                ),),
             Container(
 
               margin: EdgeInsets.all(10),
@@ -179,11 +178,76 @@ class _addPostPageState extends State<addPostPage> {
                 ],
               ),
             ),
+            Container(
+
+              margin: EdgeInsets.all(10),
+              child:Row(
+                children:[
+
+
+
+                  Icon(Icons.access_alarm, color: Color(0xFF961D36)),
+                  const SizedBox(width: 20.0),
+                  Expanded(child: TextFormField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: '조리시간',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter your Price to continue';
+                      }
+                      return null;
+                    },
+                  ),),
+
+                  const SizedBox(width: 20.0),
+                ],
+              ),
+            ),
+            Container(
+
+              margin: EdgeInsets.all(10),
+              child:Row(
+                children:[
+
+
+
+                  Icon(Icons.group, color: Color(0xFF961D36)),
+                  const SizedBox(width: 20.0),
+                  Expanded(child: TextFormField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: '몇 인분',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter your Price to continue';
+                      }
+                      return null;
+                    },
+                  ),),
+
+                  const SizedBox(width: 20.0),
+                ],
+              ),
+            ),
+
+
+
+                  const SizedBox(width: 20.0),
+
+
+
             const SizedBox(height: 12.0),
+            Container (
+              margin: EdgeInsets.all(10),
+              child: Column(children:[
+
             TextFormField(
               controller: _controller1,
               decoration: const InputDecoration(
-                hintText: '가격대',
+                hintText: '재료 예) 양배추(500g), 배추(200g)',
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -207,6 +271,10 @@ class _addPostPageState extends State<addPostPage> {
                 }
                 return null;
               },
+            ),
+
+        ],
+        ),
             ),
             const SizedBox(height: 40.0),
             Container(
@@ -237,4 +305,3 @@ class _addPostPageState extends State<addPostPage> {
     return menuItems;
   }
 }
-
