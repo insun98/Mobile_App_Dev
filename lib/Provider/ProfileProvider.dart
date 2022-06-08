@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import '../firebase_options.dart';
 import 'PostProvider.dart';
 
+
 class ProfileProvider extends ChangeNotifier {
   String _defaultImage = '';
   ProfileProvider() {
@@ -47,7 +48,6 @@ class ProfileProvider extends ChangeNotifier {
           notifyListeners();
         }
 
-
         FirebaseFirestore.instance
             .collection('user')
             .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -68,7 +68,6 @@ class ProfileProvider extends ChangeNotifier {
           }
           notifyListeners();
         });
-
 
         print(_myProfile.subscribing.length);
         _subscribingProfile = [];
@@ -124,6 +123,31 @@ class ProfileProvider extends ChangeNotifier {
         getFriends();
       }
 
+      _rankSubscription = FirebaseFirestore.instance
+          .collection('user')
+          .orderBy('followers', descending: true)
+          .limit(3)
+          .snapshots()
+          .listen((snapshot) {
+        _rankUsers = [];
+        for (final document in snapshot.docs) {
+          _rankUsers.add(
+            Profile(
+              name: document.data()['name'],
+              id: document.data()['id'],
+              profession: document.data()['profession'],
+              email: document.data()['email'],
+              subscribers: document.data()['subscriber'],
+              subscribing: document.data()['subscribing'],
+              bookmark: document.data()['bookmark'],
+              photo: document.data()['image'],
+              uid: document.id,
+            ),
+          );
+        }
+        notifyListeners();
+      });
+
       //All users
       _allUserSubscription = FirebaseFirestore.instance
           .collection('user')
@@ -147,8 +171,8 @@ class ProfileProvider extends ChangeNotifier {
         }
         notifyListeners();
       });
-    });}
-
+    });
+  }
 
   Future<bool> getUser(String uid) async {
     await FirebaseFirestore.instance
@@ -159,8 +183,7 @@ class ProfileProvider extends ChangeNotifier {
       _otherProfile = Profile(
           name: '',
           id: ' ',
-          photo:
-          '',
+          photo: '',
           email: '',
           subscribers: [],
           subscribing: [],
@@ -183,70 +206,68 @@ class ProfileProvider extends ChangeNotifier {
       notifyListeners();
     });
 
-    if(_myProfile.subscribing.contains(_otherProfile.uid)){
+    if (_myProfile.subscribing.contains(_otherProfile.uid)) {
       return true;
-    }else {
+    } else {
       return false;
     }
-
   }
 
   Future<void> addSubscriber(String uid) async {
     var val = [];
     val.add(FirebaseAuth.instance.currentUser!.uid);
-    FirebaseFirestore.instance.collection("user").doc(
-        uid).update({
-
-      "subscriber": FieldValue.arrayUnion(val)});
-     val = [];
+    FirebaseFirestore.instance
+        .collection("user")
+        .doc(uid)
+        .update({"subscriber": FieldValue.arrayUnion(val)});
+    val = [];
     val.add(uid);
 
-    FirebaseFirestore.instance.collection("user").doc(
-        FirebaseAuth.instance.currentUser!.uid).update({
-
-      "subscribing": FieldValue.arrayUnion(val)});
+    FirebaseFirestore.instance
+        .collection("user")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({"subscribing": FieldValue.arrayUnion(val)});
     _isSubscribed = true;
 
     notifyListeners();
+
   }
 
-
-   getFriends()  {
-     _subscribingProfile = [];
-     for (var subscribingUser in _myProfile.subscribing) {
-       FirebaseFirestore.instance
-           .collection('user')
-           .doc(subscribingUser)
-           .snapshots()
-           .listen((snapshot) {
-         _subscribingProfile.add(Profile(
-           name: snapshot.data()!['name'],
-           id: snapshot.data()!['id'],
-           email: snapshot.data()!['email'],
-           uid: snapshot.id,
-           bookmark: snapshot.data()!['bookmark'],
-           subscribers: snapshot.data()!['subscriber'],
-           subscribing: snapshot.data()!['subscribing'],
-           photo: snapshot.data()!['image'],
-           profession: snapshot.data()!['profession'],
-         )
-
-         );
-         notifyListeners();
-       });}
+  getFriends() {
+    _subscribingProfile = [];
+    for (var subscribingUser in _myProfile.subscribing) {
+      FirebaseFirestore.instance
+          .collection('user')
+          .doc(subscribingUser)
+          .snapshots()
+          .listen((snapshot) {
+        _subscribingProfile.add(Profile(
+          name: snapshot.data()!['name'],
+          id: snapshot.data()!['id'],
+          email: snapshot.data()!['email'],
+          uid: snapshot.id,
+          bookmark: snapshot.data()!['bookmark'],
+          subscribers: snapshot.data()!['subscriber'],
+          subscribing: snapshot.data()!['subscribing'],
+          photo: snapshot.data()!['image'],
+          profession: snapshot.data()!['profession'],
+        ));
+        notifyListeners();
+      });
     }
-
-
+  }
 
   bool? _checkUser;
   List<Profile> _subscribingProfile = [];
   List<Profile> get subscribingProfile => _subscribingProfile;
   List<Profile> _allUsers = [];
+  List<Profile> _rankUsers = [];
+
   List<Profile> get allUsers => _allUsers;
+  List<Profile> get rankUsers => _rankUsers;
 
   List<Profile> _bookMarkPost = [];
   List<Profile> get bookMarkPost => _bookMarkPost;
-
 
   List<Post> _myBookPost = [];
   List<Post> get myBookPost => _myBookPost;
@@ -270,8 +291,7 @@ class ProfileProvider extends ChangeNotifier {
   Profile _otherProfile = Profile(
       name: '',
       id: ' ',
-      photo:
-          '',
+      photo: '',
       email: '',
       subscribers: [],
       subscribing: [],
@@ -285,8 +305,11 @@ class ProfileProvider extends ChangeNotifier {
   void set isSubscribedSet(bool check) {
     _isSubscribed = check;
   }
+
   StreamSubscription<DocumentSnapshot>? _profileSubscription;
   StreamSubscription<QuerySnapshot>? _allUserSubscription;
+  StreamSubscription<QuerySnapshot>? _rankSubscription;
+
   Future<void> editProfile(
       String URL, String name, String id, String profession) async {
     FirebaseFirestore.instance
@@ -303,10 +326,7 @@ class ProfileProvider extends ChangeNotifier {
 }
 
 class Profile {
-
-  Profile(
-  {
-
+  Profile({
     required this.name,
     required this.id,
     required this.email,
