@@ -30,13 +30,17 @@ class _SignupPageState extends State<SignupPage> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
   final _idController = TextEditingController();
-  final _professionController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>(debugLabel: '_signUpPageState');
+  String dropdownValue = '한식';
   @override
   Widget build(BuildContext context) {
     ApplicationState authProvider= Provider.of<ApplicationState>(context);
     return Scaffold(
 
       body: SafeArea(
+        child:Form(
+        key: _formKey,
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           children: <Widget>[
@@ -57,18 +61,20 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 30.0),
             // TODO: Remove filled: true values (103)
-            TextField(
+            TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(
                 filled: true,
                 fillColor: Color(0xFFFBF7F7),
+
                 labelText: '이름',
                 border: OutlineInputBorder(),
               ),
 
+
             ),
           const SizedBox(height: 12.0),
-            TextField(
+            TextFormField(
               controller: _idController,
               decoration: const InputDecoration(
                 filled: true,
@@ -76,6 +82,12 @@ class _SignupPageState extends State<SignupPage> {
                 labelText: '아이디',
                 border: OutlineInputBorder(),
               ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Enter your Price to continue';
+                }
+                return null;
+              },
 
             ),
             const SizedBox(height: 12.0),
@@ -89,15 +101,33 @@ class _SignupPageState extends State<SignupPage> {
               ),
             ),
             const SizedBox(height: 12.0),
-            TextField(
-              controller: _professionController,
+
+        InputDecorator(
               decoration: const InputDecoration(
-                filled: true,
-                fillColor: Color(0xFFFBF7F7),
-                labelText: '전문분야',
-                border: OutlineInputBorder(),
-              ),
+          filled: true,
+          fillColor: Color(0xFFFBF7F7),
+          labelText: '전문분야 ',
+          border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.all(6),
+        ),
+          child: DropdownButtonHideUnderline(
+
+          child:DropdownButton<String>(
+              value: dropdownValue,
+              icon: const Icon(Icons.arrow_drop_down_outlined),
+              elevation: -1,
+
+              style: const TextStyle(color: Colors.black),
+              items: dropdownItems,
+              onChanged: (String? newValue) {
+                setState(() {
+                  dropdownValue = newValue!;
+                });
+              },
             ),
+            
+        ),
+        ),
             const SizedBox(height: 12.0),
             TextField(
               controller: _passwordController,
@@ -114,11 +144,10 @@ class _SignupPageState extends State<SignupPage> {
               child: const Text('가입하기'),
               style: ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
               onPressed: () {
-                authProvider.registerAccount(_usernameController.text, _idController.text, _passwordController.text, _nameController.text, _professionController.text,(e) => _showErrorDialog(context, 'Invalid email', e));
+                authProvider.registerAccount(_usernameController.text, _idController.text, _passwordController.text, _nameController.text, dropdownValue,(e) => _showErrorDialog(context, 'Invalid email', e));
                 _idController.clear();
                 _nameController.clear();
                 _usernameController.clear();
-                _professionController.clear();
                 _passwordController.clear();
                 Navigator.pushNamed(context, '/login');
               },
@@ -127,7 +156,18 @@ class _SignupPageState extends State<SignupPage> {
           ],
         ),
       ),
+      ),
     );
+  }
+  List<DropdownMenuItem<String>> get dropdownItems{
+    List<DropdownMenuItem<String>> menuItems = [
+
+      DropdownMenuItem(child: Text("한식"),value: "한식"),
+      DropdownMenuItem(child: Text("양식"),value: "양식"),
+      DropdownMenuItem(child: Text("중식"),value: "중식"),
+      DropdownMenuItem(child: Text("일식"),value: "일식"),
+    ];
+    return menuItems;
   }
   void _showErrorDialog(BuildContext context, String title, Exception e) {
     showDialog<void>(

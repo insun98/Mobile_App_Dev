@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
+import '../Provider/CommentProvider.dart';
 import '../src/ItemCard.dart';
 import '../Provider/AuthProvider.dart';
 import '../Provider/ProfileProvider.dart';
@@ -9,6 +10,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'comments.dart';
 
 class myProfile extends StatefulWidget {
   const myProfile({Key? key}) : super(key: key);
@@ -289,7 +292,7 @@ class _PostDetaileState extends State<PostDetail> {
           style: TextStyle(color: Colors.black),
         ),
         leading: IconButton(
-        icon: Icon(Icons.clear),
+        icon: Icon(Icons.clear, color: Colors.black,),
           onPressed: () async {
             Navigator.pop(context);
           }
@@ -309,25 +312,110 @@ class _PostDetaileState extends State<PostDetail> {
                 ),
 
 
+
+
+        Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                child: Column(children:[
+                  Icon(Icons.label, color: Color(0xFF961D36)),
+                  Text(postProvider.singlePost.type),
+
+                ],
+                ),
+              ),
+              Container(
+                child: Column(children:[
+                  Icon(Icons.group, color: Color(0xFF961D36)),
+                  Text("1인분"),
+
+                ],
+              ),
+              ),
+              Container(
+                child: Column(children:[
+                  Icon(Icons.access_alarm, color: Color(0xFF961D36)),
+                  Text("60분이내"),
+
+                ],
+
+                ),
+
+              ),
+
+
+            ],
+          )
+
+        ),
+
               Container(
                 padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children:[
 
-                    Text('음식종류: ${postProvider.singlePost.type}',
-                        style: TextStyle(
-                            fontSize: 17, color: Colors.grey[600])),
-                  Text('재료: ',
-                      style: TextStyle(
-                          fontSize: 17, color: Colors.grey[600])),
-                  Text('방법: ',
-                      style: TextStyle(
-                          fontSize: 17, color: Colors.grey[600])),
 
-                  Text(postProvider.singlePost.description,
+                  Text('재료',
                       style: TextStyle(
-                          fontSize: 17, color: Colors.grey[600])),
+                          fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
+                    Text('양배추',
+                        style: TextStyle(
+                            fontSize: 18, color: Colors.black)),
+
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children:[
+
+
+
+                    Text('조리법',
+                        style: TextStyle(
+                            fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
+
+                    Text(postProvider.singlePost.description,
+                        style: TextStyle(
+                            fontSize: 18, color: Colors.black)),
+
+
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:[
+
+
+
+                    Text('댓글',
+                        style: TextStyle(
+                            fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
+
+
+
+                    Consumer<CommentProvider>(
+                      builder: (context, appState, _) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GuestBook(
+                            addMessage: (message) =>
+                                appState.addMessageToGuestBook(message,postProvider.singlePost.docId),
+                            comment: appState.guestBookMessages, // new
+                            //messages
+                          ),
+                        ],
+                      ),
+                    ),
 
                   ],
                 ),
