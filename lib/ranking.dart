@@ -47,30 +47,9 @@ class _rankPageState extends State<rankPage> {
     ApplicationState authProvider = Provider.of<ApplicationState>(context);
     PostProvider postProvider = Provider.of<PostProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-        // leading: TextButton(
-        //     style: TextButton.styleFrom(),
-        //     child: const Text('Yori \n Jori',
-        //         style: TextStyle(color: Color(0xFF961D36), fontFamily: 'Yrsa')),
-        //     onPressed: () {}),
-        // actions: <Widget>[
-        //   IconButton(
-        //       icon: const Icon(
-        //         Icons.clear,
-        //         color: Colors.grey,
-        //         semanticLabel: 'filter',
-        //       ),
-        //       onPressed: () {
-        //         Navigator.pop(context);
-        //       }),
-        // ],
-      ),
-      body: Consumer<ProfileProvider>(
+    return
+    Container(
+      child:Consumer<ProfileProvider>(
         builder: (context, ProfileProvider, _) => Column(
 
           children:[

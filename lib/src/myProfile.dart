@@ -302,14 +302,16 @@ class _PostDetaileState extends State<PostDetail> {
       body: Consumer<ProfileProvider>(
         builder: (context, ProfileProvider, _) => SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-                Image.network(
+                Center (child: Image.network(
                   postProvider.singlePost.image,
                   height: 200.0,
+
                   width: 300.0,
-                ),
+
+                ),),
 
 
 
@@ -329,7 +331,7 @@ class _PostDetaileState extends State<PostDetail> {
               Container(
                 child: Column(children:[
                   Icon(Icons.group, color: Color(0xFF961D36)),
-                  Text("1인분"),
+                  Text("${postProvider.singlePost.amount.toString()}인분"),
 
                 ],
               ),
@@ -337,7 +339,8 @@ class _PostDetaileState extends State<PostDetail> {
               Container(
                 child: Column(children:[
                   Icon(Icons.access_alarm, color: Color(0xFF961D36)),
-                  Text("60분이내"),
+                  postProvider.singlePost.duration < 60?
+                  Text("60분이내"):Text("${postProvider.singlePost.duration.toString()} 분"),
 
                 ],
 
@@ -355,7 +358,7 @@ class _PostDetaileState extends State<PostDetail> {
                 padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children:[
+                  children:const [
 
 
                   Text('재료',
@@ -377,12 +380,12 @@ class _PostDetaileState extends State<PostDetail> {
 
 
 
-                    Text('조리법',
+                    const Text('조리법',
                         style: TextStyle(
                             fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
 
                     Text(postProvider.singlePost.description,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18, color: Colors.black)),
 
 
@@ -397,7 +400,7 @@ class _PostDetaileState extends State<PostDetail> {
 
 
 
-                    Text('댓글',
+                    const Text('댓글',
                         style: TextStyle(
                             fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
 
@@ -419,7 +422,9 @@ class _PostDetaileState extends State<PostDetail> {
 
                   ],
                 ),
+
               ),
+
             ],
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -36,17 +37,14 @@ class _homeCardState extends State<homeCard> {
           locale: Localizations.localeOf(context).toString());
       ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
       PostProvider postProvider= Provider.of<PostProvider>(context);
-      CommentPage commentPage = Provider.of<CommentPage>(context);
+
       return posts.map((post) {
         profileProvider.otherProfile.name="";
         profileProvider.getUser(post.creator);
-        //name = getName(post.creator, profiles);
-        //commentPage.getPostComment(post.docId);
-        print(commentPage.postComment.length);
+
         return Card(
           clipBehavior: Clip.antiAlias,
           child: Wrap(
-            //crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Column(
                 children: [
@@ -119,25 +117,31 @@ class _homeCardState extends State<homeCard> {
                         ),
                         maxLines: 2,
                       ),
-                          FavoriteWidget(post: post, profile: profiles,),
-                          /*IconButton(
-                            icon: const Icon(
-                              Icons.chat_outlined,
-                              semanticLabel: 'chatting',
-                              color: Colors.black,
+
+                          IconButton(
+                            icon:  Icon(
+                              post.likeUsers.contains(FirebaseAuth.instance.currentUser!.uid.toString())?Icons.favorite:Icons.favorite_outline,
+                              semanticLabel: 'favorite',
+                              color: Colors.red,
                               size: 25,
                             ),
+
                               onPressed: () async {
 
-                                  Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => screen(postid: "${post.docId}"),
-                                  )
-                               );
+                                  if(post.likeUsers.contains(FirebaseAuth.instance.currentUser!.uid.toString())){
+                                    postProvider.deletelikeuser(post.docId, post.like);
+                                    setState(() {
+
+                                    });
+                                  }else {
+                                    postProvider.updatelikeuser(post.docId, post.like);
+                                    setState(() {
+
+                                    });
+                                  }
 
                               },
-                          ),*/
+                          ),
                     ],
                   ),
                 ),
@@ -179,105 +183,97 @@ class _homeCardState extends State<homeCard> {
   }
 }
 
-class FavoriteWidget extends StatefulWidget{
-
-
-  const FavoriteWidget({required this.post,required this.profile});
-  final Post post;
-  final Profile profile;
-  @override
-  _FavoriteWidgetState createState() => _FavoriteWidgetState();
-}
-class _FavoriteWidgetState extends State<FavoriteWidget> {
-  bool _isFavorited = false;
-  bool _isBooked = false;
-  List <String> like = [];
-  int count = 0;
-  @override
-  Widget build(BuildContext context) {
-    PostProvider postProvider = Provider.of<PostProvider>(context);
-    postProvider.getspecPost(widget.post.docId);
-    like = postProvider.likeList;
-   _isFavorited = false;
-
-   for(var i in like) {
-     print("hey ${i}");
-     if (i == widget.profile.uid) {
-       _isFavorited = true;
-       break;
-     }
-     else{
-       _isFavorited = false;
-     }
-   }
-
-    return Consumer<PostProvider>( builder: (context, appState, _) => Row(
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(0),
-              width: 30,
-              child: IconButton(
-                padding: const EdgeInsets.all(0),
-                alignment: Alignment.centerLeft,
-                icon: (_isFavorited
-                    ? const Icon(Icons.favorite)
-                    : const Icon(Icons.favorite_border)),
-                color: Colors.red,
-                onPressed: (){
-                  setState(() {
-                    if (_isFavorited) {
-                      int num = 0;
-                      num = widget.post.like -= 1 ;
-                      _isFavorited = false;
-                      postProvider.updateDoc(widget.post.docId, widget.post.like, _isFavorited);
-                      postProvider.deletelikeuser(widget.post.docId);
-                    } else {
-                      widget.post.like += 1;
-                      _isFavorited = true;
-                      postProvider.updateDoc(widget.post.docId, widget.post.like, _isFavorited);
-                      postProvider.updatelikeuser(widget.post.docId);
-                    }
-                  });
-                },
-              ),
-            ),
-            Text(
-              '${widget.post.like}',
-            ),
-          ],
-        ),
-
-       /* Container(
-          padding: const EdgeInsets.all(0),
-          child: IconButton(
-            padding: const EdgeInsets.all(0),
-            alignment: Alignment.centerRight,
-            icon:
-            const Icon(
-              Icons.book,
-              color: Colors.brown,),
-            onPressed:  (){
-              setState(() {
-                if (_isBooked) {
-                  _isBooked = false;
-                  postProvider.deletebook(widget.post.docId);
-                  Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: const Text("collection deleted")));
-                } else {
-                  _isBooked = true;
-                  postProvider.updatebook(widget.post.docId);
-                  Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: const Text("collection added")));
-                }
-              });
-            },
-          ),
-        ),*/
-      ],
-    ),
-    );
-  }
-}
+// class FavoriteWidget extends StatefulWidget{
+//
+//
+//   const FavoriteWidget({required this.post,required this.profile});
+//   final Post post;
+//   final Profile profile;
+//   @override
+//   _FavoriteWidgetState createState() => _FavoriteWidgetState();
+// }
+// class _FavoriteWidgetState extends State<FavoriteWidget> {
+//   bool _isFavorited = false;
+//   bool _isBooked = false;
+//   List <String> like = [];
+//   int count = 0;
+//   @override
+//   Widget build(BuildContext context) {
+//     PostProvider postProvider = Provider.of<PostProvider>(context);
+//     postProvider.getspecPost(widget.post.docId);
+//     like = postProvider.likeList;
+//    _isFavorited = false;
+//
+//
+//
+//
+//     return Consumer<PostProvider>( builder: (context, appState, _) => Row(
+//       children: [
+//         Row(
+//           children: [
+//             Container(
+//               padding: const EdgeInsets.all(0),
+//               width: 30,
+//               child: IconButton(
+//                 padding: const EdgeInsets.all(0),
+//                 alignment: Alignment.centerLeft,
+//                 icon: (_isFavorited
+//                     ? const Icon(Icons.favorite)
+//                     : const Icon(Icons.favorite_border)),
+//                 color: Colors.red,
+//                 onPressed: (){
+//                   setState(() {
+//                     if (_isFavorited) {
+//                       int num = 0;
+//                       num = widget.post.like -= 1 ;
+//                       _isFavorited = false;
+//                       postProvider.updateDoc(widget.post.docId, widget.post.like);
+//                       postProvider.deletelikeuser(widget.post.docId);
+//                     } else {
+//                       widget.post.like += 1;
+//                       _isFavorited = true;
+//                       postProvider.updateDoc(widget.post.docId, widget.post.like);
+//                       postProvider.updatelikeuser(widget.post.docId);
+//                     }
+//                   });
+//                 },
+//               ),
+//             ),
+//             Text(
+//               '${widget.post.like}',
+//             ),
+//           ],
+//         ),
+//
+//        /* Container(
+//           padding: const EdgeInsets.all(0),
+//           child: IconButton(
+//             padding: const EdgeInsets.all(0),
+//             alignment: Alignment.centerRight,
+//             icon:
+//             const Icon(
+//               Icons.book,
+//               color: Colors.brown,),
+//             onPressed:  (){
+//               setState(() {
+//                 if (_isBooked) {
+//                   _isBooked = false;
+//                   postProvider.deletebook(widget.post.docId);
+//                   Scaffold.of(context)
+//                       .showSnackBar(SnackBar(content: const Text("collection deleted")));
+//                 } else {
+//                   _isBooked = true;
+//                   postProvider.updatebook(widget.post.docId);
+//                   Scaffold.of(context)
+//                       .showSnackBar(SnackBar(content: const Text("collection added")));
+//                 }
+//               });
+//             },
+//           ),
+//         ),*/
+//       ],
+//     ),
+//     );
+//   }
+// }
 

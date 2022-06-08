@@ -114,6 +114,8 @@ class ProfileProvider extends ChangeNotifier {
               likeUsers: snapshot.data()!['likeUsers'],
               lat: snapshot.data()!['lat'],
               lng: snapshot.data()!['lng'],
+              duration: snapshot.data()!['duration'],
+              amount: snapshot.data()!['amount'],
             ));
           });
         }

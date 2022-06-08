@@ -52,12 +52,15 @@ class PostProvider extends ChangeNotifier {
       creatorId: "",
       creatorImage: '',
       lat: 0.0,
-      lng: 0.0);
+      lng: 0.0,
+      amount: 0,
+      duration: 0);
 
 
   Post get singlePost => _singlePost;
 
-  Post _specPost = Post(docId: "", image: "", title: "", like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "", creatorImage: '', lat: 0.0, lng: 0.0);
+  Post _specPost = Post(docId: "", image: "", title: "", like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "", creatorImage: '', lat: 0.0, lng: 0.0,  amount: 0,
+      duration: 0);
   Post get specPost => _specPost;
 
   List<String> _likeList = [];
@@ -108,6 +111,8 @@ class PostProvider extends ChangeNotifier {
               likeUsers: document.data()['likeUsers'],
               lat: document.data()['lat'],
               lng: document.data()['lng'],
+              duration: document.data()['duration'],
+              amount: document.data()['amount'],
             ),
 
           );
@@ -141,6 +146,8 @@ class PostProvider extends ChangeNotifier {
               likeUsers: document.data()['likeUsers'],
               lat: document.data()['lat'],
               lng: document.data()['lng'],
+              duration: document.data()['duration'],
+              amount: document.data()['amount'],
             ),
           );
           notifyListeners();
@@ -172,6 +179,8 @@ class PostProvider extends ChangeNotifier {
               likeUsers: document.data()['likeUsers'],
               lat: document.data()['lat'],
               lng: document.data()['lng'],
+              duration: document.data()['duration'],
+              amount: document.data()['amount'],
             ),
           );
           notifyListeners();
@@ -207,6 +216,8 @@ class PostProvider extends ChangeNotifier {
             likeUsers: document.data()['likeUsers'],
             lat: document.data()['lat'],
             lng: document.data()['lng'],
+            duration: document.data()['duration'],
+            amount: document.data()['amount'],
           ),
 
         );
@@ -237,7 +248,7 @@ class PostProvider extends ChangeNotifier {
           creatorId: "",
           creatorImage: '',
           lat: 0.0,
-          lng: 0.0);
+          lng: 0.0, duration: 0, amount: 0);
 
 
       if (snapshot.data() != null) {
@@ -254,6 +265,8 @@ class PostProvider extends ChangeNotifier {
         _singlePost.modify = snapshot.data()!['modify'];
         _singlePost.creator = snapshot.data()!['creator'];
         _singlePost.creatorId = snapshot.data()!['creatorId'];
+        _singlePost.duration = snapshot.data()!['duration'];
+        _singlePost.amount = snapshot.data()!['amount'];
       }
       notifyListeners();
     });
@@ -265,7 +278,7 @@ class PostProvider extends ChangeNotifier {
         .doc(docId)
         .snapshots()
         .listen((snapshot) {
-      _specPost = Post(docId: "", image: "", title: "", like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "", creatorImage: '', lat: 0.0, lng: 0.0);
+      _specPost = Post(docId: "", image: "", title: "", like: 0, likeUsers: [], type: "", description: "", create: Timestamp.now(), modify: Timestamp.now(), creator: "", creatorId: "", creatorImage: '', lat: 0.0, lng: 0.0, duration: 0, amount: 0);
 
       if (snapshot.data() != null) {
         _specPost.docId = snapshot.id;
@@ -315,6 +328,8 @@ class PostProvider extends ChangeNotifier {
               likeUsers: document.data()['likeUsers'],
               lat: document.data()['lat'],
               lng: document.data()['lng'],
+              duration: document.data()['duration'],
+              amount: document.data()['amount'],
             ),
           );
         }
@@ -348,6 +363,8 @@ class PostProvider extends ChangeNotifier {
               likeUsers: document.data()['likeUsers'],
               lat: document.data()['lat'],
               lng: document.data()['lng'],
+              duration: document.data()['duration'],
+              amount: document.data()['amount'],
             ),
           );
         }
@@ -381,6 +398,8 @@ class PostProvider extends ChangeNotifier {
               likeUsers: document.data()['likeUsers'],
               lat: document.data()['lat'],
               lng: document.data()['lng'],
+              duration: document.data()['duration'],
+              amount: document.data()['amount'],
             ),
           );
         }
@@ -414,18 +433,25 @@ class PostProvider extends ChangeNotifier {
   //     });
   //   }
   // }
-  Future<void> updateDoc(String docID, int like, bool islike) async {
+  Future<void> updateDoc(String docID, int like,  ) async {
     FirebaseFirestore.instance
         .collection("post")
         .doc(docID)
         .update(<String, dynamic>{
-      "like": like,
-      "islike": islike,
+      "like": like+1,
+
     });
     notifyListeners();
   }
 
-  Future<void> updatelikeuser(String postID) async {
+  Future<void> updatelikeuser(String postID, int like) async {
+    FirebaseFirestore.instance
+        .collection("post")
+        .doc(postID)
+        .update(<String, dynamic>{
+      "like": like + 1,
+
+    });
     FirebaseFirestore.instance.collection("post").doc(postID).update(
         <String, dynamic>{
           "likeUsers": FieldValue.arrayUnion(
@@ -434,7 +460,14 @@ class PostProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deletelikeuser(String postID) async {
+  Future<void> deletelikeuser(String postID, int like) async {
+    FirebaseFirestore.instance
+        .collection("post")
+        .doc(postID)
+        .update(<String, dynamic>{
+      "like": like - 1,
+
+    });
     FirebaseFirestore.instance.collection("post").doc(postID).update(
         <String, dynamic>{
           "likeUsers": FieldValue.arrayRemove(
@@ -527,7 +560,10 @@ class Post {
         required this.creatorId,
         required this.creatorImage,
         required this.lat,
-        required this.lng});
+        required this.lng,
+        required this.duration,
+        required this.amount,
+      });
   String docId;
   String image;
   String creatorId;
@@ -542,4 +578,6 @@ class Post {
   String creatorImage;
   double lat;
   double lng;
+  int amount;
+  int duration;
 }
