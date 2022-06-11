@@ -48,7 +48,7 @@ class _searchPageState extends State<searchPage> {
               child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: FirebaseFirestore.instance
                     .collection("post")
-                    .where('type', isEqualTo: _typeText)
+                    .where('creatorId', isEqualTo: _typeText)
                     .snapshots(),
 
                 //.where('price', isLessThan : _maxpriceText ).where('price', isGreaterThanOrEqualTo : _minpriceText)
