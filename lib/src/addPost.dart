@@ -145,9 +145,10 @@ class _addPostPageState extends State<addPostPage> {
                     int.parse(_durationController.text),
                     int.parse(_amountController.text),
                     _ingredientsController.text,
-                    _introController.text,
+
                     _descriptionController.text,
                     _blogController.text,
+                    _introController.text,
                     _dateTime,
                     lat,
                     lng,
