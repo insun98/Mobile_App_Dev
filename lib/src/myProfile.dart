@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import '../Provider/CommentProvider.dart';
@@ -12,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'addPost.dart';
 import 'comments.dart';
 
 class myProfile extends StatefulWidget {
@@ -65,8 +67,6 @@ class _myProfileState extends State<myProfile> {
                       },
                     ),
                     SizedBox(width: 30),
-
-
                     ElevatedButton(
                       child: const Text('로그아웃'),
                       style:
@@ -81,79 +81,68 @@ class _myProfileState extends State<myProfile> {
                 ButtonBar(
                   alignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    postOn?TextButton(
-                      child: const Text(
-                        '게시물',
-                   style:  TextStyle(
-                          color: Colors.black,
-                     fontWeight: FontWeight.bold,
-
-                        ),
-
-                      ),
-                      onPressed: () {
-
-                      },
-                    ):
-                    TextButton(
-                      child: const Text(
-                        '게시물',
-                        style:  TextStyle(
-                          color: Colors.black,
-                        ),
-
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          postOn=true;
-                        });
-                      },
-                    ),
-                    postOn==false?TextButton(
-                      child: const Text(
-                        '북마크',
-                        style:  TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-
-                        ),
-
-                      ),
-                      onPressed: () {
-
-                      },
-                    ):TextButton(
-                      child: const Text(
-                        '북마크',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          postOn=false;
-                        });
-                      },
-                    ),
-
+                    postOn
+                        ? TextButton(
+                            child: const Text(
+                              '게시물',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () {},
+                          )
+                        : TextButton(
+                            child: const Text(
+                              '게시물',
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                postOn = true;
+                              });
+                            },
+                          ),
+                    postOn == false
+                        ? TextButton(
+                            child: const Text(
+                              '북마크',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () {},
+                          )
+                        : TextButton(
+                            child: const Text(
+                              '북마크',
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                postOn = false;
+                              });
+                            },
+                          ),
                   ],
                 ),
-
               ],
             ),
           ),
         ),
-
         Consumer<PostProvider>(
           builder: (context, postProvider, _) => itemCard(
-            myPost: postOn?postProvider.myPost:postProvider.bookPosts,
+            myPost: postOn ? postProvider.myPost : postProvider.bookPosts,
           ),
         ),
       ],
     );
   }
-
-
 }
 
 class editProfile extends StatefulWidget {
@@ -323,9 +312,10 @@ class _PostDetaileState extends State<PostDetail> {
 
   @override
   Widget build(BuildContext context) {
-    PostProvider postProvider = Provider.of<PostProvider>(context);
+
     ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
-    return Scaffold(
+    return  Consumer<PostProvider>(
+        builder: (context, postProvider, _) => Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
@@ -344,6 +334,64 @@ class _PostDetaileState extends State<PostDetail> {
             onPressed: () async {
               Navigator.pop(context);
             }),
+        actions: <Widget>[
+          postProvider.singlePost.creator ==
+                  FirebaseAuth.instance.currentUser!.uid
+              ? IconButton(
+                  icon: Icon(
+                    Icons.create,
+                    color: Colors.grey,
+                    semanticLabel: 'filter',
+                  ),
+                  onPressed: () async { Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => editPostPage(docId: postProvider.singlePost.docId)));})
+              : IconButton(
+                  icon: Icon(
+                    postProvider.singlePost.likeUsers.contains(
+                            FirebaseAuth.instance.currentUser!.uid.toString())
+                        ? Icons.favorite
+                        : Icons.favorite_outline,
+                    semanticLabel: 'favorite',
+                    color: Color(0xFF961D36),
+                    size: 25,
+                  ),
+                  onPressed: () async {
+                    if (postProvider.singlePost.likeUsers.contains(
+                        FirebaseAuth.instance.currentUser!.uid.toString())) {
+                      postProvider.deletelikeuser(postProvider.singlePost.docId,
+                          postProvider.singlePost.like);
+                      setState(() {});
+                    } else {
+                      postProvider.updatelikeuser(postProvider.singlePost.docId,
+                          postProvider.singlePost.like);
+                      setState(() {});
+                    }
+                  },
+                ),
+          postProvider.singlePost.creator ==
+              FirebaseAuth.instance.currentUser!.uid?IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Colors.grey,
+                semanticLabel: 'filter',
+              ),
+              onPressed: () async {}): IconButton(
+    icon:  Icon(
+    Icons.book,
+    semanticLabel: 'favorite',
+    color: Color(0xFF961D36),
+    size: 25,
+
+    ),
+
+    onPressed: () async {
+    await postProvider.updatebook(postProvider.singlePost.docId);
+
+    },
+    ),
+        ],
       ),
       body: Consumer<ProfileProvider>(
         builder: (context, ProfileProvider, _) => SingleChildScrollView(
@@ -355,7 +403,7 @@ class _PostDetaileState extends State<PostDetail> {
                   postProvider.singlePost.image,
                   height: 300.0,
                   fit: BoxFit.fill,
-                width:400,
+                  width: 400,
                 ),
               ),
               SizedBox(height: 25),
@@ -402,11 +450,34 @@ class _PostDetaileState extends State<PostDetail> {
                             fontSize: 20,
                             color: Color(0xFF961D36),
                             fontWeight: FontWeight.bold)),
-                    SizedBox(height: 5,),
-                    postProvider.singlePost.share?Row(children:[Expanded(child
-                    :Text("~ ${postProvider.singlePost.date}",
-                        style: TextStyle(fontSize: 18, color: Colors.black))),postProvider.singlePost.creator != FirebaseAuth.instance.currentUser!.uid?IconButton(icon:Icon(Icons.message_rounded), color: Color(0xFF961D36), onPressed: () {profileProvider.getUser(postProvider.singlePost.creator); Navigator.pushNamed(context, '/chat');  },):Text(""),],):Text("반찬 나눔 종료",
-                        style: TextStyle(fontSize: 18, color: Colors.black)),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    postProvider.singlePost.share
+                        ? Row(
+                            children: [
+                              Expanded(
+                                  child: Text(
+                                      "~ ${postProvider.singlePost.date}",
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.black))),
+                              postProvider.singlePost.creator !=
+                                      FirebaseAuth.instance.currentUser!.uid
+                                  ? IconButton(
+                                      icon: Icon(Icons.message_rounded),
+                                      color: Color(0xFF961D36),
+                                      onPressed: () {
+                                        profileProvider.getUser(
+                                            postProvider.singlePost.creator);
+                                        Navigator.pushNamed(context, '/chat');
+                                      },
+                                    )
+                                  : Text(""),
+                            ],
+                          )
+                        : const Text("반찬 나눔 종료",
+                            style:
+                                TextStyle(fontSize: 18, color: Colors.black)),
                   ],
                 ),
               ),
@@ -415,12 +486,14 @@ class _PostDetaileState extends State<PostDetail> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('재료',
+                    const Text('재료',
                         style: TextStyle(
                             fontSize: 20,
                             color: Color(0xFF961D36),
                             fontWeight: FontWeight.bold)),
-                    SizedBox(height: 5,),
+                    SizedBox(
+                      height: 5,
+                    ),
                     Text(postProvider.singlePost.ingredients,
                         style: TextStyle(fontSize: 18, color: Colors.black)),
                   ],
@@ -436,21 +509,25 @@ class _PostDetaileState extends State<PostDetail> {
                             fontSize: 20,
                             color: Color(0xFF961D36),
                             fontWeight: FontWeight.bold)),
-                    SizedBox(height: 5,),
+                    SizedBox(
+                      height: 5,
+                    ),
                     Text(postProvider.singlePost.description,
                         style:
                             const TextStyle(fontSize: 18, color: Colors.black)),
-                    TextButton(onPressed: () async {
-                      final url = Uri.parse(
-                        postProvider.singlePost.blog,
-                      );
-                      if (await canLaunchUrl(url)) {
-                        launchUrl(url);
-                      } else {
-                        // ignore: avoid_print
-                        print("Can't launch $url");
-                      }
-                    }, child: Text("참조"))
+                    TextButton(
+                        onPressed: () async {
+                          final url = Uri.parse(
+                            postProvider.singlePost.blog,
+                          );
+                          if (await canLaunchUrl(url)) {
+                            launchUrl(url);
+                          } else {
+                            // ignore: avoid_print
+                            print("Can't launch $url");
+                          }
+                        },
+                        child: Text("참조"))
                   ],
                 ),
               ),
@@ -471,7 +548,9 @@ class _PostDetaileState extends State<PostDetail> {
                           GuestBook(
                             addMessage: (message) =>
                                 appState.addMessageToGuestBook(
-                                    message, postProvider.singlePost.docId,profileProvider.myProfile.photo),
+                                    message,
+                                    postProvider.singlePost.docId,
+                                    profileProvider.myProfile.photo),
                             comment: appState.guestBookMessages, // new
                             //messages
                           ),
@@ -485,7 +564,7 @@ class _PostDetaileState extends State<PostDetail> {
           ),
         ),
       ),
+        ),
     );
   }
-
 }

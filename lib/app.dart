@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:shrine/src/alarm.dart';
 import 'package:shrine/src/chatMessage.dart';
 
-import 'package:shrine/src/friendProfile.dart';
+
 import 'package:shrine/src/logoAnimation.dart';
 import 'package:shrine/src/start.dart';
 

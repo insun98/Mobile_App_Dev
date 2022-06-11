@@ -194,6 +194,46 @@ class PostProvider extends ChangeNotifier {
         }
         notifyListeners();
       });
+      _myPostSubscription = FirebaseFirestore.instance
+          .collection('post')
+          .where('creator', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .snapshots()
+          .listen((snapshot) {
+        _myPost = [];
+        for (final document in snapshot.docs) {
+          _myPost.add(
+            Post(
+              docId: document.id,
+              title: document.data()['title'] as String,
+              image: document.data()['image'],
+              description: document.data()['description'] as String,
+              type: document.data()['type'] as String,
+              create: document.data()['create'],
+              modify: document.data()['modify'],
+              creator: document.data()['creator'] as String,
+              creatorId: document.data()['creatorId'] as String,
+              creatorImage: document.data()['creatorImage'] as String,
+              like: document.data()['like'],
+              likeUsers: document.data()['likeUsers'],
+              lat: document.data()['lat'],
+              lng: document.data()['lng'],
+              duration: document.data()['duration'],
+              amount: document.data()['amount'],
+              blog: document.data()['blog'],
+              intro: document.data()['intro'],
+              date: DateFormat('yyyy-MM-dd HH:mm:ss')
+                  .format(document.data()['date'].toDate()),
+              share: document.data()['date'].microsecondsSinceEpoch <
+                  Timestamp.now().microsecondsSinceEpoch
+                  ? false
+                  : true,
+              ingredients: document.data()['ingredients'],
+            ),
+          );
+          notifyListeners();
+        }
+        notifyListeners();
+      });
 
       _orderPostSubscription = FirebaseFirestore.instance
           .collection('post')
@@ -337,6 +377,7 @@ class PostProvider extends ChangeNotifier {
         _singlePost.intro = snapshot.data()!['intro'];
         _singlePost.blog = snapshot.data()!['blog'];
       }
+      notifyListeners();
       if (snapshot.data()!['date'].microsecondsSinceEpoch <
           DateTime.now().microsecondsSinceEpoch) {
         FirebaseFirestore.instance
@@ -387,7 +428,7 @@ class PostProvider extends ChangeNotifier {
                   : true,
               ingredients: document.data()['ingredients'],
             ),
-          );
+          ); notifyListeners();
         }
       }
     });
@@ -431,6 +472,7 @@ class PostProvider extends ChangeNotifier {
               ingredients: document.data()['ingredients'],
             ),
           );
+          notifyListeners();
         }
       }
     });
@@ -474,6 +516,7 @@ class PostProvider extends ChangeNotifier {
               ingredients: document.data()['ingredients'],
             ),
           );
+          notifyListeners();
         }
       }
     });
@@ -556,6 +599,38 @@ class PostProvider extends ChangeNotifier {
     await mountainsRef.putFile(file);
     final downloadUrl = await mountainsRef.getDownloadURL();
     return downloadUrl;
+  }
+  Future<void> editPost(
+      String docId,
+      String type,
+      String title,
+      int duration,
+      int amount,
+      String ingredients,
+      String intro,
+      String description,
+      String blog,
+
+      DateTime date,
+      double lat,
+      double lng,) async {
+    FirebaseFirestore.instance
+        .collection("post")
+        .doc(docId)
+        .update(<String, dynamic>{
+      "title": title,
+      "duration": duration,
+      "amount": amount,
+      "ingredients": ingredients,
+      'description': description,
+      'lat': lat,
+      'lng': lng,
+      'intro': intro,
+      'blog': blog,
+      'date': date,
+      'share':date.microsecondsSinceEpoch < DateTime.now().microsecondsSinceEpoch?false:true,
+    });
+    notifyListeners();
   }
 
   Future<DocumentReference> addPost(

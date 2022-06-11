@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:location/location.dart';
@@ -369,6 +370,375 @@ class _addPostPageState extends State<addPostPage> {
               Container(
                 child: Center(
                   child: Text("Lat: $lat, Lng: $lng"),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                child: RaisedButton(
+                  child: Text("Locate Me"),
+                  onPressed: () => _locateMe(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<DropdownMenuItem<String>> get dropdownItems {
+    List<DropdownMenuItem<String>> menuItems = [
+      DropdownMenuItem(child: Text("한식"), value: "한식"),
+      DropdownMenuItem(child: Text("양식"), value: "양식"),
+      DropdownMenuItem(child: Text("중식"), value: "중식"),
+      DropdownMenuItem(child: Text("일식"), value: "일식"),
+    ];
+    return menuItems;
+  }
+}
+class editPostPage extends StatefulWidget {
+  String docId;
+   editPostPage({ required this.docId});
+  @override
+  _editPostPageState createState() => _editPostPageState();
+}
+
+class _editPostPageState extends State<editPostPage> {
+  CollectionReference _post = FirebaseFirestore.instance.collection('post');
+  @override
+  final _formKey = GlobalKey<FormState>(debugLabel: '_addItemPageState');
+  final _amountController = TextEditingController();
+  final _durationController = TextEditingController();
+  final _ingredientsController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _blogController = TextEditingController();
+  final _introController = TextEditingController();
+  DateTime _dateTime = DateTime.now();
+  bool order = true;
+
+  double lat = 0;
+  double lng = 0;
+  Location location = new Location();
+  bool _serviceEnabled = true;
+  late PermissionStatus _permissionGranted;
+  _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _dateTime, // Refer step 1
+      firstDate: DateTime(2022),
+      lastDate: DateTime(2025),
+    );
+    if (picked != null && picked != _dateTime)
+      setState(() {
+        _dateTime = picked;
+      });
+  }
+
+  _locateMe() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    // Track user Movements
+    location.onLocationChanged.listen((res) {
+      setState(() {
+        lat = res.latitude!;
+        lng = res.longitude!;
+      });
+    });
+    getPlaceAddress(lat, lng);
+  }
+
+  Future<void> getPlaceAddress(double lat, double lng) async {
+    final apiEndpoint =
+        'https://maps.gooleapis.com/maps/api/geocode/json?latlng=$lat, $lng&key=AIzaSyDTt1M9Qxc7sGeOAzbuYuUMr3B29XO8Is0';
+    final Uri url = Uri.parse(apiEndpoint);
+    final response = await http.post(url);
+    print(jsonDecode(response.body)['results'][0]['formatted_address']);
+    //  return jsonDecode(response.body)['results'][0]['formatted_address'];
+  }
+
+  String dropdownValue = '한식';
+  Future<void> edit()async {
+  FirebaseFirestore.instance
+      .collection('post')
+      .doc(widget.docId)
+      .get().then((snapshot) {
+  if (snapshot.data() != null) {
+  _amountController.text = snapshot.data()!['amount'].toString();
+  _durationController.text = snapshot.data()!['duration'].toString();
+  _ingredientsController.text = snapshot.data()!['ingredients'];
+  _descriptionController.text =snapshot.data()!['description'];
+  _titleController.text =snapshot.data()!['title'];
+  _blogController.text =snapshot.data()!['blog'];
+  _introController.text = snapshot.data()!['intro'];
+
+  dropdownValue = snapshot.data()!['type'];
+  lat = snapshot.data()!['lat'];
+  lng = snapshot.data()!['lng'];
+
+  }
+  });}
+  @override
+  Widget build(BuildContext context) {
+edit();
+    late ScrollController _scrollController;
+    void initState() {
+      super.initState();
+      _scrollController = ScrollController();
+    }
+
+    PostProvider postProvider = Provider.of<PostProvider>(context);
+    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
+    bool dateCheck = false;
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        bottomOpacity: 0.0,
+        elevation: 0.0,
+        title: const Text(
+          '업로드',
+          style: TextStyle(color: Colors.black),
+        ),
+        leading: TextButton(
+          child: const Text(
+            'cancel',
+            style: TextStyle(fontSize: 12),
+          ),
+          onPressed: () async {
+            Navigator.pop(context);
+          },
+          style: TextButton.styleFrom(primary: Colors.black),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Save'),
+            onPressed: () async {
+
+
+              if (_formKey.currentState!.validate()) {
+                await postProvider.editPost(
+                    postProvider.singlePost.docId,
+                    dropdownValue,
+                    _titleController.text,
+                    int.parse(_durationController.text),
+                    int.parse(_amountController.text),
+                    _ingredientsController.text,
+                    _introController.text,
+                    _descriptionController.text,
+                    _blogController.text,
+                    _dateTime,
+                    lat,
+                    lng,
+
+                   );
+
+              }
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(primary: Colors.black),
+          ),
+        ],
+      ),
+      body:
+      SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image.network(postProvider.singlePost.image,
+                  height: 200, width: 500, fit: BoxFit.fill),
+
+              Container(
+                  margin: EdgeInsets.all(10),
+                  child: Row(children: [
+                    Icon(Icons.web_asset_outlined, color: Color(0xFF961D36)),
+                    const SizedBox(width: 20.0),
+                    Text('반찬 나눔 종료일:'),
+                    Expanded(
+                      child: TextButton(
+                        child: Text(
+                            DateFormat('yyyy-MM-dd HH:mm:ss')
+                                .format(_dateTime),
+                            style: TextStyle(
+                              fontSize: 15,
+                            )),
+                        onPressed: () async {
+                          _selectDate(context);
+                          setState(() {
+
+                          });
+                        },
+                        style: TextButton.styleFrom(primary: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(width: 80.0),
+                  ])),
+              Container(
+                margin: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _titleController,
+                        decoration: const InputDecoration(
+                          hintText: '음식이름(상단에 추천된 이름 선택 가능)',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter your Price to continue';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 40.0),
+                    DropdownButton<String>(
+                      value: dropdownValue,
+                      icon: const Icon(Icons.arrow_drop_down_outlined),
+                      elevation: 0,
+                      style: const TextStyle(color: Colors.black),
+                      items: dropdownItems,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownValue = newValue!;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 20.0),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(10),
+                child: TextFormField(
+                  controller: _introController,
+                  decoration: const InputDecoration(
+                    hintText: '한줄 소개',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Enter your Price to continue';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    Icon(Icons.access_alarm, color: const Color(0xFF961D36)),
+                    const SizedBox(width: 20.0),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _durationController,
+                        decoration: const InputDecoration(
+                          hintText: '조리시간',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter your Price to continue';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 20.0),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    Icon(Icons.group, color: const Color(0xFF961D36)),
+                    const SizedBox(width: 20.0),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _amountController,
+                        decoration: const InputDecoration(
+                          hintText: '몇 인분',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter your Price to continue';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 20.0),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 20.0),
+              const SizedBox(height: 12.0),
+              Container(
+                margin: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _ingredientsController,
+                      decoration: const InputDecoration(
+                        hintText: '재료 예) 양배추(500g), 배추(200g)',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter your Price to continue';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 40.0),
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: const InputDecoration(
+                        hintText: '설명',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter your Description to continue';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 40.0),
+                    TextFormField(
+                      controller: _blogController,
+                      decoration: const InputDecoration(
+                        hintText: '사용한 블로그',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter your Description to continue';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40.0),
+              Container(
+                child: Center(
+                  child: Text("Lat: ${postProvider.singlePost.lat}, Lng: ${postProvider.singlePost.lng}"),
                 ),
               ),
               Container(
