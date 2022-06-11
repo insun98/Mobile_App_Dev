@@ -51,15 +51,6 @@ class _searchPageState extends State<searchPage> {
                     .where('creatorId', isEqualTo: _typeText)
                     .snapshots(),
 
-                //.where('price', isLessThan : _maxpriceText ).where('price', isGreaterThanOrEqualTo : _minpriceText)
-                // .where('type', isEqualTo: _typeText)
-
-                //.where('type', isEqualTo: _type.text)
-                //.where('price', isLessThan : _maxprice.text).where('price', isGreaterThanOrEqualTo : _minprice.text)
-                // .where('calory', isGreaterThanOrEqualTo : _maxcalory.text).where('calory', isGreaterThanOrEqualTo : _mincalory.text)
-
-                // .where('calory', isGreaterThanOrEqualTo : _maxcalory.text).where('calory', isGreaterThanOrEqualTo : _mincalory.text)
-                //.snapshots(),
 
                 builder: (context, snapshot) {
                   PostProvider postProvider = Provider.of<PostProvider>(context);
@@ -70,7 +61,7 @@ class _searchPageState extends State<searchPage> {
                       width: 50,
                       alignment: Alignment.center,
                       child: Text(
-                        '종류를 입력해주세요',
+                        '사용자 아이디를 입력해주세요',
                       ),
                     );
                   }
@@ -237,8 +228,8 @@ class _searchPageState extends State<searchPage> {
                           filled: true,
                           fillColor: Color(0xFFFBF7F7),
                           prefixIcon: Icon(Icons.search),
-                          hintText: '종류를 입력하세요',
-                          labelText: '종류',
+                          hintText: '사용자 아이디를 입력하세요',
+                          labelText: '사용자 아이디',
                           // icon:Icon(Icons.search),
                           border: OutlineInputBorder(),
                         ),
