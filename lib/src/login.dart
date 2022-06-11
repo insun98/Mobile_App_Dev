@@ -11,6 +11,8 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../Provider/PostProvider.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -149,6 +151,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver{
 
   @override
   Widget build(BuildContext context) {
+    PostProvider postProvider = Provider.of<PostProvider>(context);
     ApplicationState authProvider= Provider.of<ApplicationState>(context);
     return Scaffold(
       body: SafeArea(
@@ -202,7 +205,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver{
                 if(login == true){
                   print(_passwordController);
                   authProvider.signInWithEmailAndPassword(_usernameController.text, _passwordController.text,(e) => _showErrorDialog(context, 'Invalid email', e));
-                  print("good");
+                  postProvider.getTypePost('양식');
                   Navigator.pushNamed(context, '/logo');
                 }else{
                   print("false");

@@ -76,14 +76,15 @@ int limit = 3;
 
         // const SizedBox(height: 8),
 
-         for(count =0; count < limit; count ++ )
+         for(var document in widget.comment )
+
           Column( children:[
             Row(
               children: [
                 const SizedBox(width: 10),
 
                 SizedBox(width:30,height:30,child:Image.network(
-                  '${widget.comment[count].image_url}' ,
+                  '${document.image_url}' ,
                 ),
                   // child: CircleAvatar(child: Text(_name[0])),
                 ),
@@ -97,17 +98,17 @@ int limit = 3;
                     SizedBox(
                       width: 5, height: 8,
                     ),
-                    Text('${widget.comment[count].name}', style: TextStyle(fontSize: 13.0),),
-                    SizedBox(height: 8,),
+                    Text('${document.name}', style: TextStyle(fontSize: 13.0, color:Colors.black, fontWeight: FontWeight.bold),),
+                    SizedBox(height: 5,),
                     Container(
                       margin: const EdgeInsets.only(top: 5.0),
                       child: Column (
                         crossAxisAlignment: CrossAxisAlignment.start,
 
                         children :[
-                          Text('${widget.comment[count].message}',style: TextStyle(fontSize: 16.0),),
+                          Text('${document.message}',style: TextStyle(fontSize: 16.0),),
                           SizedBox(height: 3,),
-                          Text('${widget.comment[count].formattedDate}', style: TextStyle(fontSize: 12.0),),
+                          Text('${document.formattedDate}', style: TextStyle(fontSize: 12.0),),
 
                         ],
                       ),
@@ -128,21 +129,7 @@ int limit = 3;
             Divider(height: 10,color: Colors.grey,),
           ],
           ),
-        limit  == 3  ? Center (child: TextButton(
 
-          onPressed: ()  {
-            setState(() {
-              limit = widget.comment.length;
-            });
-          }, child: Text("댓글 ${widget.comment.length} 모두 보기", style: TextStyle(color: Colors.black),),
-        ),) : Center (child: TextButton(
-
-          onPressed: ()  {
-            setState(() {
-              limit = 3;
-            });
-          }, child: Text("댓글 그만 보기", style: TextStyle(color: Colors.black),),
-        ),)
       ],
     );
 

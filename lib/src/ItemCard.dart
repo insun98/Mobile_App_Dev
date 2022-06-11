@@ -48,7 +48,7 @@ class _itemCardState extends State<itemCard> {
               AspectRatio(
                 aspectRatio: 6/ 6,
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+
                   child:InkWell(
                     onTap:() async {
                       await profileProvider.getUser(post.creator);
@@ -75,7 +75,7 @@ class _itemCardState extends State<itemCard> {
     return Flexible(
       child: GridView.count(
         crossAxisCount: 3,
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(0.0),
         childAspectRatio: 1 / 1,
         children: _buildListCards(context),
       ),

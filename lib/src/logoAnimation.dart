@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../Provider/AuthProvider.dart';
@@ -34,33 +35,21 @@ class _LogoState extends State<Logo> {
               SizedBox(
               width: 200.0,
               child: TextLiquidFill(
-                text: 'YORI',
+                text: 'YORIJORI',
                 waveColor: Color(0xFF961D36),
                 boxBackgroundColor: Colors.white,
+
                 textStyle: TextStyle(
                   fontFamily: 'Yrsa',
-                  fontSize: 80.0,
+                  fontSize: 50.0,
                   fontWeight: FontWeight.bold,
                 ),
-                boxHeight: 200.0,
+                boxHeight: 100.0,
               ),
             ),
-                SizedBox(
-                  width: 200.0,
-                  child: TextLiquidFill(
-                    text: 'JORI',
-                    waveColor: Color(0xFF961D36),
-                    boxBackgroundColor: Colors.white,
-                    textStyle: TextStyle(
-                      fontFamily: 'Yrsa',
-                      fontSize: 80.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    boxHeight: 200.0,
-                  ),
-                ),
 
 
+            Lottie.asset('assets/75783-prepare-food.json'),
               ],
             ),
             ),

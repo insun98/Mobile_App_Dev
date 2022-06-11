@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shrine/Provider/CommentProvider.dart';
 import 'package:shrine/src/comments.dart';
 import '../Provider/PostProvider.dart';
 import '../Provider/ProfileProvider.dart';
@@ -13,7 +14,7 @@ import 'friendProfile.dart';
 
 
 class homeCard extends StatefulWidget {
-  const homeCard({required this.posts, required this.profiles});
+   homeCard({required this.posts, required this.profiles});
   final List<Post> posts;
   final Profile profiles;
   @override
@@ -30,17 +31,18 @@ class _homeCardState extends State<homeCard> {
       Profile profiles = widget.profiles;
       String name;
       if (posts.isEmpty) {
-        return const <Card>[];
+        return  <Card>[];
       }
       final ThemeData theme = Theme.of(context);
       final NumberFormat formatter = NumberFormat.simpleCurrency(
           locale: Localizations.localeOf(context).toString());
       ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
       PostProvider postProvider= Provider.of<PostProvider>(context);
+      CommentProvider commentProvider= Provider.of<CommentProvider>(context);
 
       return posts.map((post) {
         profileProvider.otherProfile.name="";
-        profileProvider.getUser(post.creator);
+
 
         return Card(
           clipBehavior: Clip.antiAlias,
@@ -53,18 +55,27 @@ class _homeCardState extends State<homeCard> {
                       SizedBox(width: 10,),
                       CircleAvatar(
                         radius: 20.0,
-                        backgroundImage: NetworkImage( '${post.creatorImage}'),
+                        backgroundImage: NetworkImage( post.creatorImage),
                         backgroundColor: Colors.transparent,
                       ),
                       SizedBox(width: 15,),
                       TextButton(
                          onPressed: ()  async {
-                        //   ProfileProvider.getUser(post.creator);
-                        //   await postProvider.getPost(post.creator);
-                        //   Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //           builder: (context) => friendProfile(isSubscribed: true)));
+                           if(post.creator != FirebaseAuth.instance.currentUser!.uid) {
+                             bool isSubscribed;
+
+                             isSubscribed =
+                             await profileProvider.getUser(post.creator);
+
+                             await postProvider.getPost(post.creator);
+                             Navigator.push(
+                                 context,
+                                 MaterialPageRoute(
+                                     builder: (context) =>
+                                         friendProfile(isSubscribed: true)));
+                           }else{
+                             Navigator.pushNamed(context, '/start');
+                           }
                          },
                         child: Text('${post.creatorId}',
                         style: TextStyle(
@@ -79,7 +90,7 @@ class _homeCardState extends State<homeCard> {
                 ],
               ),
               AspectRatio(
-                aspectRatio: 25 / 11,
+                aspectRatio: 24 / 11,
                 child:
                 ClipRRect(
                   borderRadius: BorderRadius.only(
@@ -88,41 +99,73 @@ class _homeCardState extends State<homeCard> {
                     bottomLeft: Radius.circular(5),
                     bottomRight: Radius.circular(5),
                   ),
+
                   child: Image.network(
                     post.image,
-                    fit: BoxFit.fill,
+                    fit: BoxFit.fitHeight,
+
                   ),
                 ),
+
               ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(
+                  padding:  EdgeInsets.fromLTRB(
                       20, 5, 0, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      SizedBox(height:10),
 
                       Text(
                         '${post.title}',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 17,
                           fontWeight: FontWeight.bold,
                         ),
                         maxLines: 2,
                       ),
-
+                      SizedBox(height:5),
                       Text(
-                        '${post.description}',
+                        '\"${post.intro}\"',
                         style: TextStyle(
                           fontSize: 14,
                         ),
                         maxLines: 2,
                       ),
+                      SizedBox(height:10),
+                      post.share?Text(
+                        '반찬 나눔 진행중 ',
+                        style: TextStyle(
+                          fontSize: 14,fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 2,
+                      ):Text(
+                        '반찬 나눔 종료',
+                        style: TextStyle(
+                          fontSize: 14,fontWeight: FontWeight.bold,
+                        ),
 
-                          IconButton(
+                      ),
+                      SizedBox(height:5),
+                      post.share?Text(
+                        '~ ${post.date}',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+
+                      ):Text(" "),
+                      Row(
+
+
+
+                        mainAxisAlignment: MainAxisAlignment.end,
+                          children:[
+                            Row(
+                           children:[IconButton(
                             icon:  Icon(
                               post.likeUsers.contains(FirebaseAuth.instance.currentUser!.uid.toString())?Icons.favorite:Icons.favorite_outline,
                               semanticLabel: 'favorite',
-                              color: Colors.red,
+                              color: Color(0xFF961D36),
                               size: 25,
                             ),
 
@@ -141,19 +184,43 @@ class _homeCardState extends State<homeCard> {
                                   }
 
                               },
+
                           ),
+                             Text(post.like.toString()),
+                           ],),
+                           IconButton(
+                              icon:  Icon(
+                               Icons.book,
+                                semanticLabel: 'favorite',
+                                color: Color(0xFF961D36),
+                                size: 25,
+
+                              ),
+
+                              onPressed: () async {
+                                await postProvider.updatebook(post.docId);
+
+                              },
+                            ),
+
+
+
+                            IconButton(onPressed: () async {
+                        await postProvider.getSinglePost(post.docId);
+                        await commentProvider.init(post.docId);
+                        await
+                        Navigator.pushNamed(context, '/postDetail');
+                      }, icon: Icon(Icons.add_to_home_screen_sharp,color: Color(0xFF961D36),
+                        )
+                      ),
+                          ],
+                        ),
+
                     ],
                   ),
+
                 ),
-              TextButton(onPressed: () async {
-                await postProvider.getSinglePost(post.docId);
-                Navigator.pushNamed(context, '/postDetail');
-                }, child: Text("   자세한 레시피",
-                style: TextStyle(
-                fontSize: 14,
-                color: Colors.black,
-              ),)
-              ),
+
             ],
           ),
         );
@@ -164,7 +231,7 @@ class _homeCardState extends State<homeCard> {
     return Flexible(
       child: GridView.count(
         crossAxisCount: 1,
-        padding: const EdgeInsets.all(5),
+        padding:  EdgeInsets.all(5),
         childAspectRatio: 1 / 1,
         children: _buildListCards(context),
       ),
@@ -183,97 +250,5 @@ class _homeCardState extends State<homeCard> {
   }
 }
 
-// class FavoriteWidget extends StatefulWidget{
-//
-//
-//   const FavoriteWidget({required this.post,required this.profile});
-//   final Post post;
-//   final Profile profile;
-//   @override
-//   _FavoriteWidgetState createState() => _FavoriteWidgetState();
-// }
-// class _FavoriteWidgetState extends State<FavoriteWidget> {
-//   bool _isFavorited = false;
-//   bool _isBooked = false;
-//   List <String> like = [];
-//   int count = 0;
-//   @override
-//   Widget build(BuildContext context) {
-//     PostProvider postProvider = Provider.of<PostProvider>(context);
-//     postProvider.getspecPost(widget.post.docId);
-//     like = postProvider.likeList;
-//    _isFavorited = false;
-//
-//
-//
-//
-//     return Consumer<PostProvider>( builder: (context, appState, _) => Row(
-//       children: [
-//         Row(
-//           children: [
-//             Container(
-//               padding: const EdgeInsets.all(0),
-//               width: 30,
-//               child: IconButton(
-//                 padding: const EdgeInsets.all(0),
-//                 alignment: Alignment.centerLeft,
-//                 icon: (_isFavorited
-//                     ? const Icon(Icons.favorite)
-//                     : const Icon(Icons.favorite_border)),
-//                 color: Colors.red,
-//                 onPressed: (){
-//                   setState(() {
-//                     if (_isFavorited) {
-//                       int num = 0;
-//                       num = widget.post.like -= 1 ;
-//                       _isFavorited = false;
-//                       postProvider.updateDoc(widget.post.docId, widget.post.like);
-//                       postProvider.deletelikeuser(widget.post.docId);
-//                     } else {
-//                       widget.post.like += 1;
-//                       _isFavorited = true;
-//                       postProvider.updateDoc(widget.post.docId, widget.post.like);
-//                       postProvider.updatelikeuser(widget.post.docId);
-//                     }
-//                   });
-//                 },
-//               ),
-//             ),
-//             Text(
-//               '${widget.post.like}',
-//             ),
-//           ],
-//         ),
-//
-//        /* Container(
-//           padding: const EdgeInsets.all(0),
-//           child: IconButton(
-//             padding: const EdgeInsets.all(0),
-//             alignment: Alignment.centerRight,
-//             icon:
-//             const Icon(
-//               Icons.book,
-//               color: Colors.brown,),
-//             onPressed:  (){
-//               setState(() {
-//                 if (_isBooked) {
-//                   _isBooked = false;
-//                   postProvider.deletebook(widget.post.docId);
-//                   Scaffold.of(context)
-//                       .showSnackBar(SnackBar(content: const Text("collection deleted")));
-//                 } else {
-//                   _isBooked = true;
-//                   postProvider.updatebook(widget.post.docId);
-//                   Scaffold.of(context)
-//                       .showSnackBar(SnackBar(content: const Text("collection added")));
-//                 }
-//               });
-//             },
-//           ),
-//         ),*/
-//       ],
-//     ),
-//     );
-//   }
-// }
+
 

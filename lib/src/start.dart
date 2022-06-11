@@ -51,6 +51,18 @@ class _StartPageState extends State<StartPage> {
           actions: <Widget>[
             IconButton(
                 icon: Icon(
+                  Icons.message,
+                  color: Colors.grey,
+                  semanticLabel: 'filter',
+                ),
+                onPressed: () async{
+
+                  Navigator.pushNamed(context,'/messageView');
+                }) ,
+
+
+            IconButton(
+                icon: Icon(
                   Icons.add,
                   color: Colors.grey,
                   semanticLabel: 'filter',
@@ -62,9 +74,8 @@ class _StartPageState extends State<StartPage> {
                   if(check==true){
                     print("save");
                     Navigator.push(context,  MaterialPageRoute(builder: (context) => addPostPage(image: _image, prediction: prediction)));
-                 }
-  }) ,
-
+                  }
+                }) ,
             Builder(
               builder: (context) => IconButton(
                 color: Colors.black,
@@ -94,7 +105,7 @@ class _StartPageState extends State<StartPage> {
                   color: Color(0xFF961D36),
                 ),
                 title: const Text(
-                  'Subscribers',
+                  '구독중',
                   style: TextStyle(color: Color(0xFF961D36)),
                 ),
                 onTap: ()  async {
@@ -108,7 +119,7 @@ class _StartPageState extends State<StartPage> {
                   Icons.photo_filter_outlined,
                   color: Colors.black,
                 ),
-                title: const Text('Map'),
+                title: const Text('나눔'),
                 onTap: () {
                   Navigator.pushNamed(context, '/map');
                 },
@@ -119,7 +130,7 @@ class _StartPageState extends State<StartPage> {
                   Icons.settings,
                   color: Color(0xFF961D36),
                 ),
-                title: const Text('Settings'),
+                title: const Text('설정'),
                 onTap: () {},
               ),
 
