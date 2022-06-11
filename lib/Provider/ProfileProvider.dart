@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import '../firebase_options.dart';
 import 'PostProvider.dart';
 
@@ -58,7 +59,7 @@ class ProfileProvider extends ChangeNotifier {
             try {
               dynamic book = snapshot.get(FieldPath(['bookmark']));
               // _myBookPost.add(
-              print("${book[0]}");
+
               //);
             } on StateError catch (e) {
               print('No field exists!');
@@ -92,35 +93,45 @@ class ProfileProvider extends ChangeNotifier {
           });
           notifyListeners();
         }
-        for (var userBookMark in _myProfile.bookmark) {
-          FirebaseFirestore.instance
-              .collection('post')
-              .doc(userBookMark)
-              .snapshots()
-              .listen((snapshot) {
-            _myBookPost.add(Post(
-              docId: snapshot.id,
-              title: snapshot.data()!['title'],
-              image: snapshot.data()!['image'],
-              description: snapshot.data()!['description'] as String,
-              type: snapshot.data()!['type'] as String,
-              create: snapshot.data()!['create'],
-              modify: snapshot.data()!['modify'],
-              creator: snapshot.data()!['creator'] as String,
-              creatorId: snapshot.data()!['creatorId'] as String,
-              creatorImage: snapshot.data()!['creatorImage'] as String,
 
-              like: snapshot.data()!['like'],
-              likeUsers: snapshot.data()!['likeUsers'],
-              lat: snapshot.data()!['lat'],
-              lng: snapshot.data()!['lng'],
-            ));
-          });
-        }
       });
+      _bookMarkPost = [];
+      for (var userBookMark in _myProfile.bookmark) {
+        FirebaseFirestore.instance
+            .collection('post')
+            .doc(userBookMark)
+            .snapshots()
+            .listen((snapshot) {
+          _bookMarkPost.add(Post(
+            docId: snapshot.id,
+            title: snapshot.data()!['title'],
+            image: snapshot.data()!['image'],
+            description: snapshot.data()!['description'] as String,
+            type: snapshot.data()!['type'] as String,
+            create: snapshot.data()!['create'],
+            modify: snapshot.data()!['modify'],
+            creator: snapshot.data()!['creator'] as String,
+            creatorId: snapshot.data()!['creatorId'] as String,
+            creatorImage: snapshot.data()!['creatorImage'] as String,
+
+            like: snapshot.data()!['like'],
+            likeUsers: snapshot.data()!['likeUsers'],
+            lat: snapshot.data()!['lat'],
+            lng: snapshot.data()!['lng'],
+            duration: snapshot.data()!['duration'],
+            amount: snapshot.data()!['amount'],
+            blog: snapshot.data()!['blog'],
+            intro: snapshot.data()!['intro'],
+            date: DateFormat('yyyy-MM-dd HH:mm:ss').format(snapshot.data()!['date'].toDate()),
+            share: snapshot.data()!['share'],
+            ingredients: snapshot.data()!['ingredients'],
+          ));
+        });
+      }
 
       if (_myProfile.uid == FirebaseAuth.instance.currentUser!.uid) {
         getFriends();
+        getBook();
       }
 
       _rankSubscription = FirebaseFirestore.instance
@@ -148,63 +159,45 @@ class ProfileProvider extends ChangeNotifier {
         notifyListeners();
       });
 
-      //All users
-      _allUserSubscription = FirebaseFirestore.instance
-          .collection('user')
-          .snapshots()
-          .listen((snapshot) {
-        _allUsers = [];
-        for (final document in snapshot.docs) {
-          _allUsers.add(
-            Profile(
-              name: document.data()['name'],
-              id: document.data()['id'],
-              profession: document.data()['profession'],
-              email: document.data()['email'],
-              subscribers: document.data()['subscriber'],
-              subscribing: document.data()['subscribing'],
-              bookmark: document.data()['bookmark'],
-              photo: document.data()['image'],
-              uid: document.id,
-            ),
-          );
-        }
-        notifyListeners();
-      });
     });
   }
 
-  Future<bool> getUser(String uid) async {
-    await FirebaseFirestore.instance
+   Future<bool> getUser(String uid) async {
+    print("ssgood");
+     FirebaseFirestore.instance
         .collection('user')
         .doc(uid)
-        .snapshots()
-        .listen((snapshot) {
-      _otherProfile = Profile(
-          name: '',
-          id: ' ',
-          photo: '',
-          email: '',
-          subscribers: [],
-          subscribing: [],
-          bookmark: [],
-          profession: "",
-          uid: ' ');
-      _isSubscribed = false;
-      if (snapshot.data() != null) {
-        _otherProfile.subscribers = snapshot.data()!['subscriber'];
-        _otherProfile.name = snapshot.data()!['name'];
-        _otherProfile.email = snapshot.data()!['email'];
-        _otherProfile.id = snapshot.data()!['id'];
+        .get().then((snapshot) {
+       _otherProfile = Profile(
+           name: '',
+           id: ' ',
+           photo: '',
+           email: '',
+           subscribers: [],
+           subscribing: [],
+           bookmark: [],
+           profession: "",
+           uid: ' ');
+       _isSubscribed = false;
+       if (snapshot.data() != null) {
+         _otherProfile.subscribers = snapshot.data()!['subscriber'];
+         _otherProfile.name = snapshot.data()!['name'];
+         _otherProfile.email = snapshot.data()!['email'];
+         _otherProfile.id = snapshot.data()!['id'];
 
-        _otherProfile.subscribing = snapshot.data()!['subscribing'];
-        _otherProfile.bookmark = snapshot.data()!['bookmark'];
-        _otherProfile.photo = snapshot.data()!['image'];
-        _otherProfile.uid = snapshot.id;
-        _otherProfile.profession = snapshot.data()!['profession'];
-      }
-      notifyListeners();
-    });
+         _otherProfile.subscribing = snapshot.data()!['subscribing'];
+         _otherProfile.bookmark = snapshot.data()!['bookmark'];
+         _otherProfile.photo = snapshot.data()!['image'];
+         _otherProfile.uid = snapshot.id;
+         _otherProfile.profession = snapshot.data()!['profession'];
+       }
+       notifyListeners();
+
+     });
+
+
+
+
 
     if (_myProfile.subscribing.contains(_otherProfile.uid)) {
       return true;
@@ -256,6 +249,41 @@ class ProfileProvider extends ChangeNotifier {
       });
     }
   }
+  getBook() {
+    _bookMarkPost = [];
+    for (var userBookMark in _myProfile.bookmark) {
+      FirebaseFirestore.instance
+          .collection('post')
+          .doc(userBookMark)
+          .snapshots()
+          .listen((snapshot) {
+        _bookMarkPost.add(Post(
+          docId: snapshot.id,
+          title: snapshot.data()!['title'],
+          image: snapshot.data()!['image'],
+          description: snapshot.data()!['description'] as String,
+          type: snapshot.data()!['type'] as String,
+          create: snapshot.data()!['create'],
+          modify: snapshot.data()!['modify'],
+          creator: snapshot.data()!['creator'] as String,
+          creatorId: snapshot.data()!['creatorId'] as String,
+          creatorImage: snapshot.data()!['creatorImage'] as String,
+
+          like: snapshot.data()!['like'],
+          likeUsers: snapshot.data()!['likeUsers'],
+          lat: snapshot.data()!['lat'],
+          lng: snapshot.data()!['lng'],
+          duration: snapshot.data()!['duration'],
+          amount: snapshot.data()!['amount'],
+          blog: snapshot.data()!['blog'],
+          intro: snapshot.data()!['intro'],
+          date: DateFormat('yyyy-MM-dd HH:mm:ss').format(snapshot.data()!['date'].toDate()),
+          share: snapshot.data()!['share'],
+          ingredients: snapshot.data()!['ingredients'],
+        ));
+      });
+    }
+  }
 
   bool? _checkUser;
   List<Profile> _subscribingProfile = [];
@@ -266,8 +294,8 @@ class ProfileProvider extends ChangeNotifier {
   List<Profile> get allUsers => _allUsers;
   List<Profile> get rankUsers => _rankUsers;
 
-  List<Profile> _bookMarkPost = [];
-  List<Profile> get bookMarkPost => _bookMarkPost;
+  List<Post> _bookMarkPost = [];
+  List<Post> get bookMarkPost => _bookMarkPost;
 
   List<Post> _myBookPost = [];
   List<Post> get myBookPost => _myBookPost;

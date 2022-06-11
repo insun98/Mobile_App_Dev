@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'comments.dart';
 
@@ -23,6 +24,7 @@ class myProfile extends StatefulWidget {
 class _myProfileState extends State<myProfile> {
   File? _image;
   String dropdownValue = '인기순';
+  bool postOn = true;
   Widget build(BuildContext context) {
     ApplicationState authProvider = Provider.of<ApplicationState>(context);
     PostProvider postProvider = Provider.of<PostProvider>(context);
@@ -48,8 +50,7 @@ class _myProfileState extends State<myProfile> {
                 Text(ProfileProvider.myProfile.name,
                     style: const TextStyle(fontSize: 15, color: Colors.black)),
                 const SizedBox(height: 10.0),
-                Text(
-                    '구독자:${ProfileProvider.myProfile.subscribers.length}',
+                Text('구독자:${ProfileProvider.myProfile.subscribers.length}',
                     style: const TextStyle(fontSize: 15, color: Colors.black)),
                 const SizedBox(height: 10.0),
                 Row(
@@ -64,15 +65,8 @@ class _myProfileState extends State<myProfile> {
                       },
                     ),
                     SizedBox(width: 30),
-                    ElevatedButton(
-                      child: const Text('알람설정'),
-                      style:
-                      ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
-                      onPressed: () async {
-                        Navigator.pushNamed(context, '/alarm');
-                      },
-                    ),
-                    SizedBox(width: 30),
+
+
                     ElevatedButton(
                       child: const Text('로그아웃'),
                       style:
@@ -84,43 +78,82 @@ class _myProfileState extends State<myProfile> {
                     ),
                   ],
                 ),
+                ButtonBar(
+                  alignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    postOn?TextButton(
+                      child: const Text(
+                        '게시물',
+                   style:  TextStyle(
+                          color: Colors.black,
+                     fontWeight: FontWeight.bold,
+
+                        ),
+
+                      ),
+                      onPressed: () {
+
+                      },
+                    ):
+                    TextButton(
+                      child: const Text(
+                        '게시물',
+                        style:  TextStyle(
+                          color: Colors.black,
+                        ),
+
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          postOn=true;
+                        });
+                      },
+                    ),
+                    postOn==false?TextButton(
+                      child: const Text(
+                        '북마크',
+                        style:  TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+
+                        ),
+
+                      ),
+                      onPressed: () {
+
+                      },
+                    ):TextButton(
+                      child: const Text(
+                        '북마크',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          postOn=false;
+                        });
+                      },
+                    ),
+
+                  ],
+                ),
+
               ],
             ),
           ),
         ),
-        Container(
-          margin: EdgeInsets.only(left: 35),
-          child: DropdownButton<String>(
-            value: dropdownValue,
-            icon: const Icon(Icons.arrow_drop_down_outlined),
-            elevation: 0,
-            style: const TextStyle(color: Colors.black),
-            items: dropdownItems,
-            onChanged: (String? newValue) {
-              setState(() {
-                dropdownValue = newValue!;
-                postProvider.getTimePost(dropdownValue);
-              });
-            },
-          ),
-        ),
+
         Consumer<PostProvider>(
           builder: (context, postProvider, _) => itemCard(
-            myPost: postProvider.myPost,
+            myPost: postOn?postProvider.myPost:postProvider.bookPosts,
           ),
         ),
       ],
     );
   }
 
-  List<DropdownMenuItem<String>> get dropdownItems {
-    List<DropdownMenuItem<String>> menuItems = [
-      DropdownMenuItem(child: Text("인기순"), value: "인기순"),
-      DropdownMenuItem(child: Text("가장 오래된 순"), value: "가장 오래된 순"),
-      DropdownMenuItem(child: Text("최신순"), value: "최신순"),
-    ];
-    return menuItems;
-  }
+
 }
 
 class editProfile extends StatefulWidget {
@@ -266,6 +299,7 @@ class _editProfileState extends State<editProfile> {
     }
   }
 }
+
 class PostDetail extends StatefulWidget {
   const PostDetail({Key? key}) : super(key: key);
 
@@ -274,7 +308,18 @@ class PostDetail extends StatefulWidget {
 }
 
 class _PostDetaileState extends State<PostDetail> {
-
+  Future<void> _launchUniversalLinkIos(Uri url) async {
+    final bool nativeAppLaunchSucceeded = await launchUrl(
+      url,
+      mode: LaunchMode.externalNonBrowserApplication,
+    );
+    if (!nativeAppLaunchSucceeded) {
+      await launchUrl(
+        url,
+        mode: LaunchMode.inAppWebView,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -287,84 +332,81 @@ class _PostDetaileState extends State<PostDetail> {
         backgroundColor: Colors.transparent,
         bottomOpacity: 0.0,
         elevation: 0.0,
-        title:  Text(
+        title: Text(
           postProvider.singlePost.title,
           style: TextStyle(color: Colors.black),
         ),
         leading: IconButton(
-        icon: Icon(Icons.clear, color: Colors.black,),
-          onPressed: () async {
-            Navigator.pop(context);
-          }
-        ),
-
+            icon: Icon(
+              Icons.clear,
+              color: Colors.black,
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+            }),
       ),
       body: Consumer<ProfileProvider>(
         builder: (context, ProfileProvider, _) => SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-                Image.network(
+              Center(
+                child: Image.network(
                   postProvider.singlePost.image,
-                  height: 200.0,
-                  width: 300.0,
-                ),
-
-
-
-
-        Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                child: Column(children:[
-                  Icon(Icons.label, color: Color(0xFF961D36)),
-                  Text(postProvider.singlePost.type),
-
-                ],
+                  height: 300.0,
+                  fit: BoxFit.fill,
+                width:400,
                 ),
               ),
+              SizedBox(height: 25),
               Container(
-                child: Column(children:[
-                  Icon(Icons.group, color: Color(0xFF961D36)),
-                  Text("1인분"),
-
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    child: Column(
+                      children: [
+                        Icon(Icons.label, color: Color(0xFF961D36)),
+                        Text(postProvider.singlePost.type),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Icon(Icons.group, color: Color(0xFF961D36)),
+                        Text("${postProvider.singlePost.amount.toString()}인분"),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Icon(Icons.access_alarm, color: Color(0xFF961D36)),
+                        postProvider.singlePost.duration < 60
+                            ? Text("60분이내")
+                            : Text(
+                                "${postProvider.singlePost.duration.toString()} 분"),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
-              ),
-              Container(
-                child: Column(children:[
-                  Icon(Icons.access_alarm, color: Color(0xFF961D36)),
-                  Text("60분이내"),
-
-                ],
-
-                ),
-
-              ),
-
-
-            ],
-          )
-
-        ),
-
+              )),
               Container(
                 padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children:[
-
-
-                  Text('재료',
-                      style: TextStyle(
-                          fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
-                    Text('양배추',
+                  children: [
+                    Text('반찬나눔진행중',
                         style: TextStyle(
-                            fontSize: 18, color: Colors.black)),
-
+                            fontSize: 20,
+                            color: Color(0xFF961D36),
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(height: 5,),
+                    postProvider.singlePost.share?Row(children:[Expanded(child
+                    :Text("~ ${postProvider.singlePost.date}",
+                        style: TextStyle(fontSize: 18, color: Colors.black))),postProvider.singlePost.creator != FirebaseAuth.instance.currentUser!.uid?IconButton(icon:Icon(Icons.message_rounded), color: Color(0xFF961D36), onPressed: () {profileProvider.getUser(postProvider.singlePost.creator); Navigator.pushNamed(context, '/chat');  },):Text(""),],):Text("반찬 나눔 종료",
+                        style: TextStyle(fontSize: 18, color: Colors.black)),
                   ],
                 ),
               ),
@@ -372,20 +414,43 @@ class _PostDetaileState extends State<PostDetail> {
                 padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-
-                  children:[
-
-
-
-                    Text('조리법',
+                  children: [
+                    Text('재료',
                         style: TextStyle(
-                            fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
-
+                            fontSize: 20,
+                            color: Color(0xFF961D36),
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(height: 5,),
+                    Text(postProvider.singlePost.ingredients,
+                        style: TextStyle(fontSize: 18, color: Colors.black)),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('조리법',
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color(0xFF961D36),
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(height: 5,),
                     Text(postProvider.singlePost.description,
-                        style: TextStyle(
-                            fontSize: 18, color: Colors.black)),
-
-
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.black)),
+                    TextButton(onPressed: () async {
+                      final url = Uri.parse(
+                        postProvider.singlePost.blog,
+                      );
+                      if (await canLaunchUrl(url)) {
+                        launchUrl(url);
+                      } else {
+                        // ignore: avoid_print
+                        print("Can't launch $url");
+                      }
+                    }, child: Text("참조"))
                   ],
                 ),
               ),
@@ -393,30 +458,26 @@ class _PostDetaileState extends State<PostDetail> {
                 padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children:[
-
-
-
-                    Text('댓글',
+                  children: [
+                    const Text('댓글',
                         style: TextStyle(
-                            fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
-
-
-
+                            fontSize: 20,
+                            color: Color(0xFF961D36),
+                            fontWeight: FontWeight.bold)),
                     Consumer<CommentProvider>(
                       builder: (context, appState, _) => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           GuestBook(
                             addMessage: (message) =>
-                                appState.addMessageToGuestBook(message,postProvider.singlePost.docId),
+                                appState.addMessageToGuestBook(
+                                    message, postProvider.singlePost.docId,profileProvider.myProfile.photo),
                             comment: appState.guestBookMessages, // new
                             //messages
                           ),
                         ],
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -424,7 +485,6 @@ class _PostDetaileState extends State<PostDetail> {
           ),
         ),
       ),
-
     );
   }
 

@@ -31,63 +31,91 @@ class _HomesPageState extends State<HomesPage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               TextButton(
-                child: const Text(
+                child: kind != "양식"?Text(
                   '양식',
                   style: TextStyle(
                     fontSize: 17,
                     color: Colors.white,
                   ),
+                ):Text(
+                  '양식',
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 onPressed: () {
-                  setState(() {
+
                     kind = "양식";
                     postProvider.getTypePost(kind);
-                  });
+
                 },
               ),
               TextButton(
-                child: const Text(
+                child: kind != "한식"? Text(
                   '한식',
                   style: TextStyle(
                     fontSize: 17,
                     color: Colors.white,
                   ),
+                ):Text(
+                  '한식',
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 onPressed: () {
-                  setState(() {
+
                     kind = "한식";
                     postProvider.getTypePost(kind);
-                  });
+
                 },
               ),
               TextButton(
-                child: const Text(
+                child:  kind != "중식"? Text(
                   '중식',
                   style: TextStyle(
                     fontSize: 17,
                     color: Colors.white,
                   ),
+                ):Text(
+                  '중식',
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 onPressed: () {
-                  setState(() {
+
                     kind = "중식";
                     postProvider.getTypePost(kind);
-                  });
+
                 },
               ),
               TextButton(
-                child: const Text(
+                child:  kind != "일식"?Text(
                   '일식',
                   style: TextStyle(
                     fontSize: 17,
                     color: Colors.white,
                   ),
+                ):Text(
+                  '일식',
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 onPressed: () {
-                  setState(() {
+
                     kind = "일식";
                     postProvider.getTypePost(kind);
-                  });
+
                 },
               ),
             ],

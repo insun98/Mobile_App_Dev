@@ -56,11 +56,25 @@ class _viewSubscribersState extends State<viewSubscribers> {
 
          children:[
            Container(
-             padding:EdgeInsets.all(10),
+             padding: EdgeInsets.all(10),
              decoration: const BoxDecoration(
-               color: Color(0xFF961D36),
+               color: Colors.white,
              ),
-           child: Row(children:const [ Text('구독', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),)],),),
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: const [
+                 Text(
+                   '구독중',
+                   style: TextStyle(
+                       color: Color(0xFF961D36),
+                       fontSize: 20,
+                       fontWeight: FontWeight.bold),
+                 )
+
+               ],
+
+             ),
+           ),
       SizedBox(
         height:500,
            child:ListView.separated(
@@ -80,7 +94,7 @@ class _viewSubscribersState extends State<viewSubscribers> {
                 TextButton(
                   onPressed: ()  async {
                     bool isSubscribed = await ProfileProvider.getUser(ProfileProvider.subscribingProfile[index].uid);
-                    await postProvider.getPost(ProfileProvider.subscribingProfile[index].uid);
+                     postProvider.getPost(ProfileProvider.subscribingProfile[index].uid);
                      Navigator.push(
                         context,
                         MaterialPageRoute(
