@@ -112,7 +112,46 @@ class PostProvider extends ChangeNotifier {
 
     final downloadUrl = await defaultProPicRef.getDownloadURL();
     _defaultImage = downloadUrl;
+    _allPostSubscription = FirebaseFirestore.instance
+        .collection('post')
+        .snapshots()
+        .listen((snapshot) {
+      _allPosts = [];
+      for (final document in snapshot.docs) {
+        _allPosts.add(
+          Post(
+            docId: document.id,
+            title: document.data()['title'] as String,
+            image: document.data()['image'],
+            description: document.data()['description'] as String,
+            type: document.data()['type'] as String,
+            create: document.data()['create'],
+            modify: document.data()['modify'],
+            creator: document.data()['creator'] as String,
+            creatorId: document.data()['creatorId'] as String,
+            creatorImage: document.data()['creatorImage'] as String,
 
+            like: document.data()['like'],
+            likeUsers: document.data()['likeUsers'],
+            lat: document.data()['lat'],
+            lng: document.data()['lng'],
+            duration: document.data()['duration'],
+            amount: document.data()['amount'],
+            blog: document.data()['blog'],
+            intro: document.data()['intro'],
+            date: DateFormat('yyyy-MM-dd HH:mm:ss')
+                .format(document.data()['date'].toDate()),
+            share: document.data()['date'].microsecondsSinceEpoch <
+                Timestamp.now().microsecondsSinceEpoch
+                ? false
+                : true,
+            ingredients: document.data()['ingredients'],
+          ),
+        );
+        notifyListeners();
+      }
+      notifyListeners();
+    });
     FirebaseAuth.instance.userChanges().listen((user) {
       //Read only my posts
       _myPostSubscription = FirebaseFirestore.instance
