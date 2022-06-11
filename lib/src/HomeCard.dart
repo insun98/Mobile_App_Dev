@@ -173,11 +173,17 @@ class _homeCardState extends State<homeCard> {
 
                                   if(post.likeUsers.contains(FirebaseAuth.instance.currentUser!.uid.toString())){
                                     postProvider.deletelikeuser(post.docId, post.like);
+                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                      content: Text('게시물을 좋아요 취소 했습니다.'),
+                                    ));
                                     setState(() {
 
                                     });
                                   }else {
                                     postProvider.updatelikeuser(post.docId, post.like);
+                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                      content: Text('게시물을 좋아요 했습니다.'),
+                                    ));
                                     setState(() {
 
                                     });
@@ -198,6 +204,9 @@ class _homeCardState extends State<homeCard> {
                               ),
 
                               onPressed: () async {
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  content: Text('게시물이 북마크에 추가됐습니다.'),
+                                ));
                                 await postProvider.updatebook(post.docId);
 
                               },

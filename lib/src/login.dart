@@ -149,11 +149,13 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 12.0),
             TextField(
               controller: _passwordController,
+
               decoration: const InputDecoration(
                 filled: true,
                 fillColor: Color(0xFFFBF7F7),
                 labelText: '비밀번호',
                 border: OutlineInputBorder(),
+
               ),
               obscureText: true,
             ),
@@ -161,6 +163,7 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               child: const Text('로그인'),
               style: ElevatedButton.styleFrom(primary: Color(0xFF961D36)),
+
               onPressed: () async {
                 bool? login = await authProvider.verifyEmail(_usernameController.text, (e) => _showErrorDialog(context, 'Invalid email', e));
 

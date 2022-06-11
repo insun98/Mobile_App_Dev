@@ -79,8 +79,10 @@ class MessageProvider extends ChangeNotifier {
               uid: document.data()["uid"],
               userId: document.data()["userId"]));
         }
+        notifyListeners();
       }
     });
+    notifyListeners();
   }
   getFriends() {
     _messageHistoryInfo = [];
@@ -123,6 +125,7 @@ class MessageProvider extends ChangeNotifier {
       'userId': userId,
       'userProfile': image,
     });
+    notifyListeners();
 
     FirebaseFirestore.instance
         .collection('user')
@@ -137,6 +140,7 @@ class MessageProvider extends ChangeNotifier {
       'userId': userId,
       'userProfile': image,
     });
+    notifyListeners();
   }
 }
 

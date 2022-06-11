@@ -530,6 +530,9 @@ edit();
           TextButton(
             child: const Text('Save'),
             onPressed: () async {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('게시물이 추가됐습니다.'),
+              ));
 
 
               if (_formKey.currentState!.validate()) {
