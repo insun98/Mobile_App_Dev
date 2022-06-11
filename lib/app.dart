@@ -14,8 +14,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:shrine/src/alarm.dart';
+import 'package:shrine/src/chatMessage.dart';
 
-import 'package:shrine/src/friendProfile.dart';
+
 import 'package:shrine/src/logoAnimation.dart';
 import 'package:shrine/src/start.dart';
 
@@ -26,7 +27,7 @@ import 'package:shrine/src/book.dart';
 import 'src/myProfile.dart';
 import 'src/hot.dart';
 import 'src/map.dart';
-import 'ranking.dart';
+import 'src/ranking.dart';
 
 
  import 'src/login.dart';
@@ -85,7 +86,7 @@ class ShrineApp extends StatelessWidget {
 
 
         '/map':(BuildContext context) => const MyMap(),
-      
+
 
        
         '/alarm': (BuildContext context) => const alarmPage(),
@@ -94,6 +95,8 @@ class ShrineApp extends StatelessWidget {
 
         '/postDetail': (BuildContext context) => const PostDetail(),
     '/logo': (BuildContext context) => const Logo(),
+        '/messageView': (BuildContext context) => const messageView(),
+
 
       },
 

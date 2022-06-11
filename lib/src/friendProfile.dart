@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 
 import 'package:provider/provider.dart';
+import 'package:shrine/Provider/MessageProvider.dart';
 import 'dart:io';
 import '../src/addPost.dart';
 import '../src/ItemCard.dart';
@@ -26,7 +27,7 @@ class _friendProfileState extends State<friendProfile> {
   List<String>prediction =[];
   bool textScanning= false;
   Widget build(BuildContext context) {
-    ApplicationState authProvider= Provider.of<ApplicationState>(context);
+    MessageProvider messageProvider= Provider.of<MessageProvider>(context);
     PostProvider postProvider= Provider.of<PostProvider>(context);
 
     return Consumer<ProfileProvider>(
@@ -156,6 +157,14 @@ class _friendProfileState extends State<friendProfile> {
                         ));
                           ProfileProvider.addSubscriber(ProfileProvider.otherProfile.uid);
                           },
+                      ),
+                      ElevatedButton(
+                        child: const Text('대화하기'),
+                        style: ElevatedButton.styleFrom(primary: Color(0xFF961D35)),
+                        onPressed: () async {
+                          await messageProvider.getMessages(ProfileProvider.otherProfile.uid);
+                          Navigator.pushNamed(context, '/chat');
+                        },
                       ),
 
                     ],

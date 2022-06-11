@@ -19,20 +19,18 @@ class CommentProvider extends ChangeNotifier {
   List<Com> get guestBookMessages => _guestBookMessages;
 
   Future<DocumentReference> addMessageToGuestBook(String message,
-      String docId) async {
+      String docId, String image_url ) async {
     return FirebaseFirestore.instance
         .collection('post')
         .doc(docId)
         .collection('comment')
         .add(<String, dynamic>{
       'text': message,
-      'timestamp': DateTime
-          .now()
-          .millisecondsSinceEpoch,
+      'timestamp':  DateTime.now(),
       'name': FirebaseAuth.instance.currentUser!.displayName,
       'userId': FirebaseAuth.instance.currentUser?.uid,
       'image_url':
-      "https://firebasestorage.googleapis.com/v0/b/yorijori-52f2a.appspot.com/o/defaultProfile.png?alt=media&token=127cd072-80b8-4b77-ab22-a50a0dfa5206",
+      image_url,
     });
   }
 
@@ -53,7 +51,7 @@ class CommentProvider extends ChangeNotifier {
                 name: document.data()['name'] as String,
                 message: document.data()['text'] as String,
                 formattedDate: DateFormat('yyyy-MM-dd HH:mm:ss')
-                    .format(DateTime.now()),
+                    .format(document.data()['timestamp'].toDate()),
                 image_url: document.data()['image_url'],
                 uid: document.data()['userId'] as String,
               ),

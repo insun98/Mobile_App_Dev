@@ -10,26 +10,25 @@ dependencies:
   intl: ^0.17.0
   flutter_local_notifications: ^9.2.0
   flutter_native_timezone: ^2.0.0
-  flutter_app_badger: ^1.3.0
+  flutter_app_badger: ^1.1.0
   google_fonts: ^2.3.2
   cupertino_icons: ^1.0.3
   shrine_images: ^2.0.1
-  firebase_core: ^1.17.0
+  firebase_core: ^1.16.0
   firebase_auth: ^3.3.18
   cloud_firestore: ^3.1.15
   provider: ^6.0.2
   adaptive_theme: ^2.2.0
   firebase_storage: ^10.2.16
-  image_picker: ^0.8.5+3
+  image_picker: ^0.8.1
   google_ml_kit: ^0.7.3
   google_mlkit_image_labeling: ^0.3.0
-
-
   animated_text_kit: ^4.2.1
-  get: ^4.6.5
+  lottie: ^1.3.0
+  url_launcher: ^6.0.20
 
   google_maps_flutter: ^2.1.7
-  location: ^4.4.0
+  location: ^4.1.0
   http: ^0.13.4
   json_serializable: ^6.2.0
 
@@ -43,6 +42,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/diamond.png
+    - 75783-prepare-food.json
   fonts:
     - family: Yrsa
       fonts:

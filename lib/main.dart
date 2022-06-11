@@ -16,6 +16,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shrine/Provider/AuthProvider.dart';
+import 'package:shrine/Provider/MessageProvider.dart';
 import 'package:shrine/Provider/PostProvider.dart';
 import 'package:shrine/Provider/ProfileProvider.dart';
 import 'package:shrine/src/comments.dart';
@@ -44,6 +45,8 @@ class Myapp extends StatelessWidget {
 
         ChangeNotifierProvider<CommentProvider>(
             create: (_) => CommentProvider ("")),
+        ChangeNotifierProvider<MessageProvider>(
+            create: (_) => MessageProvider()),
 
       ],
       child: ShrineApp(),
