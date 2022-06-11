@@ -114,6 +114,7 @@ class PostProvider extends ChangeNotifier {
     _defaultImage = downloadUrl;
     _allPostSubscription = FirebaseFirestore.instance
         .collection('post')
+        .where('share', isEqualTo: true)
         .snapshots()
         .listen((snapshot) {
       _allPosts = [];
