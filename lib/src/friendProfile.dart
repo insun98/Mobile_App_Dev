@@ -173,20 +173,7 @@ class _friendProfileState extends State<friendProfile> {
                 ],
               ),
             ),
-            Container(margin: EdgeInsets.only(left:35), child: DropdownButton<String>(
-              value: dropdownValue,
-              icon: const Icon(Icons.arrow_drop_down_outlined),
-              elevation: 0,
 
-              style: const TextStyle(color: Colors.black),
-              items: dropdownItems,
-              onChanged: (String? newValue) {
-                setState(() {
-                  dropdownValue = newValue!;
-                  postProvider.getTimePost(dropdownValue);
-                });
-              },
-            ),),
             itemCard(myPost: postProvider.frinedPost,),
           ],
 
