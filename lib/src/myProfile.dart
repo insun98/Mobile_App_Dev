@@ -3,6 +3,7 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import '../Provider/CommentProvider.dart';
+import '../Provider/MessageProvider.dart';
 import '../src/ItemCard.dart';
 import '../Provider/AuthProvider.dart';
 import '../Provider/ProfileProvider.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'addPost.dart';
+import 'chatMessage.dart';
 import 'comments.dart';
 
 class myProfile extends StatefulWidget {
@@ -312,7 +314,7 @@ class _PostDetaileState extends State<PostDetail> {
 
   @override
   Widget build(BuildContext context) {
-
+    MessageProvider messageProvider = Provider.of<MessageProvider>(context);
     ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
     return  Consumer<PostProvider>(
         builder: (context, postProvider, _) => Scaffold(
@@ -377,7 +379,9 @@ class _PostDetaileState extends State<PostDetail> {
                 color: Colors.grey,
                 semanticLabel: 'filter',
               ),
-              onPressed: () async {}): IconButton(
+              onPressed: () async {
+                postProvider.deletePost(postProvider.singlePost.docId);
+              }): IconButton(
     icon:  Icon(
     Icons.book,
     semanticLabel: 'favorite',
@@ -466,10 +470,17 @@ class _PostDetaileState extends State<PostDetail> {
                                   ? IconButton(
                                       icon: Icon(Icons.message_rounded),
                                       color: Color(0xFF961D36),
-                                      onPressed: () {
-                                        profileProvider.getUser(
+                                      onPressed: () async{
+                                        await profileProvider.getUser(
                                             postProvider.singlePost.creator);
-                                        Navigator.pushNamed(context, '/chat');
+                                        await messageProvider.getMessages(
+                                            postProvider.singlePost.creator);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => ChatScreen(addMessage: (message) =>
+                                              messageProvider.addMessage(
+                                                  postProvider.singlePost.creator, message,profileProvider.myProfile.id,profileProvider.myProfile.photo), messages: messageProvider.messages)),
+                                        );
                                       },
                                     )
                                   : Text(""),
@@ -520,12 +531,7 @@ class _PostDetaileState extends State<PostDetail> {
                           final url = Uri.parse(
                             postProvider.singlePost.blog,
                           );
-                          if (await canLaunchUrl(url)) {
-                            launchUrl(url);
-                          } else {
-                            // ignore: avoid_print
-                            print("Can't launch $url");
-                          }
+                          _launchUniversalLinkIos(url);
                         },
                         child: Text("참조"))
                   ],

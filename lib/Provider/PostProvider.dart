@@ -633,6 +633,23 @@ class PostProvider extends ChangeNotifier {
     });
     notifyListeners();
   }
+  Future<void> deletePost(String docId) async {
+
+
+    var collection = FirebaseFirestore.instance
+        .collection('post')
+        .doc(docId)
+        .collection('comment');
+    var snapshots = await collection.get();
+    if(snapshots.docs.isNotEmpty) {
+      for (var doc in snapshots.docs) {
+        await doc.reference.delete();
+      }
+    }
+
+    FirebaseFirestore.instance.collection('post').doc(docId).delete();
+    notifyListeners();
+  }
 
   Future<DocumentReference> addPost(
       String URL,
