@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:provider/provider.dart';
@@ -11,62 +10,36 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../Provider/PostProvider.dart';
-
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
-
-class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver{
+//class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver{
+class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  //알람기능 추가
 
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
 
 
-//앱 아이콘의 뱃지를 초기화 - 앱이 foreground 상태가 될대 뱃지를 초기화
-//1
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
-    _init();
+    main_init();
   }
-//2
+
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
-//3
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      FlutterAppBadger.removeBadge();
-    }
-  }
 
 
-  //flutter_local_notification 초기화 -> 특정시간에 표시하기 위해
-  Future<void> _init() async {
+  Future<void> main_init() async {
     await _configureLocalTimeZone();
-    await _initializeNotification();
-  }
 
-  //현재 시간 등록하기
-  Future<void> _configureLocalTimeZone() async {
-    tz.initializeTimeZones();
-    final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(timeZoneName!));
-  }
-//  ios 권한요청 - 미리 초기화
-  Future<void> _initializeNotification() async {
     const IOSInitializationSettings initializationSettingsIOS =
     IOSInitializationSettings(
       requestAlertPermission: false,
@@ -74,7 +47,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver{
       requestSoundPermission: false,
     );
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('ic_notification');
+    AndroidInitializationSettings('free_icon_user');
 
     const InitializationSettings initializationSettings =
     InitializationSettings(
@@ -84,12 +57,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver{
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-//메세지 등록 취소 - 새로운 메시지 등록 - 이전메시지 취소
-  Future<void> _cancelNotification() async {
-    await _flutterLocalNotificationsPlugin.cancelAll();
+  Future<void> _configureLocalTimeZone() async {
+    tz.initializeTimeZones();
+    final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName!));
   }
 
-//권한요청
   Future<void> _requestPermissions() async {
     await _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -102,22 +75,14 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver{
   }
 
 
-  //메세지 등록
-
-  Future<void> _registerMessage({
-    //여기서 - 바뀌는거 감지하면 - if - notification 에서 notifier 하면 이때 시간 -
-    required int hour,
-    required int minutes,
-    required message,
-  }) async {
+  Future<void> _messageManage(
+      {
+        required message,
+      }) async
+  {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      hour,
-      minutes,
+      tz.local, now.year, now.month, now.day,  tz.TZDateTime.now(tz.local).hour, tz.TZDateTime.now(tz.local).minute+1,
     );
 
     await _flutterLocalNotificationsPlugin.zonedSchedule(
@@ -127,14 +92,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver{
       scheduledDate,
       NotificationDetails(
         android: AndroidNotificationDetails(
-          'channel id',
-          'channel name',
+          'channel id', 'yorijori',
           importance: Importance.max,
           priority: Priority.high,
-          //앱을 실행하면 메세지가 사라짐
           ongoing: true,
           styleInformation: BigTextStyleInformation(message),
-          icon: 'ic_notification',
+          icon: 'free_icon_user',
         ),
         iOS: const IOSNotificationDetails(
           badgeNumber: 1,
@@ -151,7 +114,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver{
 
   @override
   Widget build(BuildContext context) {
-    PostProvider postProvider = Provider.of<PostProvider>(context);
     ApplicationState authProvider= Provider.of<ApplicationState>(context);
     return Scaffold(
       body: SafeArea(
@@ -205,22 +167,16 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver{
                 if(login == true){
                   print(_passwordController);
                   authProvider.signInWithEmailAndPassword(_usernameController.text, _passwordController.text,(e) => _showErrorDialog(context, 'Invalid email', e));
-                  postProvider.getTypePost('양식');
+                  print("good");
                   Navigator.pushNamed(context, '/logo');
                 }else{
                   print("false");
                 }
 
-
-                await _cancelNotification();
                 await _requestPermissions();
-
-                final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-                await _registerMessage(
-                  hour: now.hour,
-                  minutes: now.minute + 1,
-                  message: _usernameController.text+'계정으로 로그인이 되었습니다 . '
-                      +"\n"+'본인이 아닐경우 로그아웃 하세요 .',
+                await _messageManage(
+                  message: _usernameController.text+'계정으로 로그인이 되었습니다. '
+                      +"\n"+'본인이 아닐경우 로그아웃 하세요.',
                 );
                 _usernameController.clear();
                 _passwordController.clear();

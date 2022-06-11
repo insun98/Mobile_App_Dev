@@ -11,8 +11,8 @@ import 'package:shrine/src/myProfile.dart';
 import 'package:shrine/src/home.dart';
 
 import '../Provider/ProfileProvider.dart';
-import '../ranking.dart';
-import '../search.dart';
+import 'ranking.dart';
+import 'search.dart';
 import 'addPost.dart';
 
 class StartPage extends StatefulWidget {
@@ -29,7 +29,7 @@ class _StartPageState extends State<StartPage> {
     HomesPage(),
     HotPage(),
     myProfile(),
-    SearchScreen(),
+    searchPage(),
     rankPage()
   ];
 

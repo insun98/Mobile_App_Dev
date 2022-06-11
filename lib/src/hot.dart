@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:shrine/src/HomeCard.dart';
 
-import 'package:shrine/search.dart';
+import 'package:shrine/src/search.dart';
 
 import 'dart:io';
 

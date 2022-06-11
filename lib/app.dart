@@ -27,7 +27,7 @@ import 'package:shrine/src/book.dart';
 import 'src/myProfile.dart';
 import 'src/hot.dart';
 import 'src/map.dart';
-import 'ranking.dart';
+import 'src/ranking.dart';
 
 
  import 'src/login.dart';

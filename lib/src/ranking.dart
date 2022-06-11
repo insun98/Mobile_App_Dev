@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../src/friendProfile.dart';
-import '../Provider/ProfileProvider.dart';
-import '../Provider/PostProvider.dart';
+import '../../src/friendProfile.dart';
+import '../../Provider/ProfileProvider.dart';
+import '../../Provider/PostProvider.dart';
 import 'package:flutter/cupertino.dart';
 
 class rankPage extends StatefulWidget {
